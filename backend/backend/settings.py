@@ -138,3 +138,5 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 
 CORS_ORIGIN_WHITELIST = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
+
+CORS_ALLOW_ALL_ORIGINS = True
