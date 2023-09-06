@@ -52,12 +52,12 @@ services:
       - default
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.template2.rule=Host(`template2.danielleandjohn.love`)"
-      - "traefik.http.routers.template2.entrypoints=websecure"
-      - "traefik.http.services.template2.loadbalancer.server.port=80"
-      - "traefik.http.routers.template2.service=template2"
-      - "traefik.http.routers.template2.tls.certresolver=myresolver"
-      - "traefik.http.routers.template2.middlewares=authelia,secure-headers@file,rate-limit@file,restrict-access@file"
+      - "traefik.http.routers.chores.rule=Host(`chores.danielleandjohn.love`)"
+      - "traefik.http.routers.chores.entrypoints=websecure"
+      - "traefik.http.services.chores.loadbalancer.server.port=80"
+      - "traefik.http.routers.chores.service=chores"
+      - "traefik.http.routers.chores.tls.certresolver=myresolver"
+      - "traefik.http.routers.chores.middlewares=authelia,secure-headers@file,rate-limit@file,restrict-access@file"
       - "traefik.docker.network=web"
 
 networks:
