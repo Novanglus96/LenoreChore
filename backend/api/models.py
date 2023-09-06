@@ -47,10 +47,10 @@ class Chore(models.Model):
     def __str__(self):
         return self.chore_name
 
-class History(models.Model):
+class HistoryItem(models.Model):
     completed_date = models.DateField()
     completed_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     chore = models.ForeignKey(Chore, on_delete=models.CASCADE)
 
-class Options(models.Model):
+class Option(models.Model):
     vacation_mode = models.BooleanField(default=False)
