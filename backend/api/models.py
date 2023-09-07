@@ -54,3 +54,5 @@ class HistoryItem(models.Model):
 
 class Option(models.Model):
     vacation_mode = models.BooleanField(default=False)
+    def __str__(self):
+        return 'Options'

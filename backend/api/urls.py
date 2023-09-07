@@ -1,9 +1,13 @@
-from django.urls import path
-
+from django.urls import path, include
+from rest_framework import routers
 from . import views
 
+router = routers.DefaultRouter()
+router.register(r'areas', views.AreaView, 'area')
+router.register(r'chores', views.ChoreView, 'chore')
+router.register(r'historyitems', views.HistoryItemView, 'historyitem')
+router.register(r'options', views.OptionView, 'option')
+
 urlpatterns = [
-    path('areas/', views.areas),
-    path('areas/<int:pk>/', views.area_detail),
-    path("", views.index, name="index"),
+    path("", include(router.urls)),
 ]
