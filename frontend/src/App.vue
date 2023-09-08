@@ -1,26 +1,20 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <!-- Other content in your App.vue file -->
+    <DataTable />
+    <DataCard />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import DataTable from './components/AreaTable.vue'; // Adjust the path to your component
+import DataCard from './components/AreaCard.vue';
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    DataTable, // Register the DataTable component for use in your template
+    DataCard,
+  },
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
