@@ -1,9 +1,22 @@
 from django.contrib import admin
-from .models import Area, Chore, HistoryItem, Option
+from django.contrib.auth.admin import UserAdmin
+from .models import Area, Chore, HistoryItem, Option, CustomUser
 
+class CustomUserAdmin(UserAdmin):
+    # Customize the admin panel for your custom user model
+    list_display = ('email', 'first_name', 'last_name', 'is_staff')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
+    fieldsets = (
+        (None, {'fields': ('password',)}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'profile_picture')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+    ordering = ('email',)
 # Register your models here.
 
 admin.site.register(Area)
 admin.site.register(Chore)
 admin.site.register(HistoryItem)
 admin.site.register(Option)
+admin.site.register(CustomUser, CustomUserAdmin)

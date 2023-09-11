@@ -1,7 +1,23 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
+from django.conf import settings
+from datetime import date
 
+from .managers import CustomUserManager
 # Create your models here.
+
+class CustomUser(AbstractUser):
+    username = None
+    email = models.EmailField("email address", unique=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return self.email
 
 class Area(models.Model):
     area_name = models.CharField(max_length=254)
@@ -38,7 +54,7 @@ class Chore(models.Model):
     m_oct = models.BooleanField(default=False)
     m_nov = models.BooleanField(default=False)
     m_dec = models.BooleanField(default=False)
-    assignee = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    assignee = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
     effort = models.IntegerField()
     seasonal = models.BooleanField(default=False)
     vacationMode = models.BooleanField(default=False)
@@ -49,7 +65,7 @@ class Chore(models.Model):
 
 class HistoryItem(models.Model):
     completed_date = models.DateField()
-    completed_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    completed_by = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
     chore = models.ForeignKey(Chore, on_delete=models.CASCADE)
 
 class Option(models.Model):
