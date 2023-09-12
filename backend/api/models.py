@@ -4,12 +4,20 @@ from django.conf import settings
 from datetime import date
 
 from .managers import CustomUserManager
+
+import os
+
+def user_profile_picture_upload(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    
+    return f"profile_pictures/{instance.email}{file_extension}"
+
 # Create your models here.
 
 class CustomUser(AbstractUser):
     username = None
     email = models.EmailField("email address", unique=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to=user_profile_picture_upload, blank=True, null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
