@@ -1,5 +1,5 @@
 from rest_framework import routers,serializers,viewsets
-from .models import Area, Chore, HistoryItem, Option
+from .models import Area, Chore, HistoryItem, Option, CustomUser
 from django.contrib.auth.models import User
 
 class AreaSerializer(serializers.ModelSerializer):
@@ -21,3 +21,9 @@ class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
         fields = '__all__'
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        field = '__all__'
+        extra_kwargs = {'password': {'write_only': True}}
