@@ -12,37 +12,44 @@ const routes = [
   {
     path: '/',
     name: 'dash',
-    component: DashView
+    component: DashView,
+    meta: { requiresAuth: true },
   },
   {
     path: '/list',
     name: 'list',
-    component: ListView
+    component: ListView,
+    meta: { requiresAuth: true },
   },
   {
     path: '/graphs',
     name: 'graphs',
-    component: GraphView
+    component: GraphView,
+    meta: { requiresAuth: true },
   },
   {
     path: '/history',
     name: 'history',
-    component: HistoryView
+    component: HistoryView,
+    meta: { requiresAuth: true },
   },
   {
     path: '/settings',
     name: 'settings',
-    component: SettingsView
+    component: SettingsView,
+    meta: { requiresAuth: true },
   },
   {
     path: '/profile',
     name: 'profile',
-    component: ProfileView
+    component: ProfileView,
+    meta: { requiresAuth: true },
   },
   {
     path: '/logout',
     name: 'logout',
-    component: LogoutView
+    component: LogoutView,
+    meta: { requiresAuth: true },
   },
   {
     path: '/login',
@@ -55,5 +62,24 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+// Global navigation guard
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    // Check if the user is authenticated (e.g., by checking the presence of a token)
+    const isAuthenticated = localStorage.getItem('authToken');
+
+    if (!isAuthenticated) {
+      // Redirect to the login page if not authenticated
+      next('/login');
+    } else {
+      // Continue to the requested route if authenticated
+      next();
+    }
+  } else {
+    // No authentication required, continue to the requested route
+    next();
+  }
+});
 
 export default router
