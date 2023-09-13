@@ -7,7 +7,7 @@
     </header>
     <main>
       <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <HelloWorld/>
+        <LoginForm/>
       </div>
     </main>
   </div>
@@ -15,12 +15,12 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import LoginForm from '@/components/LoginForm.vue'
 
 export default {
   name: 'ListView',
   components: {
-    HelloWorld
+    LoginForm
   }
 }
 </script>

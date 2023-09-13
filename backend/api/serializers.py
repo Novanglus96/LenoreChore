@@ -25,5 +25,12 @@ class OptionSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        field = '__all__'
+        fields = '__all__'
         extra_kwargs = {'password': {'write_only': True}}
+
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+class UserLogoutSerializer(serializers.Serializer):
+    pass

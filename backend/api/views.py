@@ -1,12 +1,11 @@
 from django.http import HttpResponse
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.hashers import make_password
-from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer
+from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer
 from .models import Area, Chore, HistoryItem, Option, CustomUser
+from rest_framework.decorators import action
 
 # Create your views here.
 
@@ -29,27 +28,32 @@ class OptionView(viewsets.ModelViewSet):
     serializer_class = OptionSerializer
     queryset = Option.objects.all()
 
-class UserRegistrationView(APIView):
-    def post(self, request):
-        serializer = CustomUserSerializer(data=request.data)
+class UserViewSet(viewsets.ModelViewSet):
+    serializer_class = CustomUserSerializer
+    queryset = CustomUser.objects.all()
+    
+    @action(detail=False, methods=['POST'])
+    def login(self, request):
+        serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save(password=make_password(request.data['password']))
-            token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+
+            user = authenticate(request, username=username, password=password)
+            if user:
+                login(request, user)
+
+                # Retrieve or create a token for the authenticated user
+                token, _ = Token.objects.get_or_create(user=user)
+
+                return Response({'token': token.key, 'detail': 'Login successful'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserLoginView(APIView):
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(username=username, password=password)
-        if user:
-            login(request, user)
-            token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
-        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-class UserLogoutView(APIView):
-    def post(self, request):
+    @action(detail=False, methods=['POST'])
+    def logout(self, request):
+        # Log the user out
         logout(request)
         return Response({'detail': 'Logout successful'}, status=status.HTTP_200_OK)
