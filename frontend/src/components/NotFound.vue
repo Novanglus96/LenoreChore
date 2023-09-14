@@ -1,10 +1,11 @@
 <template>
   <div class="NotFound">
     <v-img
-  :width="300"
+  :width="400"
   aspect-ratio="16/9"
   cover
-  src="SeekPng.com_404-png_2123989.png"
+  src="404.png"
 ></v-img>
+Looks like that page doesn't exist!  Try navigating back to the <router-link to="/">Home</router-link> page.
   </div>
 </template>
