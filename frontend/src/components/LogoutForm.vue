@@ -27,7 +27,8 @@ export default {
       this.clearAuthToken(); // Dispatch the Vuex action to clear the token
 
       // Redirect to the login page or another desired page
-      this.$router.push('/login');
+      //this.$router.push('/login');
+      location.replace('/login');
     },
   },
 };

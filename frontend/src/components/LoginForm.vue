@@ -82,7 +82,8 @@ export default {
         this.setAuthToken(token); // Dispatch the Vuex action to set the token
 
         // Redirect to the desired page (e.g., dashboard)
-        this.$router.push('/');
+        //this.$router.push('/');
+        location.replace('/');
       } catch (error) {
         console.error('Login failed:', error);
         // Handle login error (e.g., show an error message)
