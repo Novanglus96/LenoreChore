@@ -1,7 +1,16 @@
 <template>
   <div>
-    <h2>Logout</h2>
-    <button @click="logout">Logout</button>
+    <v-btn
+        block
+        class="mb-8"
+        color="blue"
+        size="large"
+        variant="tonal"
+        type="submit"
+        @click="logout"
+      >
+        Log Out
+      </v-btn>
   </div>
 </template>
 
