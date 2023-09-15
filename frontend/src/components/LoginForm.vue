@@ -37,7 +37,7 @@
         variant="tonal"
       >
         <v-card-text class="text-medium-emphasis text-caption">
-          {{ errormsg }}
+          {{ this.errormsg }}
         </v-card-text>
       </v-card>
 
@@ -68,6 +68,7 @@ export default {
         username: '',
         password: '',
       },
+      errormsg: '',
     };
   },
   computed: {
@@ -92,6 +93,7 @@ export default {
       } catch (error) {
         console.error('Login failed:', error);
         // Handle login error (e.g., show an error message)
+        this.errormsg = 'Login failed'
       }
     },
   },
