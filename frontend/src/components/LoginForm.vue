@@ -37,7 +37,7 @@
         variant="tonal"
       >
         <v-card-text class="text-medium-emphasis text-caption">
-          Warning: After 3 consecutive failed login attempts, you account will be temporarily locked for three hours. If you must login now, you can also click "Forgot login password?" below to reset the login password.
+          {{ errormsg }}
         </v-card-text>
       </v-card>
 
@@ -58,7 +58,8 @@
 
 <script>
 import axios from 'axios';
-import { mapActions } from 'vuex';
+import { mapActions } from 'pinia';
+import { useUserStore } from '../stores/user';
 
 export default {
   data() {
@@ -69,21 +70,25 @@ export default {
       },
     };
   },
+  computed: {
+    
+  },
   methods: {
-    ...mapActions(['setAuthToken']), // Vuex action to set the auth token
+    ...mapActions(useUserStore, ['loginUser']),
 
     async login() {
       try {
         const response = await axios.post('https://chores.danielleandjohn.love/api/users/login/', this.credentials);
-        const { token } = response.data;
+        const { token } = response.data.token;
 
         // Store the token in local storage or Vuex store
         localStorage.setItem('authToken', token);
-        this.setAuthToken(token); // Dispatch the Vuex action to set the token
+        this.loginUser(response.data.firstname, response.data.lastname, response.data.email, response.data.isAdmin)
 
+        //this.userStore.picture = response.data.picture
+        
         // Redirect to the desired page (e.g., dashboard)
-        //this.$router.push('/');
-        location.replace('/');
+        this.$router.push('/');
       } catch (error) {
         console.error('Login failed:', error);
         // Handle login error (e.g., show an error message)

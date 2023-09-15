@@ -5,6 +5,7 @@ import router from './router'
 import './tailwind.css'
 import store from './store'
 import '@mdi/font/css/materialdesignicons.css'
+import piniaPluginPersistedState from "pinia-plugin-persistedstate"
 
 // Vuetify
 import 'vuetify/styles'
@@ -19,6 +20,7 @@ const vuetify = createVuetify({
 })
 
 const pinia = createPinia()
+pinia.use(piniaPluginPersistedState)
 const app = createApp(App)
 
 app.use(router)
@@ -26,7 +28,6 @@ app.use(store)
 app.use(pinia)
 app.use(vuetify)
 app.mount('#app')
-//createApp(App).use(router,store).mount('#app')
 
 export default createVuetify({
     icons: {
