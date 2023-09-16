@@ -10,12 +10,17 @@ export const useUserStore = defineStore('user', {
       fullname: (state) => state.firstname + ' ' + state.lastname,
     },
     actions: {
-      loginUser(firstname, lastname, email, isAdmin) {
+      loginUser(firstname, lastname, email, isAdmin, male) {
         this.firstname = firstname
         this.lastname = lastname
         this.email = email
         this.isAdmin = isAdmin
         this.isLoggedIn = true
+        if (male) {
+          this.avatar = 'male_avatar.png';
+        } else {
+          this.avatar = 'female_avatar.png';
+        }
       },
       logoutUser() {
         this.firstname = 'FirstName'
@@ -23,6 +28,7 @@ export const useUserStore = defineStore('user', {
         this.email = 'someone@somplace.org'
         this.isAdmin = false
         this.isLoggedIn = false
+        this.avatar = 'male_avatar.png'
       },
     },
     persist: true,

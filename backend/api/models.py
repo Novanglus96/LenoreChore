@@ -18,6 +18,7 @@ class CustomUser(AbstractUser):
     username = None
     email = models.EmailField("email address", unique=True)
     profile_picture = models.ImageField(upload_to=user_profile_picture_upload, blank=True, null=True)
+    male = models.BooleanField(default=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
