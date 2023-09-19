@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
-        fields = ('area_name', 'area_bgcolor', 'area_textcolor')
+        fields = '__all__'
 
 class ChoreSerializer(serializers.ModelSerializer):
     class Meta:

@@ -6,18 +6,18 @@
     >
       <template v-slot:activator="{ props }">
         <v-list-item
-                key="1"
+                key="2"
                 v-bind="props"
               >
                 <template v-slot:prepend>
                   <v-icon icon="mdi-plus-circle"></v-icon>
                 </template>
-                <v-list-item-title>Add Area</v-list-item-title>
+                <v-list-item-title>Add Chore</v-list-item-title>
         </v-list-item>
       </template>
       <v-card>
         <v-card-title>
-          <span class="text-h5">Add Area</span>
+          <span class="text-h5">Add Chore</span>
         </v-card-title>
         <v-card-text>
           <v-container>

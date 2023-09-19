@@ -1,12 +1,9 @@
 <template>
-<v-card
-  class="mx-auto"
-  max-width="400"
-  >
   <v-container>
       <v-row dense>
         <v-col cols="12">
           <v-card
+          color="red"
           >
             <v-card-item title="Clean sink and counters">
               <template v-slot:subtitle>
@@ -89,6 +86,7 @@
     <v-row dense>
         <v-col cols="12">
           <v-card
+          color="orange"
           >
             <v-card-item title="Clean Toilet">
               <template v-slot:subtitle>
@@ -171,6 +169,7 @@
     <v-row dense>
         <v-col cols="12">
           <v-card
+          color="green"
           >
             <v-card-item title="Change Sheets">
               <template v-slot:subtitle>
@@ -250,7 +249,6 @@
       </v-col>
     </v-row>
   </v-container>
-  </v-card>
 </template>
 <script>
   export default {

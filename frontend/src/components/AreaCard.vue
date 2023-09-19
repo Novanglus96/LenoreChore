@@ -1,30 +1,27 @@
 <template>
   <div>
-    <AddAreaForm/><br/>
-    <v-card
-      max-width="400"
-      class="mx-auto"
-    >
       <v-container>
         <v-row dense>
           <v-col cols="12" v-for="item in items" :key="item.id">
             <v-card
-              :color="item.area_bgcolor"
+              color="primary"
               theme="dark"
             >
               <div class="d-flex flex-no-wrap justify-space-between">
                 <div>
                   <v-card-title class="text-h5">
+                    <v-icon>{{ item.area_icon }}</v-icon>
                     {{ item.area_name }}
                   </v-card-title>
 
-                  <v-card-subtitle>10 Chores Due Today</v-card-subtitle>
+                  <v-card-subtitle>{{ item.area_duecount }} Chores Due Today</v-card-subtitle>
 
                   <v-card-actions>
                     <v-btn
                       class="ms-2"
                       variant="outlined"
                       size="small"
+                      to="/list"
                     >
                       See Chores
                     </v-btn>
@@ -34,10 +31,10 @@
                   :rotate="360"
                   :size="125"
                   :width="15"
-                  :model-value=80
-                  color="teal"
+                  :model-value="item.area_cleanlevel"
+                  color="red"
                 >
-                  80
+                  {{ item.area_cleanlevel }}
                 </v-progress-circular>
 
               </div>
@@ -46,13 +43,11 @@
 
         </v-row>
       </v-container>
-    </v-card>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import AddAreaForm from '@/components/AddAreaForm.vue';
 
 export default {
   data() {
@@ -78,8 +73,5 @@ export default {
         });
     },
   },
-  components: {
-    AddAreaForm
-  }
 };
 </script>

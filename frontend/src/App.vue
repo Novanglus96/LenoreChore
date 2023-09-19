@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="448" class="mx-auto">
+  <v-card max-width="448" class="mx-auto" variant="tonal" color="white">
     <v-layout>
       <v-app-bar
         color="info"
@@ -21,6 +21,11 @@
                 <v-list-item-title>{{ menu.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
+            <v-divider></v-divider>
+            <v-list v-if="store.isAdmin">
+                <AddAreaForm/>
+                <AddChoreForm/>
+              </v-list>
         </v-menu>
 
         <v-app-bar-title>Chores</v-app-bar-title>
@@ -114,6 +119,8 @@
 <script setup>
     import { ref } from 'vue';
     import { useUserStore } from '@/stores/user'
+    import AddAreaForm from '@/components/AddAreaForm.vue'
+    import AddChoreForm from '@/components/AddChoreForm.vue'
 
     const store = useUserStore()
 
