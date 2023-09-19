@@ -1,27 +1,67 @@
 <template>
-    <div>
-        <div v-for="item in items" :key="item.id" class="p-4 m-auto border-2 rounded-lg bg-slate-800 text-white" >
-            <h1 class="text-3xl font-bold">{{ item.area_name }}</h1>
-            <p class="mt-5">
-            {{ item.area_name }}
-            </p>
-            <button
-            class="bg-indigo-600 hover:bg-indigo-800 mt-4 font-bold py-2 px-4 rounded"
+  <div>
+    <AddAreaForm/><br/>
+    <v-card
+      max-width="400"
+      class="mx-auto"
+    >
+      <v-container>
+        <v-row dense>
+          <v-col cols="12" v-for="item in items" :key="item.id">
+            <v-card
+              :color="item.area_bgcolor"
+              theme="dark"
             >
-            Click Me
-            </button>
-        </div>
-    </div>
+              <div class="d-flex flex-no-wrap justify-space-between">
+                <div>
+                  <v-card-title class="text-h5">
+                    {{ item.area_name }}
+                  </v-card-title>
+
+                  <v-card-subtitle>10 Chores Due Today</v-card-subtitle>
+
+                  <v-card-actions>
+                    <v-btn
+                      class="ms-2"
+                      variant="outlined"
+                      size="small"
+                    >
+                      See Chores
+                    </v-btn>
+                  </v-card-actions>
+                </div>
+                <v-progress-circular
+                  :rotate="360"
+                  :size="125"
+                  :width="15"
+                  :model-value=80
+                  color="teal"
+                >
+                  80
+                </v-progress-circular>
+
+              </div>
+            </v-card>
+          </v-col>
+
+        </v-row>
+      </v-container>
+    </v-card>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
+import AddAreaForm from '@/components/AddAreaForm.vue';
 
 export default {
   data() {
     return {
       items: [], // Initialize an empty array to hold the fetched data
     };
+  },
+  created() {
+    setInterval(this.fetchData, 1000)
   },
   mounted() {
     this.fetchData(); // Call the fetchData method when the component is mounted
@@ -38,5 +78,8 @@ export default {
         });
     },
   },
+  components: {
+    AddAreaForm
+  }
 };
 </script>
