@@ -117,12 +117,14 @@
   </v-card>
 </template>
 <script setup>
-    import { ref } from 'vue';
+    import { ref, onMounted } from 'vue';
     import { useUserStore } from '@/stores/user'
     import AddAreaForm from '@/components/AddAreaForm.vue'
     import AddChoreForm from '@/components/AddChoreForm.vue'
+    import { useChoreStore } from '@/stores/chores';
 
-    const store = useUserStore()
+    const store = useUserStore();
+    const chorestore = useChoreStore();
 
     const menus = [
         { title: 'Dashboard', url: '/', icon: 'mdi-home' },
@@ -133,4 +135,9 @@
 
     const menu = ref(false);
     const vacation = ref(false);
+
+    onMounted(() => {
+      chorestore.fetchAreas();
+      chorestore.fetchChores();
+    });
 </script>

@@ -28,9 +28,9 @@
                 md="4"
               >
                 <v-text-field
-                  label="Area name*"
+                  label="Chore name*"
                   required
-                  v-model="formData.area_name"
+                  v-model="formData.chore_name"
                 ></v-text-field>
               </v-col>
               <v-col
@@ -38,19 +38,13 @@
                 sm="6"
                 md="4"
               >
-                <v-chip-group
-                  v-model="formData.area_icon"
-                  selected-class="text-deep-purple-accent-4"
-                  mandatory
+                <v-select
+                    label="Area"
+                    :items="areas"
+                    item-title="area_name"
+                    itemid="id"   
                 >
-                  <v-chip 
-                    v-for="icon in icons"
-                    :key="icon"
-                    :value="icon"
-                  >
-                  <v-icon>{{ icon }}</v-icon>
-                  </v-chip>
-                </v-chip-group>
+                </v-select>
               </v-col>
             </v-row>
           </v-container>
@@ -76,34 +70,26 @@
       </v-card>
     </v-dialog>
 </template>
-<script>
-import axios from 'axios';
+<script setup>
+  import { ref, computed } from 'vue';
+  import { useChoreStore } from '@/stores/chores';
 
-  export default {
-    data: () => ({
-      dialog: false,
-      formData: {
-        area_name: '',
-        area_icon: 'mdi-home',
-      },
-      icons: [
-        'mdi-home', 'mdi-fridge', 'mdi-sofa', 'mdi-water', 'mdi-help', 'mdi-home',
-      ],
-    }),
-    methods: {
-    async submitForm() {
-      try {
-        // Make a POST request to your API endpoint
-        const response = await axios.post('https://chores.danielleandjohn.love/api/areas/', this.formData);
+  const chorestore = useChoreStore();
+  const dialog = ref(false)
+  const formData = ref({
+        chore_name: '',
+      })
+  const areas = computed(() => {
+    return chorestore.areas;
+    });
 
-        // Handle the response here (e.g., show a success message)
-        console.log('Response:', response.data);
-        this.dialog = false
-      } catch (error) {
-        // Handle errors (e.g., show an error message)
-        console.error('Error:', error);
-      }
-    },
-  },
-  }
+  const submitForm = async () => {
+    try {
+      chorestore.addChore(formData.value);
+      dialog.value = false;
+    } catch (error) {
+      // Handle errors (e.g., show an error message)
+      console.log('Error:', error);
+    }
+  };
 </script>

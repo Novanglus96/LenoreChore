@@ -86,7 +86,8 @@
     <v-row dense>
         <v-col cols="12">
           <v-card
-          color="orange"
+          color="primary"
+          theme="dark"
           >
             <v-card-item title="Clean Toilet">
               <template v-slot:subtitle>
@@ -120,9 +121,9 @@
             <div class="d-flex py-3 justify-space-between">
               <v-list-item
                 density="compact"
-                prepend-icon="mdi-radiobox-blank"
+                prepend-icon="mdi-radiobox-marked"
               >
-                <v-list-item-subtitle>Unclaimed</v-list-item-subtitle>
+                <v-list-item-subtitle>John Adams</v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item
@@ -250,7 +251,7 @@
     </v-row>
   </v-container>
 </template>
-<script>
+<script >
   export default {
     data: () => ({
       labels: { 0: 'SU', 1: 'MO', 2: 'TU', 3: 'WED', 4: 'TH', 5: 'FR', 6: 'SA' },

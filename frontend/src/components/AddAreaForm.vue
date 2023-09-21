@@ -68,7 +68,7 @@
           <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="submitForm()"
+            @click="submitForm"
           >
             Save
           </v-btn>
@@ -76,34 +76,27 @@
       </v-card>
     </v-dialog>
 </template>
-<script>
-import axios from 'axios';
+<script setup>
+  import { ref } from 'vue';
+  import { useChoreStore } from '@/stores/chores';
 
-  export default {
-    data: () => ({
-      dialog: false,
-      formData: {
+  const chorestore = useChoreStore();
+  const dialog = ref(false)
+  const formData = ref({
         area_name: '',
         area_icon: 'mdi-home',
-      },
-      icons: [
+      })
+  const icons = ref([
         'mdi-home', 'mdi-fridge', 'mdi-sofa', 'mdi-water', 'mdi-help', 'mdi-home',
-      ],
-    }),
-    methods: {
-    async submitForm() {
-      try {
-        // Make a POST request to your API endpoint
-        const response = await axios.post('https://chores.danielleandjohn.love/api/areas/', this.formData);
+      ])
 
-        // Handle the response here (e.g., show a success message)
-        console.log('Response:', response.data);
-        this.dialog = false
-      } catch (error) {
-        // Handle errors (e.g., show an error message)
-        console.error('Error:', error);
-      }
-    },
-  },
-  }
+  const submitForm = async () => {
+    try {
+      chorestore.addArea(formData.value);
+      dialog.value = false;
+    } catch (error) {
+      // Handle errors (e.g., show an error message)
+      console.log('Error:', error);
+    }
+  };
 </script>
