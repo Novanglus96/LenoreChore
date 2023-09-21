@@ -38,8 +38,8 @@ class Chore(models.Model):
     chore_name = models.CharField(max_length=254)
     area = models.ForeignKey(Area, null=True, on_delete=models.SET_NULL)
     active = models.BooleanField(default=True)
-    nextDue = models.DateField(auto_now_add=True)
-    lastCompleted = models.DateField(auto_now_add=True)
+    nextDue = models.DateField(default=date.today)
+    lastCompleted = models.DateField(default=date.today)
     intervalNumber = models.IntegerField(default=1)
     unit = models.CharField(max_length=1, default='d')
     m_jan = models.BooleanField(default=True)
@@ -57,6 +57,7 @@ class Chore(models.Model):
     assignee = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
     effort = models.IntegerField(default=0)
     vacationPause = models.IntegerField(default=0)
+    expand = models.BooleanField(default=False)
     def __str__(self):
         return self.chore_name
 

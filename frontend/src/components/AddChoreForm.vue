@@ -42,7 +42,8 @@
                     label="Area"
                     :items="areas"
                     item-title="area_name"
-                    itemid="id"   
+                    item-value="id"
+                    v-model="formData.area"   
                 >
                 </v-select>
               </v-col>
@@ -78,6 +79,7 @@
   const dialog = ref(false)
   const formData = ref({
         chore_name: '',
+        area: '',
       })
   const areas = computed(() => {
     return chorestore.areas;

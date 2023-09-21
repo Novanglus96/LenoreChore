@@ -64,6 +64,7 @@ export const useChoreStore = defineStore('chore', {
 
           // Handle the response here (e.g., show a success message)
           console.log('Response:', response.data);
+          console.log('Request:', chore)
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
