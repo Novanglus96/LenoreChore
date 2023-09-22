@@ -41,7 +41,7 @@ class Chore(models.Model):
     nextDue = models.DateField(default=date.today)
     lastCompleted = models.DateField(default=date.today)
     intervalNumber = models.IntegerField(default=1)
-    unit = models.CharField(max_length=1, default='d')
+    unit = models.CharField(max_length=10, default='day(s)')
     m_jan = models.BooleanField(default=True)
     m_feb = models.BooleanField(default=True)
     m_mar = models.BooleanField(default=True)
@@ -60,6 +60,16 @@ class Chore(models.Model):
     expand = models.BooleanField(default=False)
     def __str__(self):
         return self.chore_name
+    @property
+    def cleanliness(self):
+        timesincedone = self.lastCompleted - date.today()
+        timeperiod = self.lastCompleted - self.nextDue
+        cleanliness = round((timesincedone.days / timeperiod.days) * 100)
+        return cleanliness
+    @property
+    def duedays(self):
+        delta = self.nextDue - date.today()
+        return delta.days
 
 class HistoryItem(models.Model):
     completed_date = models.DateField()

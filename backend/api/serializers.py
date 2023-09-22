@@ -8,6 +8,8 @@ class AreaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ChoreSerializer(serializers.ModelSerializer):
+    duedays = serializers.IntegerField(required=False)
+    cleanliness = serializers.IntegerField(required=False)
     class Meta:
         model = Chore
         fields = '__all__'

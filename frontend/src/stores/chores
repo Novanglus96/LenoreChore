@@ -9,14 +9,35 @@ export const useChoreStore = defineStore('chore', {
   state: () => ({ 
     areas: [],
     chores: [],
+    users: [],
   }),
     getters: {
       getAreas(state){
         return state.areas
       },
       getChores(state){
+        state.chores.forEach((chore) => {
+          const areaid = chore.area -1
+          const userid = chore.assignee -1
+          chore.repeat = chore.intervalNumber + " " + chore.unit
+          chore.area = state.areas[areaid].area_name
+          chore.areaicon = state.areas[areaid].area_icon
+          if (userid >= 0) {
+            chore.assignee = state.users[userid].first_name + ' ' + state.users[userid].last_name
+            chore.assignee_icon = "mdi-radiobox-marked"
+            chore.isAssigned = true
+          } else {
+            chore.assignee = "Unassigned"
+            chore.assignee_icon = "mdi-radiobox-blank"
+            chore.isAssigned = false
+          }
+        })
+
         return state.chores
       },
+      getUsers(state){
+        return state.users
+      }
     },
     actions: {
       async fetchAreas() {
@@ -39,13 +60,24 @@ export const useChoreStore = defineStore('chore', {
           console.log(error)
         }
       },
+      async fetchUsers() {
+        try {
+          const data = await axios.get('https://chores.danielleandjohn.love/api/users/')
+          this.users = data.data
+        }
+        catch (error) {
+          alert(error)
+          console.log(error)
+        }
+      },
       async addArea(area) {
         try {
           // Make a POST request to your API endpoint
           const response = await axios.post('https://chores.danielleandjohn.love/api/areas/', area);
 
           // Add area to local storage
-          this.areas.push(area);
+          //this.areas.push(area);
+          this.fetchAreas();
 
           // Handle the response here (e.g., show a success message)
           console.log('Response:', response.data);
@@ -60,7 +92,8 @@ export const useChoreStore = defineStore('chore', {
           const response = await axios.post('https://chores.danielleandjohn.love/api/chores/', chore);
 
           // Add area to local storage
-          this.chores.push(chore);
+          //this.chores.push(chore);
+          this.fetchChores();
 
           // Handle the response here (e.g., show a success message)
           console.log('Response:', response.data);
@@ -70,5 +103,6 @@ export const useChoreStore = defineStore('chore', {
           console.log('Error:', error);
         }
       },
-    }
+    },
+    persist: true,
   })

@@ -4,10 +4,16 @@
         <v-col cols="12" >
           <v-card
           color="primary"
-          theme="dark"
+          :theme="chore.isAssigned ? 'light' : 'dark'"
           >
             <v-card-item :title="chore.chore_name">
               <template v-slot:subtitle>
+                <v-icon
+                  :icon="chore.areaicon"
+                  size="18"
+                  class="me-1 pb-1"
+                ></v-icon>
+
                 {{ chore.area }}
               </template>
             </v-card-item>
@@ -19,7 +25,7 @@
                   cols="6"
                 >
                   <v-progress-linear
-                    v-model="skill"
+                    v-model="chore.cleanliness"
                     color="blue-grey"
                     height="25"
                   >
@@ -30,7 +36,7 @@
                 </v-col>
 
                 <v-col cols="6" class="text-right">
-                  Due in 1 day(s)
+                  Due in {{ chore.duedays }} day(s)
                 </v-col>
               </v-row>
             </v-card-text>
@@ -38,7 +44,7 @@
             <div class="d-flex py-3 justify-space-between">
               <v-list-item
                 density="compact"
-                prepend-icon="mdi-radiobox-marked"
+                :prepend-icon="chore.assignee_icon"
               >
                 <v-list-item-subtitle>{{ chore.assignee }}</v-list-item-subtitle>
               </v-list-item>
@@ -64,7 +70,7 @@
                   </v-list-item>
                   <v-list-item title="Next Due" :subtitle="chore.nextDue">
                   </v-list-item>
-                  <v-list-item title="Repeats Every" subtitle="3 Weeks">
+                  <v-list-item title="Repeats Every" :subtitle="chore.repeat">
                   </v-list-item>
                 </v-list>
               </div>
@@ -87,13 +93,11 @@
   </v-container>
 </template>
 <script setup>
-  import { ref, computed } from 'vue';
+  import { computed } from 'vue';
   import { useChoreStore } from '@/stores/chores';
 
   const chorestore = useChoreStore();
   const getChores = computed(() => {
     return chorestore.getChores;
   });
-
-  const skill = ref(20)
 </script>

@@ -139,5 +139,6 @@
     onMounted(() => {
       chorestore.fetchAreas();
       chorestore.fetchChores();
+      chorestore.fetchUsers();
     });
 </script>
