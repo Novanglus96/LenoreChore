@@ -10,6 +10,7 @@ export const useChoreStore = defineStore('chore', {
     areas: [],
     chores: [],
     users: [],
+    units: ['day(s)', 'week(s)', 'month(s)', 'year(s)'],
   }),
     getters: {
       getAreas(state){
