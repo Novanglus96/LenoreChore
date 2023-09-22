@@ -39,13 +39,251 @@
                 md="4"
               >
                 <v-select
-                    label="Area"
+                    label="Area*"
+                    required
                     :items="areas"
                     item-title="area_name"
                     item-value="id"
                     v-model="formData.area"   
                 >
                 </v-select>
+              </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+              <span class="text-h9">Repeat</span>
+                  </v-col>
+              </v-row>
+                <v-row>
+                  <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+              <v-select
+                    label="Interval*"
+                    required
+                    :items="intervals"
+                    v-model="formData.intervalNumber"   
+                >
+                </v-select>
+                  </v-col>
+                  <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+                <v-select
+                    label="Unit(s)*"
+                    required
+                    :items="units"
+                    v-model="formData.unit"   
+                >
+                </v-select>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+              <span class="text-h9">Active Months</span>
+                  </v-col>
+              </v-row>
+                <v-row>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_jan"
+                label="Jan"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_feb"
+                label="Feb"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_mar"
+                label="Mar"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_apr"
+                label="Apr"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>               
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_may"
+                label="May"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_jun"
+                label="Jun"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_jul"
+                label="Jul"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_aug"
+                label="Aug"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>               
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_sep"
+                label="Sep"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_oct"
+                label="Oct"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_nov"
+                label="Nov"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                  <v-col
+                cols="4"
+                sm="6"
+                md="4"
+              >
+              <v-checkbox
+                v-model="formData.m_dec"
+                label="Dec"
+                color="red"
+                hide-details
+                :model-value="true"
+              >
+              </v-checkbox>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+                <b>Effort </b>
+                <v-rating
+                  label="Effort"
+                  v-model="formData.effort"
+                  length="3"
+                  size="20"
+                ></v-rating>
               </v-col>
             </v-row>
           </v-container>
@@ -80,10 +318,31 @@
   const formData = ref({
         chore_name: '',
         area: '',
+        unit: '',
+        effort: 1,
+        m_jan: true,
+        m_feb: true,
+        m_mar: true,
+        m_apr: true,
+        m_may: true,
+        m_jun: true,
+        m_jul: true,
+        m_aug: true,
+        m_sep: true,
+        m_oct: true,
+        m_nov: true,
+        m_dec: true,
+        intervalNumber: '',
       })
   const areas = computed(() => {
     return chorestore.areas;
     });
+  const units = computed(() => {
+    return chorestore.units;
+  });
+  const intervals = computed(() => {
+    return chorestore.intervals;
+  });
 
   const submitForm = async () => {
     try {

@@ -11,6 +11,7 @@ export const useChoreStore = defineStore('chore', {
     chores: [],
     users: [],
     units: ['day(s)', 'week(s)', 'month(s)', 'year(s)'],
+    intervals: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
   }),
     getters: {
       getAreas(state){
@@ -24,7 +25,11 @@ export const useChoreStore = defineStore('chore', {
           chore.area = state.areas[areaid].area_name
           chore.areaicon = state.areas[areaid].area_icon
           if (userid >= 0) {
-            chore.assignee = state.users[userid].first_name + ' ' + state.users[userid].last_name
+            if (state.users[userid].first_name === null && state.users[userid].last_name === null) {
+              chore.assignee = state.users[userid].first_name + ' ' + state.users[userid].last_name
+            } else {
+              chore.assignee = state.users[userid].email
+            }
             chore.assignee_icon = "mdi-radiobox-marked"
             chore.isAssigned = true
           } else {
@@ -90,6 +95,19 @@ export const useChoreStore = defineStore('chore', {
       async addChore(chore) {
         try {
           // Make a POST request to your API endpoint
+          const newDate = new Date()
+          const today = new Date()
+          if ( chore.unit == 'day(s)' ){
+            newDate.setDate(today.getDate()+chore.intervalNumber)
+          } else if ( chore.unit == 'week(s)' ){
+            newDate.setDate(today.getDate()+(chore.intervalNumber*7))
+          } else if ( chore.unit == 'month(s)' ){
+            newDate.setMonth(today.getMonth()+chore.intervalNumber)
+          } else if ( chore.unit == 'year(s)' ){
+            newDate.setFullYear(today.getFullYear()+chore.intervalNumber)
+          }
+
+          chore.nextDue = newDate.toISOString().split('T')[0]
           const response = await axios.post('https://chores.danielleandjohn.love/api/chores/', chore);
 
           // Add area to local storage
@@ -98,7 +116,6 @@ export const useChoreStore = defineStore('chore', {
 
           // Handle the response here (e.g., show a success message)
           console.log('Response:', response.data);
-          console.log('Request:', chore)
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);

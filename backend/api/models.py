@@ -61,11 +61,14 @@ class Chore(models.Model):
     def __str__(self):
         return self.chore_name
     @property
-    def cleanliness(self):
+    def dirtiness(self):
         timesincedone = self.lastCompleted - date.today()
         timeperiod = self.lastCompleted - self.nextDue
-        cleanliness = round((timesincedone.days / timeperiod.days) * 100)
-        return cleanliness
+        if timeperiod.days == 0:
+            dirtiness = 0
+        else:
+            dirtiness = round((timesincedone.days / timeperiod.days) * 100)
+        return dirtiness
     @property
     def duedays(self):
         delta = self.nextDue - date.today()

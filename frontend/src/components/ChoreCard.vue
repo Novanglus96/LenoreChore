@@ -25,7 +25,7 @@
                   cols="6"
                 >
                   <v-progress-linear
-                    v-model="chore.cleanliness"
+                    v-model="chore.dirtiness"
                     color="blue-grey"
                     height="25"
                   >

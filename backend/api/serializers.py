@@ -9,7 +9,7 @@ class AreaSerializer(serializers.ModelSerializer):
 
 class ChoreSerializer(serializers.ModelSerializer):
     duedays = serializers.IntegerField(required=False)
-    cleanliness = serializers.IntegerField(required=False)
+    dirtiness = serializers.IntegerField(required=False)
     class Meta:
         model = Chore
         fields = '__all__'
