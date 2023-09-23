@@ -2,7 +2,7 @@
   <v-card max-width="448" class="mx-auto" variant="tonal" color="white">
     <v-layout>
       <v-app-bar
-        color="info"
+        color="primary"
         density=compact
       >
         <v-menu v-if="store.isLoggedIn">

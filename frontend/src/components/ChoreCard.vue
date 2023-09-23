@@ -54,7 +54,7 @@
               >
                 <v-rating
                   v-model="chore.effort"
-                  readonly
+                  :readonly="!chore.expand"
                   length="3"
                   size="20"
                 ></v-rating>
@@ -63,16 +63,167 @@
 
             <v-expand-transition>
               <div v-if="chore.expand">
-                
-                <v-list class="bg-transparent">
-                  <v-list-item title="Last Completed" :subtitle="chore.lastCompleted">
-
-                  </v-list-item>
-                  <v-list-item title="Next Due" :subtitle="chore.nextDue">
-                  </v-list-item>
-                  <v-list-item title="Repeats Every" :subtitle="chore.repeat">
-                  </v-list-item>
-                </v-list>
+                <v-container>
+                  <v-row dense>
+                    <v-col>
+                      <v-text-field
+                        label="Last Completed"
+                        required
+                        v-model="chore.lastCompleted"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-text-field
+                        label="Next Due"
+                        required
+                        v-model="chore.nextDue"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row dense>
+                    <v-col>
+                      Repeats
+                    </v-col>
+                  </v-row>
+                  <v-row dense>
+                    <v-col>
+                       <v-select
+                          label="Interval*"
+                          required
+                          :items="intervals"
+                          v-model="chore.intervalNumber"   
+                        ></v-select>
+                    </v-col>
+                    <v-col>
+                        <v-select
+                            label="Unit(s)*"
+                            required
+                            :items="units"
+                            v-model="chore.unit"   
+                        ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-row dense>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_jan"
+                        label="Jan"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_feb"
+                        label="Feb"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_mar"
+                        label="Mar"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_apr"
+                        label="Apr"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                  </v-row>
+                  <v-row dense>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_may"
+                        label="May"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_jun"
+                        label="Jun"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_jul"
+                        label="Jul"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_aug"
+                        label="Aug"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                  </v-row>
+                  <v-row dense>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_sep"
+                        label="Sep"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_oct"
+                        label="Oct"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_nov"
+                        label="Nov"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col>
+                      <v-checkbox
+                        v-model="chore.m_dec"
+                        label="Dec"
+                        color="white"
+                        hide-details
+                        :model-value="true"
+                      ></v-checkbox>
+                    </v-col>
+                  </v-row>
+                  <v-row dense>
+                    <v-col>
+                      <v-btn icon="mdi-content-save-outline"></v-btn>
+                      <v-btn icon="mdi-delete-forever-outline"></v-btn>
+                    </v-col>
+                  </v-row>
+                </v-container>
               </div>
             </v-expand-transition>
 
@@ -82,10 +233,8 @@
               <v-btn icon="mdi-check"></v-btn>
               <v-btn icon="mdi-alarm-snooze"></v-btn>
               <v-btn icon="mdi-clipboard-account-outline"></v-btn>
-              <v-btn icon="mdi-pencil-outline"></v-btn>
-              <v-btn @click="chore.expand = !chore.expand" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'">
-              </v-btn>
-              
+              <v-btn icon="mdi-circle-off-outline"></v-btn>
+              <v-btn @click="chore.expand = !chore.expand" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
             </v-card-actions>
         </v-card>
       </v-col>
@@ -99,5 +248,11 @@
   const chorestore = useChoreStore();
   const getChores = computed(() => {
     return chorestore.getChores;
+  });
+  const units = computed(() => {
+    return chorestore.units;
+  });
+  const intervals = computed(() => {
+    return chorestore.intervals;
   });
 </script>
