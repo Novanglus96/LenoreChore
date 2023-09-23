@@ -121,6 +121,24 @@ export const useChoreStore = defineStore('chore', {
           console.log('Error:', error);
         }
       },
+      async claimChore(chore) {
+        console.log('Chore claimed', chore)
+      },
+      async completeChore(chore) {
+        console.log('Chore completed', chore)
+      },
+      async snoozeChore(chore) {
+        console.log('Chore snoozed', chore)
+      },
+      async toggleChore(chore) {
+        console.log('Chore toggled', chore)
+      },
+      async saveChore(chore) {
+        console.log('Chore saved', chore)
+      },
+      async deleteChore(chore) {
+        console.log('Chore deleted', chore)
+      },
     },
     persist: true,
   })

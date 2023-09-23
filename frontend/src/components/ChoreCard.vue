@@ -219,8 +219,8 @@
                   </v-row>
                   <v-row dense>
                     <v-col>
-                      <v-btn icon="mdi-content-save-outline"></v-btn>
-                      <v-btn icon="mdi-delete-forever-outline"></v-btn>
+                      <v-btn @click="chorestore.saveChore(chore.id)" icon="mdi-content-save-outline"></v-btn>
+                      <v-btn @click="chorestore.deleteChore(chore.id)" icon="mdi-delete-forever-outline"></v-btn>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -230,10 +230,10 @@
             <v-divider :thickness="2"></v-divider>
 
             <v-card-actions>
-              <v-btn icon="mdi-check"></v-btn>
-              <v-btn icon="mdi-alarm-snooze"></v-btn>
-              <v-btn icon="mdi-clipboard-account-outline"></v-btn>
-              <v-btn icon="mdi-circle-off-outline"></v-btn>
+              <v-btn @click="chorestore.completeChore(chore.id)" icon="mdi-check"></v-btn>
+              <v-btn @click="chorestore.snoozeChore(chore.id)" icon="mdi-alarm-snooze"></v-btn>
+              <v-btn @click="chorestore.claimChore(chore.id)" icon="mdi-clipboard-account-outline"></v-btn>
+              <v-btn @click="chorestore.toggleChore(chore.id)" icon="mdi-circle-off-outline"></v-btn>
               <v-btn @click="chore.expand = !chore.expand" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
             </v-card-actions>
         </v-card>
