@@ -68,6 +68,8 @@ class Chore(models.Model):
             dirtiness = 0
         else:
             dirtiness = round((timesincedone.days / timeperiod.days) * 100)
+            if dirtiness > 100:
+                dirtiness = 100
         return dirtiness
     @property
     def duedays(self):

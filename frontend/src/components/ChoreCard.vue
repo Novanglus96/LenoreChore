@@ -26,7 +26,7 @@
                 >
                   <v-progress-linear
                     v-model="chore.dirtiness"
-                    color="blue-grey"
+                    :color="chore.dirtycolor"
                     height="25"
                   >
                     <template v-slot:default="{ value }">
@@ -36,7 +36,7 @@
                 </v-col>
 
                 <v-col cols="6" class="text-right">
-                  Due in {{ chore.duedays }} day(s)
+                  <span :class="chore.isOverdue ? 'text-red' : ''">Due in {{ chore.duedays }} day(s)</span>
                 </v-col>
               </v-row>
             </v-card-text>

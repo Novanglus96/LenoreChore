@@ -12,6 +12,8 @@ export const useChoreStore = defineStore('chore', {
     users: [],
     units: ['day(s)', 'week(s)', 'month(s)', 'year(s)'],
     intervals: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+    med_thresh: 50,
+    high_thresh: 90,
   }),
     getters: {
       getAreas(state){
@@ -36,6 +38,18 @@ export const useChoreStore = defineStore('chore', {
             chore.assignee = "Unassigned"
             chore.assignee_icon = "mdi-radiobox-blank"
             chore.isAssigned = false
+          }
+          if (chore.duedays < 0) {
+            chore.isOverdue = true
+          }else{
+            chore.isOverdue = false
+          }
+          if (chore.dirtiness <= state.med_thresh ) {
+            chore.dirtycolor = 'blue-grey'
+          }else if (chore.dirtiness > state.med_thresh && chore.dirtiness <= state.high_thresh){
+            chore.dirtycolor = 'yellow'
+          }else if (chore.dirtiness > state.high_thresh){
+            chore.dirtycolor = 'red'
           }
         })
 
