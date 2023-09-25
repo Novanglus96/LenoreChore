@@ -4,7 +4,6 @@
         <v-col cols="12" >
           <v-card
           color="primary"
-          :theme="chore.isAssigned ? 'light' : 'dark'"
           >
             <v-card-item :title="chore.chore_name">
               <template v-slot:subtitle>

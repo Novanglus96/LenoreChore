@@ -5,7 +5,6 @@
           <v-col cols="12" v-for="area in getAreas" :key="area.id">
             <v-card
               color="primary"
-              theme="dark"
             >
               <div class="d-flex flex-no-wrap justify-space-between">
                 <div>
