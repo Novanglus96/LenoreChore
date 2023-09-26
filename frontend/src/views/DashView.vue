@@ -1,7 +1,5 @@
 <template>
-  <div class="dash">
     <AreaCard />
-  </div>
 </template>
 
 <script>

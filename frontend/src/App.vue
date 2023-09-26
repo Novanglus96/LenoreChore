@@ -2,7 +2,7 @@
     <v-app>
         <AppNavigationVue/>
         <v-main>
-            <v-container fluid>
+            <v-container fluid class="pa-2">
                 <router-view/>
             </v-container>
         </v-main>

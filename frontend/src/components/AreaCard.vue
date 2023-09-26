@@ -1,5 +1,4 @@
 <template>
-  <div>
       <v-container>
         <v-row dense>
           <v-col cols="12" v-for="area in getAreas" :key="area.id">
@@ -42,7 +41,6 @@
 
         </v-row>
       </v-container>
-  </div>
 </template>
 
 <script setup>
