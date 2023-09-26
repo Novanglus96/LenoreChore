@@ -1,44 +1,16 @@
 <template>
   <v-app>
-  <v-card max-width="448" class="mx-auto" variant="tonal" color="white">
-    <v-layout>
+  <v-card max-width="448" class="mx-auto" variant="tonal" color="white" app>
+    <v-layout app>
       <v-app-bar
         color="primary"
         density=compact
+        app
       >
         <v-menu v-if="store.isLoggedIn">
             <template v-slot:activator="{ props }">
                 <v-btn icon="mdi-menu" v-bind="props"></v-btn>
             </template>
-            <v-container class="fill-height">
-    <v-responsive class="d-flex align-center text-center fill-height">
-      <div class="text-body-2 font-weight-light mb-n1">Welcome to</div>
-
-      <h1 class="text-h2 font-weight-bold">Vuetify</h1>
-
-      <div class="py-5" />
-
-      <v-row class="d-flex align-center justify-center">
-        <v-col cols="auto"> <v-btn color="primary"> Primary </v-btn> </v-col>
-        <v-col cols="auto">
-          <v-btn color="secondary"> Secondary </v-btn>
-        </v-col>
-        <v-col cols="auto"> <v-btn color="error"> Error </v-btn> </v-col>
-      </v-row>
-
-      <v-row class="d-flex align-center justify-center">
-        <v-col cols="auto">
-          <v-btn color="info"> Info </v-btn>
-        </v-col>
-        <v-col cols="auto">
-          <v-btn color="success"> Success </v-btn>
-        </v-col>
-        <v-col cols="auto">
-          <v-btn color="warning"> Warning </v-btn>
-        </v-col>
-      </v-row>
-    </v-responsive>
-  </v-container>
             <v-list>
                 <v-list-item
                 v-for="(menu, i) in menus"
