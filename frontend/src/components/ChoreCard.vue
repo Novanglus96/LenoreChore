@@ -3,7 +3,7 @@
     <v-row dense v-for="chore in getChores" :key="chore.id">
         <v-col cols="12" >
           <v-card
-          color="primary"
+          :color="chore.active ? 'primary' : 'grey'"
           >
             <v-card-item :title="chore.chore_name">
               <template v-slot:subtitle>
@@ -13,7 +13,7 @@
                   class="me-1 pb-1"
                 ></v-icon>
 
-                {{ chore.area }}
+                {{ chore.area_name }}
               </template>
             </v-card-item>
 
@@ -45,7 +45,7 @@
                 density="compact"
                 :prepend-icon="chore.assignee_icon"
               >
-                <v-list-item-subtitle>{{ chore.assignee }}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{ chore.assignee_name }}</v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item
@@ -229,10 +229,10 @@
             <v-divider :thickness="2"></v-divider>
 
             <v-card-actions>
-              <v-btn @click="chorestore.completeChore(chore.id)" icon="mdi-check"></v-btn>
-              <v-btn @click="chorestore.snoozeChore(chore.id)" icon="mdi-alarm-snooze"></v-btn>
-              <v-btn @click="chorestore.claimChore(chore.id)" icon="mdi-clipboard-account-outline"></v-btn>
-              <v-btn @click="chorestore.toggleChore(chore.id)" icon="mdi-circle-off-outline"></v-btn>
+              <v-btn @click="chorestore.completeChore(chore)" icon="mdi-check" :disabled="!chore.active"></v-btn>
+              <v-btn @click="chorestore.snoozeChore(chore)" icon="mdi-alarm-snooze" :disabled="!chore.active"></v-btn>
+              <v-btn @click="chorestore.claimChore(chore,getID)" icon="mdi-clipboard-account-outline" :disabled="!chore.active"></v-btn>
+              <v-btn @click="chorestore.toggleChore(chore)" icon="mdi-circle-off-outline" :color="chore.active ? 'red' : 'white'"></v-btn>
               <v-btn @click="chore.expand = !chore.expand" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
             </v-card-actions>
         </v-card>
@@ -243,10 +243,15 @@
 <script setup>
   import { computed } from 'vue';
   import { useChoreStore } from '@/stores/chores';
+  import { useUserStore } from '@/stores/user';
 
   const chorestore = useChoreStore();
+  const userstore = useUserStore();
   const getChores = computed(() => {
     return chorestore.getChores;
+  });
+  const getID = computed(() => {
+    return userstore.getID;
   });
   const units = computed(() => {
     return chorestore.units;

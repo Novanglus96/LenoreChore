@@ -24,18 +24,18 @@ export const useChoreStore = defineStore('chore', {
           const areaid = chore.area -1
           const userid = chore.assignee -1
           chore.repeat = chore.intervalNumber + " " + chore.unit
-          chore.area = state.areas[areaid].area_name
+          chore.area_name = state.areas[areaid].area_name
           chore.areaicon = state.areas[areaid].area_icon
           if (userid >= 0) {
             if (state.users[userid].first_name === null && state.users[userid].last_name === null) {
-              chore.assignee = state.users[userid].first_name + ' ' + state.users[userid].last_name
+              chore.assignee_name = state.users[userid].email
             } else {
-              chore.assignee = state.users[userid].email
+              chore.assignee_name = state.users[userid].first_name + ' ' + state.users[userid].last_name
             }
             chore.assignee_icon = "mdi-radiobox-marked"
             chore.isAssigned = true
           } else {
-            chore.assignee = "Unassigned"
+            chore.assignee_name = "Unassigned"
             chore.assignee_icon = "mdi-radiobox-blank"
             chore.isAssigned = false
           }
@@ -135,23 +135,103 @@ export const useChoreStore = defineStore('chore', {
           console.log('Error:', error);
         }
       },
-      async claimChore(chore) {
-        console.log('Chore claimed', chore)
+      async claimChore(chore,user) {
+        console.log('Chore claimed', chore.id)
+
+        const data = {
+          "assignee": ''
+        }
+        if (chore.assignee == user){
+          data.assignee = null
+        } else {
+          data.assignee = user
+        }
+
+        try {
+          // Make a POST request to your API endpoint
+          const response = await axios.patch('https://chores.danielleandjohn.love/api/chores/' + chore.id +'/', data);
+
+          // Add area to local storage
+          //this.areas.push(area);
+          this.fetchChores();
+
+          // Handle the response here (e.g., show a success message)
+          console.log('Response:', response.data);
+        } catch (error) {
+          // Handle errors (e.g., show an error message)
+          console.log('Error:', error);
+        }
       },
       async completeChore(chore) {
-        console.log('Chore completed', chore)
+        const newDate = new Date()
+        const today = new Date()
+        if ( chore.unit == 'day(s)' ){
+          newDate.setDate(today.getDate()+chore.intervalNumber)
+        } else if ( chore.unit == 'week(s)' ){
+          newDate.setDate(today.getDate()+(chore.intervalNumber*7))
+        } else if ( chore.unit == 'month(s)' ){
+          newDate.setMonth(today.getMonth()+chore.intervalNumber)
+        } else if ( chore.unit == 'year(s)' ){
+          newDate.setFullYear(today.getFullYear()+chore.intervalNumber)
+        }
+
+        const data = {
+          "nextDue": newDate.toISOString().split('T')[0],
+          "lastCompleted": today.toISOString().split('T')[0],
+          "assignee": null
+        }
+
+        console.log('Chore completed', chore.id)
+        try {
+          // Make a POST request to your API endpoint
+          const response = await axios.patch('https://chores.danielleandjohn.love/api/chores/' + chore.id +'/', data);
+
+          // Add area to local storage
+          //this.areas.push(area);
+          this.fetchChores();
+
+          // Handle the response here (e.g., show a success message)
+          console.log('Response:', response.data);
+        } catch (error) {
+          // Handle errors (e.g., show an error message)
+          console.log('Error:', error);
+        }
       },
       async snoozeChore(chore) {
-        console.log('Chore snoozed', chore)
+        console.log('Chore snoozed', chore.id)
       },
       async toggleChore(chore) {
-        console.log('Chore toggled', chore)
+        console.log('Chore toggled', chore.id)
+
+        const data = {
+          "active": ''
+        }
+        if (chore.active == false){
+          data.active = true
+        } else {
+          data.active = false
+        }
+
+        try {
+          // Make a POST request to your API endpoint
+          const response = await axios.patch('https://chores.danielleandjohn.love/api/chores/' + chore.id +'/', data);
+
+          // Add area to local storage
+          //this.areas.push(area);
+          this.fetchChores();
+
+          // Handle the response here (e.g., show a success message)
+          console.log('Response:', response.data);
+        } catch (error) {
+          // Handle errors (e.g., show an error message)
+          console.log('Error:', error);
+        }
       },
       async saveChore(chore) {
-        console.log('Chore saved', chore)
+        console.log('Chore saved', chore.id)
       },
       async deleteChore(chore) {
-        console.log('Chore deleted', chore)
+        console.log('Chore deleted', chore.id)
       },
     },
     persist: true,
