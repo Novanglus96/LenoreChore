@@ -218,8 +218,8 @@
                   </v-row>
                   <v-row dense>
                     <v-col>
-                      <v-btn @click="chorestore.saveChore(chore)" icon="mdi-content-save-outline"></v-btn>
-                      <v-btn @click="chorestore.deleteChore(chore)" icon="mdi-delete-forever-outline"></v-btn>
+                      <v-btn @click="callSaveChore(chore)" icon="mdi-content-save-outline"></v-btn>
+                      <v-btn @click="callDeleteChore(chore)" icon="mdi-delete-forever-outline"></v-btn>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -229,10 +229,10 @@
             <v-divider :thickness="2"></v-divider>
 
             <v-card-actions>
-              <v-btn @click="chorestore.completeChore(chore)" icon="mdi-check" :disabled="!chore.active"></v-btn>
+              <v-btn @click="callCompleteChore(chore)" icon="mdi-check" :disabled="!chore.active"></v-btn>
               <v-btn @click="callSnoozeChore(chore)" icon="mdi-alarm-snooze" :disabled="!chore.active"></v-btn>
-              <v-btn @click="chorestore.claimChore(chore,getID)" icon="mdi-clipboard-account-outline" :disabled="!chore.active" :color="chore.isAssigned ? 'red' : 'white'"></v-btn>
-              <v-btn @click="chorestore.toggleChore(chore)" icon="mdi-circle-off-outline" :color="chore.active ? 'red' : 'white'"></v-btn>
+              <v-btn @click="callClaimChore(chore,getID)" icon="mdi-clipboard-account-outline" :disabled="!chore.active" :color="chore.isAssigned ? 'red' : 'white'"></v-btn>
+              <v-btn @click="callToggleChore(chore)" icon="mdi-circle-off-outline" :color="chore.active ? 'red' : 'white'"></v-btn>
               <v-btn @click="chore.expand = !chore.expand" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
             </v-card-actions>
         </v-card>
@@ -276,9 +276,66 @@
       const store = useChoreStore();
       await store.snoozeChore(chore);
 
-      showSnackbar('Chore snoozed', 'success');
+      showSnackbar('Chore snoozed successfully!', 'success');
     } catch (error) {
-      showSnackbar('Chore not snoozed', 'error');
+      showSnackbar('Chore not snoozed!', 'error');
+    }
+  }
+  const callSaveChore = async (chore) => {
+    try {
+      const store = useChoreStore();
+      await store.saveChore(chore);
+
+      showSnackbar('Chore saved successfully!', 'success');
+    } catch (error) {
+      showSnackbar('Chore not saved!', 'error');
+    }
+  }
+  const callDeleteChore = async (chore) => {
+    try {
+      const store = useChoreStore();
+      await store.deleteChore(chore);
+
+      showSnackbar('Chore deleted successfully!', 'success');
+    } catch (error) {
+      showSnackbar('Chore not deleted!', 'error');
+    }
+  }
+  const callCompleteChore = async (chore) => {
+    try {
+      const store = useChoreStore();
+      await store.completeChore(chore);
+
+      showSnackbar('Chore completed successfully!', 'success');
+    } catch (error) {
+      showSnackbar('Chore not completed!', 'error');
+    }
+  }
+  const callClaimChore = async (chore,user) => {
+    try {
+      const store = useChoreStore();
+      await store.claimChore(chore,user);
+
+      showSnackbar('Chore claimed/unclaimed successfully!', 'success');
+    } catch (error) {
+      showSnackbar('Chore not claimed/unclaimed!', 'error');
+    }
+  }
+  const callToggleChore = async (chore) => {
+    try {
+      const store = useChoreStore();
+      await store.toggleChore(chore);
+      if (chore.active){
+        showSnackbar('Chore deactivated successfully!', 'success');
+      } else {
+        showSnackbar('Chore activated successfully!', 'success');
+      }
+    } catch (error) {
+      if (chore.active){
+        showSnackbar('Chore not deactivated!', 'error');
+      } else {
+        showSnackbar('Chore not activated!', 'error');
+      }
     }
   }
   const showSnackbar = (text, color) => {
