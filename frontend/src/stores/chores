@@ -111,7 +111,6 @@ export const useChoreStore = defineStore('chore', {
 
           chore.nextDue = newDate.toISOString().split('T')[0]
           const response = await axios.post('https://chores.danielleandjohn.love/api/chores/', chore);
-
           // Add area to local storage
           //this.chores.push(chore);
           this.fetchChores();

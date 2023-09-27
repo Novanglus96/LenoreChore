@@ -11,6 +11,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
         
 class AreaSerializer(serializers.ModelSerializer):
+    dirtiness = serializers.IntegerField(required=False, read_only=True)
+    dueCount = serializers.IntegerField(required=False, read_only=True)
     class Meta:
         model = Area
         fields = '__all__'

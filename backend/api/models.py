@@ -38,6 +38,12 @@ class Area(models.Model):
     area_icon = models.CharField(max_length=254)
     def __str__(self):
         return self.area_name
+    @property
+    def dirtiness(self):
+        return 90
+    @property
+    def dueCount(self):
+        return 3
 
 class Chore(models.Model):
     chore_name = models.CharField(max_length=254)
