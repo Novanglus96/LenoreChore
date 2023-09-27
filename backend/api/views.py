@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer
 from .models import Area, Chore, HistoryItem, Option, CustomUser
 from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 # Create your views here.
 
@@ -15,14 +17,23 @@ def index(request):
 class AreaView(viewsets.ModelViewSet):
     serializer_class = AreaSerializer
     queryset = Area.objects.all()
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    ordering_fields = '__all__'
+    ordering = ['area_name']
 
 class ChoreView(viewsets.ModelViewSet):
     serializer_class = ChoreSerializer
     queryset = Chore.objects.all()
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    ordering_fields = '__all__'
+    ordering = ['nextDue']
 
 class HistoryItemView(viewsets.ModelViewSet):
     serializer_class = HistoryItemSerializer
     queryset = HistoryItem.objects.all()
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    ordering_fields = '__all__'
+    ordering = ['completed_date']
 
 class OptionView(viewsets.ModelViewSet):
     serializer_class = OptionSerializer
