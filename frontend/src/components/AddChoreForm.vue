@@ -44,7 +44,8 @@
                     :items="areas"
                     item-title="area_name"
                     item-value="id"
-                    v-model="formData.area"   
+                    v-model="formData.area"
+                    return-object   
                 >
                 </v-select>
               </v-col>

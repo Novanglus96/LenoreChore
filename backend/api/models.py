@@ -27,6 +27,11 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+    
+    @property
+    def fullname(self):
+        fullname = self.first_name + ' ' + self.last_name
+        return fullname
 
 class Area(models.Model):
     area_name = models.CharField(max_length=254)

@@ -8,12 +8,12 @@
             <v-card-item :title="chore.chore_name">
               <template v-slot:subtitle>
                 <v-icon
-                  :icon="chore.areaicon"
+                  :icon="chore.area.area_icon"
                   size="18"
                   class="me-1 pb-1"
                 ></v-icon>
 
-                {{ chore.area_name }}
+                {{ chore.area.area_name }}
               </template>
             </v-card-item>
 
@@ -43,9 +43,9 @@
             <div class="d-flex py-3 justify-space-between">
               <v-list-item
                 density="compact"
-                :prepend-icon="chore.assignee_icon"
+                :prepend-icon="chore.isAssigned ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
               >
-                <v-list-item-subtitle>{{ chore.assignee_name }}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{ chore.isAssigned ? chore.assignee.fullname : "Unassigned" }}</v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item
@@ -218,8 +218,8 @@
                   </v-row>
                   <v-row dense>
                     <v-col>
-                      <v-btn @click="chorestore.saveChore(chore.id)" icon="mdi-content-save-outline"></v-btn>
-                      <v-btn @click="chorestore.deleteChore(chore.id)" icon="mdi-delete-forever-outline"></v-btn>
+                      <v-btn @click="chorestore.saveChore(chore)" icon="mdi-content-save-outline"></v-btn>
+                      <v-btn @click="chorestore.deleteChore(chore)" icon="mdi-delete-forever-outline"></v-btn>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -230,21 +230,33 @@
 
             <v-card-actions>
               <v-btn @click="chorestore.completeChore(chore)" icon="mdi-check" :disabled="!chore.active"></v-btn>
-              <v-btn @click="chorestore.snoozeChore(chore)" icon="mdi-alarm-snooze" :disabled="!chore.active"></v-btn>
-              <v-btn @click="chorestore.claimChore(chore,getID)" icon="mdi-clipboard-account-outline" :disabled="!chore.active"></v-btn>
+              <v-btn @click="callSnoozeChore(chore)" icon="mdi-alarm-snooze" :disabled="!chore.active"></v-btn>
+              <v-btn @click="chorestore.claimChore(chore,getID)" icon="mdi-clipboard-account-outline" :disabled="!chore.active" :color="chore.isAssigned ? 'red' : 'white'"></v-btn>
               <v-btn @click="chorestore.toggleChore(chore)" icon="mdi-circle-off-outline" :color="chore.active ? 'red' : 'white'"></v-btn>
               <v-btn @click="chore.expand = !chore.expand" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
             </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
+    <v-snackbar
+      v-model="snackbar"
+      :color="snackbarColor"
+      :timeout="snackbarTimeout"
+      content-class="centered-text"
+    >
+      {{ snackbarText }}
+    </v-snackbar>
   </v-container>
 </template>
 <script setup>
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
   import { useChoreStore } from '@/stores/chores';
   import { useUserStore } from '@/stores/user';
 
+  const snackbar = ref(false);
+  const snackbarText = ref('');
+  const snackbarColor = ref('');
+  const snackbarTimeout = ref(1500)
   const chorestore = useChoreStore();
   const userstore = useUserStore();
   const getChores = computed(() => {
@@ -259,4 +271,24 @@
   const intervals = computed(() => {
     return chorestore.intervals;
   });
+  const callSnoozeChore = async (chore) => {
+    try {
+      const store = useChoreStore();
+      await store.snoozeChore(chore);
+
+      showSnackbar('Chore snoozed', 'success');
+    } catch (error) {
+      showSnackbar('Chore not snoozed', 'error');
+    }
+  }
+  const showSnackbar = (text, color) => {
+    snackbarText.value = text;
+    snackbarColor.value = color;
+    snackbar.value = true;
+  }
 </script>
+<style scoped>
+.centered-text {
+  text-align: center; /* Center-align the text */
+}
+</style>
