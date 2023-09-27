@@ -41,13 +41,26 @@ class Area(models.Model):
         return self.area_name
     @property
     def dirtiness(self):
-        return 30
+        total_dirtiness = self.total_dirtiness()
+        total_chores = self.chore_set.count()
+
+        if total_chores > 0:
+            # Calculate the percentage if there are chores
+            percentage = (total_dirtiness / total_chores)
+            perecentage = round(percentage)
+        else:
+            # Handle the case when there are no chores
+            percentage = 0
+
+        return percentage
     @property
     def dueCount(self):
         today = date.today().isoformat()
         count = self.chore_set.filter(nextDue__lte=today).count()
         return count
-
+    def total_dirtiness(self):
+        total = sum(chore.dirtiness for chore in self.chore_set.all())
+        return total
 class Chore(models.Model):
     chore_name = models.CharField(max_length=254)
     area = models.ForeignKey(Area, null=True, on_delete=models.SET_NULL)
