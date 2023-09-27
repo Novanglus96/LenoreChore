@@ -12,7 +12,7 @@
                     {{ area.area_name }}
                   </v-card-title>
 
-                  <v-card-subtitle>{{ area.dueCount }} Chores Due Today</v-card-subtitle>
+                  <v-card-subtitle>{{ area.dueCount }} Chore(s) Due</v-card-subtitle>
 
                   <v-card-actions>
                     <v-btn
@@ -30,9 +30,9 @@
                   :size="125"
                   :width="15"
                   :model-value="area.dirtiness"
-                  color="red"
+                  :color="area.dirtycolor"
                 >
-                  {{ area.area_cleanlevel }}
+                  {{ area.dirtiness }}% Dirty
                 </v-progress-circular>
 
               </div>

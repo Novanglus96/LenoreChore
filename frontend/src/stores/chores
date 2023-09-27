@@ -17,6 +17,16 @@ export const useChoreStore = defineStore('chore', {
   }),
     getters: {
       getAreas(state){
+        state.areas.forEach((area) => {
+        if (area.dirtiness <= state.med_thresh ) {
+          area.dirtycolor = 'blue-grey'
+        }else if (area.dirtiness > state.med_thresh && area.dirtiness <= state.high_thresh){
+          area.dirtycolor = 'yellow'
+        }else if (area.dirtiness > state.high_thresh){
+          area.dirtycolor = 'red'
+        }
+      })
+
         return state.areas
       },
       getChores(state){
@@ -52,6 +62,7 @@ export const useChoreStore = defineStore('chore', {
         try {
           const data = await axios.get('https://chores.danielleandjohn.love/api/areas/')
           this.areas = data.data
+          console.log(data.data)
         }
         catch (error) {
           alert(error)

@@ -29,7 +29,7 @@
                     height="25"
                   >
                     <template v-slot:default="{ value }">
-                      <strong>{{ Math.ceil(value) }}%</strong>
+                      <strong>{{ Math.ceil(value) }}% Dirty</strong>
                     </template>
                   </v-progress-linear>
                 </v-col>

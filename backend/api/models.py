@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User, AbstractUser
 from django.conf import settings
 from datetime import date
+from django.utils import dateformat
 
 from .managers import CustomUserManager
 
@@ -40,10 +41,12 @@ class Area(models.Model):
         return self.area_name
     @property
     def dirtiness(self):
-        return 90
+        return 30
     @property
     def dueCount(self):
-        return 3
+        today = date.today().isoformat()
+        count = self.chore_set.filter(nextDue__lte=today).count()
+        return count
 
 class Chore(models.Model):
     chore_name = models.CharField(max_length=254)
