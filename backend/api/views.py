@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
-from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer, HistoryItemCreateSerializer, ChoreCompleteSerializer
+from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer, HistoryItemCreateSerializer, ChoreCompleteSerializer, ChoreSnoozeSerializer
 from .models import Area, Chore, HistoryItem, Option, CustomUser
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
@@ -110,3 +110,21 @@ class ChoreCompleteViewSet(viewsets.ModelViewSet):
         serializer.validated_data['assignee'] = None
         
         serializer.save()
+
+class ChoreSnoozeViewSet(viewsets.ViewSet):
+    def partial_update(self, request, pk=None):
+        chore = Chore.objects.get(pk=pk)
+
+        serializer = ChoreSnoozeSerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            next_due_date = serializer.validated_data.get('next_due_date')
+            snooze_days = serializer.validated_data.get('snooze_days')
+
+            if next_due_date:
+                chore.nextDue = next_due_date
+            elif snooze_days:
+                chore.nextDue += timedelta(days=snooze_days)
+            
+            chore.save()
+            return Response({'message': 'Chore snoozed successfully'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

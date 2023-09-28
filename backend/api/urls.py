@@ -10,6 +10,7 @@ router.register(r'options', views.OptionView, 'option')
 router.register(r'users', views.UserViewSet, 'user')
 router.register(r'historyitem-create', views.HistoryItemCreateViewSet, basename='historyitem-create')
 router.register(r'chore-complete', views.ChoreCompleteViewSet)
+router.register(r'chore-snooze', views.ChoreSnoozeViewSet, basename='chore-snooze')
 
 urlpatterns = [
     path("", include(router.urls)),

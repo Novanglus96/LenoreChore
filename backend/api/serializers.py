@@ -75,3 +75,7 @@ class ChoreCompleteSerializer(serializers.ModelSerializer):
         model = Chore
         fields = ['lastCompleted']
         
+class ChoreSnoozeSerializer(serializers.Serializer):
+    next_due_date = serializers.DateField(required=False)
+    snooze_days = serializers.IntegerField(required=False)
+        

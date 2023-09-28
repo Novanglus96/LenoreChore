@@ -241,7 +241,43 @@
 
             <v-card-actions>
               <v-btn @click="callCompleteChore(chore)" icon="mdi-check" :disabled="!chore.active"></v-btn>
-              <v-btn @click="callSnoozeChore(chore)" icon="mdi-alarm-snooze" :disabled="!chore.active"></v-btn>
+              <v-dialog
+                v-model="chore.snoozedialog"
+                scrollable
+                max-width="300px"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    icon="mdi-alarm-snooze"
+                    :disabled="!chore.active"
+                  ></v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>Snooze Chore</v-card-title>
+                  <v-divider></v-divider>
+                  <v-card-text style="height: 500px;">
+                    <VueDatePicker v-model="chore.nextDue" :format="dateFormat" :preview-format="dateFormat" />
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-actions>
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="chore.snoozedialog = false"
+                    >
+                      Close
+                    </v-btn>
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="callSnoozeChore(chore)"
+                    >
+                      Save
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
               <v-btn @click="callClaimChore(chore,getID)" icon="mdi-clipboard-account-outline" :disabled="!chore.active" :color="chore.isAssigned ? 'red' : 'white'"></v-btn>
               <v-btn @click="callToggleChore(chore)" icon="mdi-circle-off-outline" :color="chore.active ? 'red' : 'white'"></v-btn>
               <v-btn @click="chore.expand = !chore.expand" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
@@ -264,7 +300,18 @@
   import { computed, ref } from 'vue';
   import { useChoreStore } from '@/stores/chores';
   import { useUserStore } from '@/stores/user';
+  import VueDatePicker from '@vuepic/vue-datepicker';
+  import '@vuepic/vue-datepicker/dist/main.css';
 
+  const dateFormat = (date) => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    const dateFormat = year + '-' + month + '-' + day;
+
+    return dateFormat;
+  }
   const snackbar = ref(false);
   const snackbarText = ref('');
   const snackbarColor = ref('');
@@ -287,7 +334,7 @@
     try {
       const store = useChoreStore();
       await store.snoozeChore(chore);
-
+      chore.snoozedialog = false
       showSnackbar('Chore snoozed successfully!', 'success');
     } catch (error) {
       showSnackbar('Chore not snoozed!', 'error');

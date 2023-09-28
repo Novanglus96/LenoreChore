@@ -216,7 +216,33 @@ export const useChoreStore = defineStore('chore', {
         }
       },
       async snoozeChore(chore) {
-        console.log('Chore snoozed', chore.id)
+        const data = {}
+        const dateFormat = (date) => {
+          const day = date.getDate();
+          const month = date.getMonth() + 1;
+          const year = date.getFullYear();
+      
+          const dateFormat = year + '-' + month + '-' + day;
+      
+          return dateFormat;
+        }
+
+        data.next_due_date = dateFormat(chore.nextDue)
+        
+        console.log('Chore snoozed', chore.id, data)
+        try {
+          // Make a POST request to your API endpoint
+          const response = await axios.patch('https://chores.danielleandjohn.love/api/chore-snooze/' + chore.id +'/', data);
+
+          // Add area to local storage
+          //this.areas.push(area);
+          this.fetchChores();
+          // Handle the response here (e.g., show a success message)
+          console.log('Response:', response.data);
+        } catch (error) {
+          // Handle errors (e.g., show an error message)
+          console.log('Error:', error);
+        }
       },
       async toggleChore(chore) {
         console.log('Chore toggled', chore.id)
