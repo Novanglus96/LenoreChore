@@ -225,6 +225,17 @@
                 </v-container>
               </div>
             </v-expand-transition>
+            <v-expand-transition>
+              <div v-if="chore.history">
+                <v-container>
+                  <v-row dense>
+                    <v-col>
+                      Hello
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </div>
+            </v-expand-transition>
 
             <v-divider :thickness="2"></v-divider>
 
@@ -234,6 +245,7 @@
               <v-btn @click="callClaimChore(chore,getID)" icon="mdi-clipboard-account-outline" :disabled="!chore.active" :color="chore.isAssigned ? 'red' : 'white'"></v-btn>
               <v-btn @click="callToggleChore(chore)" icon="mdi-circle-off-outline" :color="chore.active ? 'red' : 'white'"></v-btn>
               <v-btn @click="chore.expand = !chore.expand" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
+              <v-btn @click="chore.history = !chore.history" icon="mdi-clipboard-text-clock-outline" :color="!chore.history ? 'white' : 'grey'"></v-btn>
             </v-card-actions>
         </v-card>
       </v-col>
