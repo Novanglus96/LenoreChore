@@ -21,6 +21,7 @@
       chorestore.fetchChores();
       chorestore.fetchUsers();
       chorestore.fetchHistoryItems();
+      chorestore.fetchWeeklyTotals();
     });
 </script>
 
