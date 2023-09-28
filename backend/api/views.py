@@ -8,7 +8,7 @@ from .models import Area, Chore, HistoryItem, Option, CustomUser
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
 
 # Create your views here.
@@ -36,6 +36,45 @@ class HistoryItemView(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     ordering_fields = '__all__'
     ordering = ['-completed_date','-id']
+    
+    @action(detail=False, methods=['GET'])
+    def weekly_totals(self, request):
+        # Define the days of the week
+        days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+        # Get a list of all CustomUser objects
+        users = CustomUser.objects.all()
+
+        # Initialize the result list
+        result = []
+
+        # Loop through each user
+        for user in users:
+            user_data = {
+                "label": user.first_name,
+                "data": [0] * 7  # Initialize data with zeros for each day of the week
+            }
+
+            # Get history items for the user
+            history_items = HistoryItem.objects.filter(completed_by=user)
+
+            # Calculate totals for each day of the week
+            for day_index, day in enumerate(days_of_week):
+                # Calculate the date for the current day of the week
+                today = datetime.now()
+                day_offset = today.weekday() - day_index
+                target_date = today - timedelta(days=day_offset)
+
+                # Filter history items for the current day
+                day_total = history_items.filter(completed_date=target_date).count()
+
+                # Update the user's data with the total for the current day
+                user_data["data"][day_index] = day_total
+
+            # Append the user's data to the result list
+            result.append(user_data)
+
+        return Response(result)
 
 class OptionView(viewsets.ModelViewSet):
     serializer_class = OptionSerializer
