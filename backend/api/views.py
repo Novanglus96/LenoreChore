@@ -33,7 +33,7 @@ class HistoryItemView(viewsets.ModelViewSet):
     queryset = HistoryItem.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     ordering_fields = '__all__'
-    ordering = ['completed_date']
+    ordering = ['completed_date','-id']
 
 class OptionView(viewsets.ModelViewSet):
     serializer_class = OptionSerializer
