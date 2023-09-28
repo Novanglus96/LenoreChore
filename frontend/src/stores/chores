@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from "axios"
+import { useUserStore  } from './user'
 
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
@@ -10,10 +11,11 @@ export const useChoreStore = defineStore('chore', {
     areas: [],
     chores: [],
     users: [],
+    historyitems: [],
     units: ['day(s)', 'week(s)', 'month(s)', 'year(s)'],
     intervals: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-    med_thresh: 50,
-    high_thresh: 90,
+    med_thresh: 49,
+    high_thresh: 74,
   }),
     getters: {
       getAreas(state){
@@ -55,7 +57,10 @@ export const useChoreStore = defineStore('chore', {
       },
       getUsers(state){
         return state.users
-      }
+      },
+      getHistoryItems(state){
+        return state.historyitems
+      },
     },
     actions: {
       async fetchAreas() {
@@ -87,6 +92,38 @@ export const useChoreStore = defineStore('chore', {
         catch (error) {
           alert(error)
           console.log(error)
+        }
+      },
+      async fetchHistoryItems() {
+        try {
+          const data = await axios.get('https://chores.danielleandjohn.love/api/historyitems/')
+          this.historyitems = data.data
+        }
+        catch (error) {
+          alert(error)
+          console.log(error)
+        }
+      },
+      async addHistoryItem(chore) {
+        const userstore = useUserStore();
+        const data = {
+          chore_id: chore.id,
+          completed_by_id: userstore.id
+        }
+        
+        try {
+          // Make a POST request to your API endpoint
+          const response = await axios.post('https://chores.danielleandjohn.love/api/historyitem-create/', data);
+
+          // Add area to local storage
+          //this.areas.push(area);
+          this.fetchHistoryItems();
+
+          // Handle the response here (e.g., show a success message)
+          console.log('Response:', response.data);
+        } catch (error) {
+          // Handle errors (e.g., show an error message)
+          console.log('Error:', error);
         }
       },
       async addArea(area) {
@@ -187,7 +224,7 @@ export const useChoreStore = defineStore('chore', {
           // Add area to local storage
           //this.areas.push(area);
           this.fetchChores();
-
+          this.addHistoryItem(chore);
           // Handle the response here (e.g., show a success message)
           console.log('Response:', response.data);
         } catch (error) {

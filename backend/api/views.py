@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
-from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer
+from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer, HistoryItemCreateSerializer
 from .models import Area, Chore, HistoryItem, Option, CustomUser
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
@@ -68,3 +68,17 @@ class UserViewSet(viewsets.ModelViewSet):
         # Log the user out
         logout(request)
         return Response({'detail': 'Logout successful'}, status=status.HTTP_200_OK)
+
+class HistoryItemCreateViewSet(viewsets.ViewSet):
+    def create(self, request):
+        serializer = HistoryItemCreateSerializer(data=request.data)
+
+        if serializer.is_valid():
+            history_item = serializer.save()
+            # Customize the response as needed
+            return Response(
+                {'message': 'HistoryItem created successfully', 'id': history_item.id},
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

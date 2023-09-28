@@ -28,12 +28,36 @@ class ChoreSerializer(WritableNestedModelSerializer, serializers.ModelSerializer
         fields = ('id', 'chore_name', 'area', 'active', 'nextDue', 'lastCompleted', 'intervalNumber', 'unit', 'm_jan', 'm_feb', 'm_mar', 'm_apr', 'm_may', 'm_jun', 'm_jul', 'm_aug', 'm_sep', 'm_oct', 'm_nov', 'm_dec', 'assignee', 'effort', 'vacationPause', 'expand', 'dirtiness', 'duedays')
         
 class HistoryItemSerializer(serializers.ModelSerializer):
-    chore = ChoreSerializer()
-    completed_by = CustomUserSerializer()
+    chore = ChoreSerializer(required=False, allow_null=True)
+    completed_by = CustomUserSerializer(required=False, allow_null=True)
     class Meta:
         model = HistoryItem
-        fields = ('completed_date', 'completed_by', 'chore')
+        fields = '__all__'
+        
+class HistoryItemCreateSerializer(serializers.Serializer):
+    chore_id = serializers.PrimaryKeyRelatedField(
+        queryset=Chore.objects.all(),
+        required=True,
+        allow_null=False
+    )
+    completed_by_id = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all(),
+        required=True,
+        allow_null=False
+    )
 
+    def create(self, validated_data):
+        chore_id = validated_data['chore_id']
+        completed_by_id = validated_data['completed_by_id']
+
+        # Create a new HistoryItem using the provided chore and user IDs
+        history_item = HistoryItem.objects.create(
+            chore=chore_id,
+            completed_by=completed_by_id,
+            # Set other fields as needed
+        )
+        return history_item
+    
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option

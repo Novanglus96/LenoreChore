@@ -104,7 +104,7 @@ class Chore(models.Model):
         return delta.days
 
 class HistoryItem(models.Model):
-    completed_date = models.DateField()
+    completed_date = models.DateField(default=date.today)
     completed_by = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
     chore = models.ForeignKey(Chore, on_delete=models.CASCADE)
 

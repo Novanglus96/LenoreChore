@@ -20,6 +20,7 @@
       chorestore.fetchAreas();
       chorestore.fetchChores();
       chorestore.fetchUsers();
+      chorestore.fetchHistoryItems();
     });
 </script>
 
