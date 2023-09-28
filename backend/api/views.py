@@ -75,6 +75,22 @@ class HistoryItemView(viewsets.ModelViewSet):
             result.append(user_data)
 
         return Response(result)
+    
+    @action(detail=False, methods=['GET'])
+    def last_3_completed_for_chore(self, request):
+        chore_id = request.query_params.get('chore_id')
+
+        # Check if chore_id is provided in the query parameters
+        if not chore_id:
+            return Response({'detail': 'chore_id is required as a query parameter.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get the last 3 completed history items for the specified chore
+        history_items = HistoryItem.objects.filter(chore_id=chore_id).order_by('-completed_date')[:3]
+
+        # Serialize the history items
+        serializer = HistoryItemSerializer(history_items, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class OptionView(viewsets.ModelViewSet):
     serializer_class = OptionSerializer
