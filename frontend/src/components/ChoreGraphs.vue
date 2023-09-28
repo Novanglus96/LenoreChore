@@ -18,11 +18,32 @@ export default {
   data() {
     return {
       chartData: {
-        labels: [ 'January', 'February', 'March' ],
-        datasets: [ { data: [40, 20, 12] } ]
+        labels: [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [ 
+          {
+            label: 'John',
+            data: [3, 7, 1, 3, 3, 4, 9],
+            backgroundColor: 'red'
+          },
+          {
+            label: 'Danielle',
+            data: [4, 8, 2, 4, 4, 5, 10],
+            backgroundColor: 'blue'
+          }
+        ]
       },
       chartOptions: {
-        responsive: true
+        responsive: true,
+        indexAxis: 'y',
+        title: {
+          display: true,
+          tex: 'Graphs',
+        },
+        plugins: {
+          legend: {
+            position: 'right'
+          }
+        }
       }
     }
   }
