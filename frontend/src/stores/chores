@@ -198,28 +198,11 @@ export const useChoreStore = defineStore('chore', {
         }
       },
       async completeChore(chore) {
-        const newDate = new Date()
-        const today = new Date()
-        if ( chore.unit == 'day(s)' ){
-          newDate.setDate(today.getDate()+chore.intervalNumber)
-        } else if ( chore.unit == 'week(s)' ){
-          newDate.setDate(today.getDate()+(chore.intervalNumber*7))
-        } else if ( chore.unit == 'month(s)' ){
-          newDate.setMonth(today.getMonth()+chore.intervalNumber)
-        } else if ( chore.unit == 'year(s)' ){
-          newDate.setFullYear(today.getFullYear()+chore.intervalNumber)
-        }
-
-        const data = {
-          "nextDue": newDate.toISOString().split('T')[0],
-          "lastCompleted": today.toISOString().split('T')[0],
-          "assignee": null
-        }
 
         console.log('Chore completed', chore.id)
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.patch('https://chores.danielleandjohn.love/api/chores/' + chore.id +'/', data);
+          const response = await axios.patch('https://chores.danielleandjohn.love/api/chore-complete/' + chore.id +'/');
 
           // Add area to local storage
           //this.areas.push(area);

@@ -69,3 +69,9 @@ class UserLoginSerializer(serializers.Serializer):
 
 class UserLogoutSerializer(serializers.Serializer):
     pass
+
+class ChoreCompleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chore
+        fields = ['lastCompleted']
+        
