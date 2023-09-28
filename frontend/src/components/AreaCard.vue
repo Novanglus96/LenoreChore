@@ -13,6 +13,18 @@
                   </v-card-title>
 
                   <v-card-subtitle>{{ area.dueCount }} Chore(s) Due</v-card-subtitle>
+                  <v-expand-transition>
+              <div v-if="area.expand">
+                <v-container>
+                  <v-row dense>
+                    <v-col>
+                      <v-btn icon="mdi-content-save-outline"></v-btn>
+                      <v-btn icon="mdi-delete-forever-outline"></v-btn>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </div>
+            </v-expand-transition>
 
                   <v-card-actions>
                     <v-btn
@@ -23,6 +35,7 @@
                     >
                       See Chores
                     </v-btn>
+                    <v-btn @click="area.expand = !area.expand" :icon="area.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
                   </v-card-actions>
                 </div>
                 <v-progress-circular
