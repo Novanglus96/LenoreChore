@@ -1,9 +1,11 @@
 <template>
-  <Bar
-    id="my-chart-id"
-    :options="chartOptions"
-    :data="chartData"
-  />
+  <div style="height: 400px">
+      <Bar
+        id="my-chart-id"
+        :options="chartOptions"
+        :data="chartData"
+      />
+  </div>
 </template>
 <script setup>
 import { Bar } from 'vue-chartjs'
@@ -21,15 +23,16 @@ const chartData = {
 
 const chartOptions = {
   responsive: true,
-  indexAxis: 'y',
+  indexAxis: 'x',
   title: {
     display: true,
     text: 'Graphs',
   },
   plugins: {
     legend: {
-      position: 'right',
+      position: 'bottom',
     },
   },
+  maintainAspectRatio: false,
 }
 </script>

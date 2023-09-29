@@ -52,7 +52,8 @@ class HistoryItemView(viewsets.ModelViewSet):
         for user in users:
             user_data = {
                 "label": user.first_name,
-                "data": [0] * 7  # Initialize data with zeros for each day of the week
+                "data": [0] * 7,  # Initialize data with zeros for each day of the week
+                "backgroundColor": user.user_color
             }
 
             # Get history items for the user
