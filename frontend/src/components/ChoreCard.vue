@@ -230,7 +230,27 @@
                 <v-container>
                   <v-row dense>
                     <v-col>
-                      Hello
+                      <v-table>
+                        <thead>
+                        <tr>
+                            <th class="text-left">
+                            Date
+                            </th>
+                            <th class="text-left">
+                            Completed By
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr
+                            v-for="item in chore.last_three_history_items"
+                            :key="item.id"
+                        >
+                            <td>{{ item.completed_date }}</td>
+                            <td>{{ item.completed_by }}</td>
+                        </tr>
+                        </tbody>
+                    </v-table>
                     </v-col>
                   </v-row>
                 </v-container>

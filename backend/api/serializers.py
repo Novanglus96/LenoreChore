@@ -33,7 +33,7 @@ class ChoreSerializer(WritableNestedModelSerializer, serializers.ModelSerializer
         history_items = HistoryItem.objects.filter(chore=instance).order_by('-completed_date')[:3]
         
         # Serialize the 'completed_date' and 'completed_by.fullname' fields
-        history_items_data = [{'completed_date': item.completed_date, 'completed_by': item.completed_by.fullname} for item in history_items]
+        history_items_data = [{'id': item.id, 'completed_date': item.completed_date, 'completed_by': item.completed_by.fullname} for item in history_items]
         
         return history_items_data
     
