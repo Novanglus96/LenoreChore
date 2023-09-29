@@ -22,11 +22,21 @@ class ChoreSerializer(WritableNestedModelSerializer, serializers.ModelSerializer
     dirtiness = serializers.IntegerField(required=False)
     area = AreaSerializer(required=False, allow_null=True)
     assignee = CustomUserSerializer(required=False, allow_null=True)
+    last_three_history_items = serializers.SerializerMethodField()
     
     class Meta:
         model = Chore
-        fields = ('id', 'chore_name', 'area', 'active', 'nextDue', 'lastCompleted', 'intervalNumber', 'unit', 'm_jan', 'm_feb', 'm_mar', 'm_apr', 'm_may', 'm_jun', 'm_jul', 'm_aug', 'm_sep', 'm_oct', 'm_nov', 'm_dec', 'assignee', 'effort', 'vacationPause', 'expand', 'dirtiness', 'duedays')
+        fields = ('id', 'chore_name', 'area', 'active', 'nextDue', 'lastCompleted', 'intervalNumber', 'unit', 'm_jan', 'm_feb', 'm_mar', 'm_apr', 'm_may', 'm_jun', 'm_jul', 'm_aug', 'm_sep', 'm_oct', 'm_nov', 'm_dec', 'assignee', 'effort', 'vacationPause', 'expand', 'dirtiness', 'duedays', 'last_three_history_items')
+    
+    def get_last_three_history_items(self, instance):
+        # Get the last three HistoryItem objects related to the Chore
+        history_items = HistoryItem.objects.filter(chore=instance).order_by('-completed_date')[:3]
         
+        # Serialize the 'completed_date' and 'completed_by.fullname' fields
+        history_items_data = [{'completed_date': item.completed_date, 'completed_by': item.completed_by.fullname} for item in history_items]
+        
+        return history_items_data
+    
 class HistoryItemSerializer(serializers.ModelSerializer):
     chore = ChoreSerializer(required=False, allow_null=True)
     completed_by = CustomUserSerializer(required=False, allow_null=True)
