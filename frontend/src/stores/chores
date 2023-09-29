@@ -67,6 +67,19 @@ export const useChoreStore = defineStore('chore', {
       },
     },
     actions: {
+      async fetchAll() {
+        try {
+          this.fetchAreas()
+          this.fetchChores()
+          this.fetchHistoryItems()
+          this.fetchUsers()
+          this.fetchWeeklyTotals()
+        }
+        catch (error) {
+          alert(error)
+          console.log(error)
+        }
+      },
       async fetchAreas() {
         try {
           const data = await axios.get('https://chores.danielleandjohn.love/api/areas/')
@@ -132,6 +145,7 @@ export const useChoreStore = defineStore('chore', {
           // Add area to local storage
           //this.areas.push(area);
           this.fetchHistoryItems();
+          this.fetchWeeklyTotals();
 
           // Handle the response here (e.g., show a success message)
           console.log('Response:', response.data);
@@ -298,6 +312,8 @@ export const useChoreStore = defineStore('chore', {
           // Add area to local storage
           //this.areas.push(area);
           this.fetchChores();
+          this.fetchHistoryItems();
+          this.fetchWeeklyTotals();
 
           // Handle the response here (e.g., show a success message)
           console.log('Response:', response.data);

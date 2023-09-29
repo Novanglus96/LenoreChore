@@ -17,11 +17,7 @@
     const chorestore = useChoreStore();
 
     onMounted(() => {
-      chorestore.fetchAreas();
-      chorestore.fetchChores();
-      chorestore.fetchUsers();
-      chorestore.fetchHistoryItems();
-      chorestore.fetchWeeklyTotals();
+      chorestore.fetchAll();
     });
 </script>
 
