@@ -35,9 +35,16 @@ class CustomUser(AbstractUser):
         fullname = self.first_name + ' ' + self.last_name
         return fullname
 
+class AreaGroup(models.Model):
+    group_name = models.CharField(max_length=254)
+    group_order = models.IntegerField(default=1)
+    group_color = models.CharField(max_length=12)
+
 class Area(models.Model):
     area_name = models.CharField(max_length=254)
     area_icon = models.CharField(max_length=254)
+    group = models.ForeignKey(AreaGroup, null=True, on_delete=models.SET_NULL, default=1)
+    area_order = models.IntegerField(default=1)
     def __str__(self):
         return self.area_name
     @property
@@ -111,5 +118,7 @@ class HistoryItem(models.Model):
 
 class Option(models.Model):
     vacation_mode = models.BooleanField(default=False)
+    med_thresh = models.IntegerField(default=50)
+    high_thresh = models.IntegerField(default=50)
     def __str__(self):
         return 'Options'

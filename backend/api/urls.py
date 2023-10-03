@@ -4,6 +4,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'areas', views.AreaView, 'area')
+router.register(r'areagroups', views.AreaGroupView, 'areagroup')
 router.register(r'chores', views.ChoreView, 'chore')
 router.register(r'historyitems', views.HistoryItemView, 'historyitem')
 router.register(r'options', views.OptionView, 'option')

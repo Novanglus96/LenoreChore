@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Area, Chore, HistoryItem, Option, CustomUser
+from .models import Area, Chore, HistoryItem, Option, CustomUser, AreaGroup
 
 class CustomUserAdmin(UserAdmin):
     # Customize the admin panel for your custom user model
@@ -22,6 +22,7 @@ class CustomUserAdmin(UserAdmin):
 # Register your models here.
 
 admin.site.register(Area)
+admin.site.register(AreaGroup)
 admin.site.register(Chore)
 admin.site.register(HistoryItem)
 admin.site.register(Option)

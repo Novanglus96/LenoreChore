@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
-from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer, HistoryItemCreateSerializer, ChoreCompleteSerializer, ChoreSnoozeSerializer
-from .models import Area, Chore, HistoryItem, Option, CustomUser
+from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer, HistoryItemCreateSerializer, ChoreCompleteSerializer, ChoreSnoozeSerializer, AreaGroupSerializer
+from .models import Area, Chore, HistoryItem, Option, CustomUser, AreaGroup
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -21,7 +21,14 @@ class AreaView(viewsets.ModelViewSet):
     queryset = Area.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     ordering_fields = '__all__'
-    ordering = ['area_name']
+    ordering = ['area_order','area_name']
+
+class AreaGroupView(viewsets.ModelViewSet):
+    serializer_class = AreaGroupSerializer
+    queryset = AreaGroup.objects.all()
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    ordering_fields = '__all__'
+    ordering = ['group_order']
 
 class ChoreView(viewsets.ModelViewSet):
     serializer_class = ChoreSerializer

@@ -1,5 +1,5 @@
 from rest_framework import routers,serializers,viewsets
-from .models import Area, Chore, HistoryItem, Option, CustomUser
+from .models import Area, Chore, HistoryItem, Option, CustomUser, AreaGroup
 from django.contrib.auth.models import User
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
@@ -15,6 +15,11 @@ class AreaSerializer(serializers.ModelSerializer):
     dueCount = serializers.IntegerField(required=False, read_only=True)
     class Meta:
         model = Area
+        fields = '__all__'
+
+class AreaGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AreaGroup
         fields = '__all__'
 
 class ChoreSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):

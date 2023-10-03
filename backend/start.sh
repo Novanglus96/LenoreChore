@@ -13,4 +13,7 @@ then
         || true
 fi
 
+python manage.py loaddata groups
+python manage.py loaddata options
+
 gunicorn backend.wsgi:application --bind 0.0.0.0:8000
