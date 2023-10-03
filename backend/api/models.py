@@ -39,6 +39,8 @@ class AreaGroup(models.Model):
     group_name = models.CharField(max_length=254)
     group_order = models.IntegerField(default=1)
     group_color = models.CharField(max_length=12)
+    def __str__(self):
+        return self.group_name
 
 class Area(models.Model):
     area_name = models.CharField(max_length=254)
