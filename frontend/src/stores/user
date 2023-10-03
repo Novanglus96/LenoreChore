@@ -5,19 +5,20 @@ import { defineStore } from 'pinia'
 // and `Store` (e.g. `useUserStore`, `useCartStore`, `useProductStore`)
 // the first argument is a unique id of the store across your application
 export const useUserStore = defineStore('user', {
-    state: () => ({ firstname: 'FirstName', lastname: 'LastName', email: 'someone@someplace.org', isAdmin: false, isLoggedIn: false, avatar: 'male_avatar.png', id: '' }),
+    state: () => ({ firstname: 'FirstName', lastname: 'LastName', email: 'someone@someplace.org', isAdmin: false, isLoggedIn: false, avatar: 'male_avatar.png', id: '', user_color: '' }),
     getters: {
       fullname: (state) => state.firstname + ' ' + state.lastname,
       getID: (state) => state.id,
     },
     actions: {
-      loginUser(firstname, lastname, email, isAdmin, male, id) {
+      loginUser(firstname, lastname, email, isAdmin, male, id, user_color) {
         this.firstname = firstname
         this.lastname = lastname
         this.email = email
         this.isAdmin = isAdmin
         this.isLoggedIn = true
         this.id = id
+        this.user_color = user_color
         if (male) {
           this.avatar = 'male_avatar.png';
         } else {
@@ -32,6 +33,7 @@ export const useUserStore = defineStore('user', {
         this.isLoggedIn = false
         this.avatar = 'male_avatar.png'
         this.id = ''
+        this.user_color = ''
       },
     },
     persist: true,

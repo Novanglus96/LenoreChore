@@ -62,8 +62,8 @@
 
             <v-expand-transition>
               <div v-if="chore.expand">
-                <v-container>
-                  <v-row dense>
+                <v-container theme="dark" class="bg-secondary">
+                  <v-row dense class="bg-secondary">
                     <v-col>
                       <v-text-field
                         label="Last Completed"
@@ -227,10 +227,10 @@
             </v-expand-transition>
             <v-expand-transition>
               <div v-if="chore.history">
-                <v-container>
+                <v-container class="bg-secondary" theme="dark">
                   <v-row dense>
                     <v-col>
-                      <v-table>
+                      <v-table class="bg-secondary">
                         <thead>
                         <tr>
                             <th class="text-left">
@@ -245,6 +245,7 @@
                         <tr
                             v-for="item in chore.last_three_history_items"
                             :key="item.id"
+                            :style="{ backgroundColor: secondary }"
                         >
                             <td>{{ item.completed_date }}</td>
                             <td>{{ item.completed_by }}</td>
