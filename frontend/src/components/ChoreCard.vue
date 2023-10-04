@@ -379,7 +379,7 @@
   const snackbar = ref(false);
   const snackbarText = ref('');
   const snackbarColor = ref('');
-  const snackbarTimeout = ref(1500)
+  const snackbarTimeout = ref(1500);
   const chorestore = useChoreStore();
   const userstore = useUserStore();
   const getFilteredChores = computed(() => {

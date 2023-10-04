@@ -378,6 +378,27 @@ export const useChoreStore = defineStore('chore', {
           console.log('Error:', error);
         }
       },
+      async deleteArea(area) {
+        console.log('Area deleted', area.id)
+
+        try {
+          // Make a POST request to your API endpoint
+          const response = await axios.delete('https://chores.danielleandjohn.love/api/areas/' + area.id +'/');
+
+          // Add area to local storage
+          //this.areas.push(area);
+          this.fetchAreas();
+          this.fetchChores();
+          this.fetchHistoryItems();
+          this.fetchWeeklyTotals();
+
+          // Handle the response here (e.g., show a success message)
+          console.log('Response:', response.data);
+        } catch (error) {
+          // Handle errors (e.g., show an error message)
+          console.log('Error:', error);
+        }
+      },
     },
     persist: true,
   })
