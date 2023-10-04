@@ -13,6 +13,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class AreaSerializer(serializers.ModelSerializer):
     dirtiness = serializers.IntegerField(required=False, read_only=True)
     dueCount = serializers.IntegerField(required=False, read_only=True)
+    totalCount = serializers.IntegerField(required=False, read_only=True)
     class Meta:
         model = Area
         fields = '__all__'

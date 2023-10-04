@@ -243,14 +243,14 @@
                           <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn
-                              color="green-darken-1"
+                              color="primary-darken-1"
                               variant="text"
                               @click="chore.delete = false"
                             >
                               Close
                             </v-btn>
                             <v-btn
-                              color="green-darken-1"
+                              color="primary-darken-1"
                               variant="text"
                               @click="callDeleteChore(chore)"
                             >

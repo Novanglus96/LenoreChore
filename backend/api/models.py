@@ -68,6 +68,10 @@ class Area(models.Model):
         today = date.today().isoformat()
         count = self.chore_set.filter(nextDue__lte=today).count()
         return count
+    @property
+    def totalCount(self):
+        count = self.chore_set.count()
+        return count
     def total_dirtiness(self):
         total = sum(chore.dirtiness for chore in self.chore_set.all())
         return total

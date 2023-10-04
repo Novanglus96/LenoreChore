@@ -12,7 +12,7 @@
                     {{ area.area_name }}
                   </v-card-title>
 
-                  <v-card-subtitle>{{ area.dueCount }} Chore(s) Due</v-card-subtitle>
+                  <v-card-subtitle>{{ area.dueCount }} of {{ area.totalCount }} Chore(s) Due</v-card-subtitle>
                   <v-expand-transition>
               <div v-if="area.expand">
                 <v-container>
