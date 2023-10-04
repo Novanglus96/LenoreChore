@@ -227,7 +227,38 @@
                   <v-row dense>
                     <v-col>
                       <v-btn @click="callSaveChore(chore)" icon="mdi-content-save-outline"></v-btn>
-                      <v-btn @click="callDeleteChore(chore)" icon="mdi-delete-forever-outline"></v-btn>
+                      <v-dialog
+                        v-model="chore.delete"
+                        persistent
+                        width="auto"
+                      >
+                        <template v-slot:activator="{ props }">
+                          <v-btn icon="mdi-delete-forever-outline" v-bind="props"></v-btn>
+                        </template>
+                        <v-card>
+                          <v-card-title class="text-h5">
+                            Delete this Chore?
+                          </v-card-title>
+                          <v-card-text>Are you sure you want to delete {{ chore.chore_name }} from {{ chore.area.area_name }}?</v-card-text>
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                              color="green-darken-1"
+                              variant="text"
+                              @click="chore.delete = false"
+                            >
+                              Close
+                            </v-btn>
+                            <v-btn
+                              color="green-darken-1"
+                              variant="text"
+                              @click="callDeleteChore(chore)"
+                            >
+                              Delete
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -394,7 +425,7 @@
     try {
       const store = useChoreStore();
       await store.deleteChore(chore);
-
+      chore.delete = false;
       showSnackbar('Chore deleted successfully!', 'success');
     } catch (error) {
       showSnackbar('Chore not deleted!', 'error');
