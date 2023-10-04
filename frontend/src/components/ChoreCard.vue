@@ -1,6 +1,14 @@
 <template>
   <v-container>
-    <v-row dense v-for="chore in getChores" :key="chore.id">
+    <v-row dense>
+      <v-col cols="12">
+        <v-chip-group v-model="filter">
+          <v-chip color="primary" key="All" class="ma-2" label value="All" @click="applyFilter('All')"><v-icon start icon="mdi-all-inclusive"></v-icon>All</v-chip>
+          <v-chip color="primary" v-for="area in getAreas" :key="area.area_name" class="ma-2" label :value="area.area_name" @click="applyFilter(area.area_name)"><v-icon start :icon="area.area_icon"></v-icon>{{ area.area_name }}</v-chip>
+        </v-chip-group>
+      </v-col>
+    </v-row>
+    <v-row dense v-for="chore in getFilteredChores" :key="chore.id">
         <v-col cols="12" >
           <v-card
           :color="chore.active ? 'primary' : 'grey'"
@@ -323,7 +331,11 @@
   import { useUserStore } from '@/stores/user';
   import VueDatePicker from '@vuepic/vue-datepicker';
   import '@vuepic/vue-datepicker/dist/main.css';
+  import { useRoute, useRouter } from 'vue-router';
 
+  const route = useRoute();
+  const router = useRouter();
+  const filter = ref(route.params.areaName);
   const dateFormat = (date) => {
     const day = date.getDate();
     const month = date.getMonth() + 1;
@@ -339,8 +351,15 @@
   const snackbarTimeout = ref(1500)
   const chorestore = useChoreStore();
   const userstore = useUserStore();
-  const getChores = computed(() => {
-    return chorestore.getChores;
+  const getFilteredChores = computed(() => {
+    return chorestore.getFilteredChores(filter.value);
+  });
+  const applyFilter = (areaName) => {
+    filter.value = areaName;
+    router.push({ name: 'listfilter', params: { areaName }});
+  }
+  const getAreas = computed(() => {
+    return chorestore.getAreas;
   });
   const getID = computed(() => {
     return userstore.getID;

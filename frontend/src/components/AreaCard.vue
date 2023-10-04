@@ -31,7 +31,7 @@
                       class="ms-2"
                       variant="outlined"
                       size="small"
-                      to="/list"
+                      :to="listLink(area.area_name)"
                     >
                       See Chores
                     </v-btn>
@@ -59,7 +59,10 @@
 <script setup>
   import { computed } from 'vue';
   import { useChoreStore } from '@/stores/chores';
-
+  
+  const listLink = (areaName) => {
+    return '/list/' + areaName;
+  }
   const chorestore = useChoreStore();
   const getAreas = computed(() => {
     return chorestore.getAreas;

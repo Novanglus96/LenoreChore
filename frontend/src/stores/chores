@@ -33,6 +33,38 @@ export const useChoreStore = defineStore('chore', {
 
         return state.areas
       },
+      getFilteredChores: (state) => (filter) => {
+        let tempChores = state.chores
+        
+        if (filter != 'All' && filter) {
+          tempChores = tempChores.filter((chore) => {
+            return (chore.area.area_name == filter)
+          })
+        }
+
+        tempChores.forEach((chore) => {
+          chore.repeat = chore.intervalNumber + " " + chore.unit
+          if (chore.assignee) {
+            chore.isAssigned = true
+          } else {
+            chore.isAssigned = false
+          }
+          if (chore.duedays < 0) {
+            chore.isOverdue = true
+          }else{
+            chore.isOverdue = false
+          }
+          if (chore.dirtiness <= state.med_thresh ) {
+            chore.dirtycolor = 'blue-grey'
+          }else if (chore.dirtiness > state.med_thresh && chore.dirtiness <= state.high_thresh){
+            chore.dirtycolor = 'yellow'
+          }else if (chore.dirtiness > state.high_thresh){
+            chore.dirtycolor = 'red'
+          }
+        })
+
+        return tempChores;
+      },
       getChores(state){
         state.chores.forEach((chore) => {
           chore.repeat = chore.intervalNumber + " " + chore.unit
@@ -258,6 +290,7 @@ export const useChoreStore = defineStore('chore', {
           // Add area to local storage
           //this.areas.push(area);
           this.fetchChores();
+          this.fetchAreas();
           this.addHistoryItem(chore);
           // Handle the response here (e.g., show a success message)
           console.log('Response:', response.data);

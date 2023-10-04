@@ -35,7 +35,7 @@ class ChoreView(viewsets.ModelViewSet):
     queryset = Chore.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     ordering_fields = '__all__'
-    ordering = ['nextDue']
+    ordering = ['-active', 'nextDue']
 
 class HistoryItemView(viewsets.ModelViewSet):
     serializer_class = HistoryItemSerializer
