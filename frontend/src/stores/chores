@@ -15,8 +15,9 @@ export const useChoreStore = defineStore('chore', {
     weeklytotals: [],
     units: ['day(s)', 'week(s)', 'month(s)', 'year(s)'],
     intervals: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-    med_thresh: 49,
-    high_thresh: 74,
+    med_thresh: 0,
+    high_thresh: 10,
+    vacation_mode: false,
   }),
     getters: {
       getAreas(state){
@@ -65,6 +66,15 @@ export const useChoreStore = defineStore('chore', {
       getWeeklyTotals(state){
         return state.weeklytotals
       },
+      getHighThresh(state){
+        return state.high_thresh
+      },
+      getMedThresh(state){
+        return state.med_thresh
+      },
+      getVacationMode(state){
+        return state.vacation_mode
+      },
     },
     actions: {
       async fetchAll() {
@@ -74,6 +84,7 @@ export const useChoreStore = defineStore('chore', {
           this.fetchHistoryItems()
           this.fetchUsers()
           this.fetchWeeklyTotals()
+          this.fetchOptions()
         }
         catch (error) {
           alert(error)
@@ -125,6 +136,18 @@ export const useChoreStore = defineStore('chore', {
         try {
           const data = await axios.get('https://chores.danielleandjohn.love/api/historyitems/')
           this.historyitems = data.data
+        }
+        catch (error) {
+          alert(error)
+          console.log(error)
+        }
+      },
+      async fetchOptions() {
+        try {
+          const data = await axios.get('https://chores.danielleandjohn.love/api/options/')
+          this.vacation_mode = data.data[0].vacation_mode
+          this.med_thresh = data.data[0].med_thresh
+          this.high_thresh = data.data[0].high_thresh
         }
         catch (error) {
           alert(error)

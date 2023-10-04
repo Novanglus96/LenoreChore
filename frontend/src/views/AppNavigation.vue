@@ -52,11 +52,61 @@
                 <v-list>
                     <v-list-item>
                         <v-switch
-                            v-model="vacation"
+                            v-model="chorestore.vacation_mode"
                             color="purple"
                             label="Enable Vacation Mode"
                             hide-details
                         ></v-switch>
+                    </v-list-item>
+                    <v-list-item>
+                        <div>
+                            <div class="text-caption">
+                                Medium Threshold
+                            </div>
+                            <v-slider
+                                v-model="chorestore.med_thresh"
+                                thumb-label="always"
+                                :min=0
+                                :max=100
+                                :step=1
+                            >
+                                <template v-slot:append>
+                                    <v-text-field
+                                        v-model="chorestore.med_thresh"
+                                        hide-details
+                                        single-line
+                                        density="compact"
+                                        type="number"
+                                        style="width: 70px"
+                                    ></v-text-field>
+                                </template>
+                            </v-slider>
+                        </div>
+                    </v-list-item>
+                    <v-list-item>
+                        <div>
+                            <div class="text-caption">
+                                High Threshold
+                            </div>
+                            <v-slider
+                                v-model="chorestore.high_thresh"
+                                thumb-label="always"
+                                :min=0
+                                :max=100
+                                :step=1
+                            >
+                                <template v-slot:append>
+                                    <v-text-field
+                                        v-model="chorestore.high_thresh"
+                                        hide-details
+                                        single-line
+                                        density="compact"
+                                        type="number"
+                                        style="width: 70px"
+                                    ></v-text-field>
+                                </template>
+                            </v-slider>
+                        </div>
                     </v-list-item>
                 </v-list>
 
@@ -107,10 +157,12 @@
 <script setup>
     import { ref } from 'vue';
     import { useUserStore } from '@/stores/user'
+    import { useChoreStore } from '@/stores/chores'
     import AddAreaForm from '@/components/AddAreaForm.vue'
     import AddChoreForm from '@/components/AddChoreForm.vue'
 
     const store = useUserStore();
+    const chorestore = useChoreStore();
 
     const menus = [
         { title: 'Dashboard', url: '/', icon: 'mdi-home' },
@@ -120,9 +172,7 @@
       ]
 
     const menu = ref(false);
-    const vacation = ref(false);
 
-    
 </script>
 
 <style scoped>
