@@ -9,18 +9,19 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = '__all__'
         extra_kwargs = {'password': {'write_only': True}}
-        
-class AreaSerializer(serializers.ModelSerializer):
-    dirtiness = serializers.IntegerField(required=False, read_only=True)
-    dueCount = serializers.IntegerField(required=False, read_only=True)
-    totalCount = serializers.IntegerField(required=False, read_only=True)
-    class Meta:
-        model = Area
-        fields = '__all__'
 
 class AreaGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = AreaGroup
+        fields = '__all__'
+
+class AreaSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
+    dirtiness = serializers.IntegerField(required=False, read_only=True)
+    dueCount = serializers.IntegerField(required=False, read_only=True)
+    totalCount = serializers.IntegerField(required=False, read_only=True)
+    group = AreaGroupSerializer(required=False, allow_null=True)
+    class Meta:
+        model = Area
         fields = '__all__'
 
 class ChoreSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):

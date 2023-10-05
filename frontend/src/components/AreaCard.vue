@@ -3,7 +3,7 @@
         <v-row dense>
           <v-col cols="12" v-for="area in getAreas" :key="area.id">
             <v-card
-              color="primary"
+              :color="area.group.group_color"
             >
               <div class="d-flex flex-no-wrap justify-space-between">
                 <div>
@@ -13,6 +13,7 @@
                   </v-card-title>
 
                   <v-card-subtitle>{{ area.dueCount }} of {{ area.totalCount }} Chore(s) Due</v-card-subtitle>
+                  <v-card-text>{{ area.group.group_name }}</v-card-text>
                   <v-expand-transition>
               <div v-if="area.expand">
                 <v-container>

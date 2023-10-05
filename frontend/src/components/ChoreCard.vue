@@ -11,7 +11,7 @@
     <v-row dense v-for="chore in getFilteredChores" :key="chore.id">
         <v-col cols="12" >
           <v-card
-          :color="chore.active ? 'primary' : 'grey'"
+          :color="chore.active ? chore.area.group.group_color: 'grey'"
           >
             <v-card-item :title="chore.chore_name">
               <template v-slot:subtitle>

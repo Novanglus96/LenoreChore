@@ -5,7 +5,7 @@
       "fields": {
         "group_name": "No Group",
         "group_order": 1,
-        "group_color": "area1"
+        "group_color": "primary"
       }
     }
   ]
