@@ -5,15 +5,35 @@
             <v-card
               :color="area.group.group_color"
             >
-              <div class="d-flex flex-no-wrap justify-space-between">
-                <div>
                   <v-card-title class="text-h5">
-                    <v-icon>{{ area.area_icon }}</v-icon>
-                    {{ area.area_name }}
+                    <v-icon>{{ area.area_icon }}</v-icon>{{area.area_name}}
                   </v-card-title>
-
-                  <v-card-subtitle>{{ area.dueCount }} of {{ area.totalCount }} Chore(s) Due</v-card-subtitle>
-                  <v-card-text>{{ area.group.group_name }}</v-card-text>
+                  <v-card-subtitle>{{ area.group.group_name }}</v-card-subtitle>
+                   <v-card-text class="py-0">
+                    <v-row align="center" no-gutters>
+                      <v-col
+                        class="text-h9"
+                        cols="6"
+                      >
+                        <v-progress-linear
+                          v-model="area.dirtiness"
+                          :color="area.dirtycolor"
+                          height="25"
+                          striped
+                        >
+                          <template v-slot:default="{ value }">
+                            <strong>{{ Math.ceil(value) }}%</strong>
+                          </template>
+                        </v-progress-linear>
+                      </v-col>
+                      <v-col
+                        class="text-h9 text-center"
+                        cols="6"
+                      >
+                        <strong class="text-accent">{{ area.dueCount }}</strong> of <strong class="text-accent">{{ area.totalCount }}</strong> Chore(s) Due
+                      </v-col>
+                    </v-row>
+                      </v-card-text>
                   <v-expand-transition>
               <div v-if="area.expand">
                 <v-container>
@@ -69,18 +89,6 @@
                     </v-btn>
                     <v-btn @click="area.expand = !area.expand" :icon="area.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
                   </v-card-actions>
-                </div>
-                <v-progress-circular
-                  :rotate="360"
-                  :size="125"
-                  :width="15"
-                  :model-value="area.dirtiness"
-                  :color="area.dirtycolor"
-                >
-                  {{ area.dirtiness }}% Dirty
-                </v-progress-circular>
-
-              </div>
             </v-card>
           </v-col>
         </v-row>

@@ -15,7 +15,7 @@ const myCustomLightTheme = {
         warning: '#ffc107',
         info: '#795548',
         success: '#4caf50',
-        area1: '#4CAF50',
+        area1: '#1B5E20',
         area2: '#795548',
         area3: '#607D8B',
         area4: '#009688',

@@ -35,6 +35,7 @@
                     v-model="chore.dirtiness"
                     :color="chore.dirtycolor"
                     height="25"
+                    striped
                   >
                     <template v-slot:default="{ value }">
                       <strong>{{ Math.ceil(value) }}% Dirty</strong>
@@ -43,7 +44,7 @@
                 </v-col>
 
                 <v-col cols="6" class="text-right">
-                  <span :class="chore.isOverdue ? 'text-red' : ''">Due in {{ chore.duedays }} day(s)</span>
+                  <span :class="chore.isOverdue ? 'text-red' : ''">Due in <strong class="text-accent">{{ chore.duedays }}</strong> day(s)</span>
                 </v-col>
               </v-row>
             </v-card-text>

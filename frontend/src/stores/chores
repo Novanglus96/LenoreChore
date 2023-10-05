@@ -55,7 +55,7 @@ export const useChoreStore = defineStore('chore', {
             chore.isOverdue = false
           }
           if (chore.dirtiness <= state.med_thresh ) {
-            chore.dirtycolor = 'sucess'
+            chore.dirtycolor = 'success'
           }else if (chore.dirtiness > state.med_thresh && chore.dirtiness <= state.high_thresh){
             chore.dirtycolor = 'warning'
           }else if (chore.dirtiness > state.high_thresh){
@@ -79,11 +79,11 @@ export const useChoreStore = defineStore('chore', {
             chore.isOverdue = false
           }
           if (chore.dirtiness <= state.med_thresh ) {
-            chore.dirtycolor = 'blue-grey'
+            chore.dirtycolor = 'success'
           }else if (chore.dirtiness > state.med_thresh && chore.dirtiness <= state.high_thresh){
-            chore.dirtycolor = 'yellow'
+            chore.dirtycolor = 'warning'
           }else if (chore.dirtiness > state.high_thresh){
-            chore.dirtycolor = 'red'
+            chore.dirtycolor = 'error'
           }
         })
 
@@ -369,6 +369,7 @@ export const useChoreStore = defineStore('chore', {
           // Add area to local storage
           //this.areas.push(area);
           this.fetchChores();
+          this.fetchAreas();
           this.fetchHistoryItems();
           this.fetchWeeklyTotals();
 
