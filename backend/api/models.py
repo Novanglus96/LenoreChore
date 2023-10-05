@@ -45,7 +45,7 @@ class AreaGroup(models.Model):
 class Area(models.Model):
     area_name = models.CharField(max_length=254)
     area_icon = models.CharField(max_length=254)
-    group = models.ForeignKey(AreaGroup, null=True, on_delete=models.SET_NULL, default=1)
+    group = models.ForeignKey(AreaGroup, null=True, on_delete=models.SET_DEFAULT, default=1)
     area_order = models.IntegerField(default=1)
     def __str__(self):
         return self.area_name
