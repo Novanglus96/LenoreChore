@@ -263,6 +263,24 @@ export const useChoreStore = defineStore('chore', {
           console.log('Error:', error);
         }
       },
+      async editArea(area) {
+        try {
+          console.log("Area Edited", area.id)
+          // Make a POST request to your API endpoint
+          const response = await axios.patch('https://chores.danielleandjohn.love/api/areas/' + area.id + '/', area);
+
+          // Add area to local storage
+          //this.areas.push(area);
+          this.fetchAreas();
+          this.fetchChores();
+
+          // Handle the response here (e.g., show a success message)
+          console.log('Response:', response.data);
+        } catch (error) {
+          // Handle errors (e.g., show an error message)
+          console.log('Error:', error);
+        }
+      },
       async addChore(chore) {
         try {
           // Make a POST request to your API endpoint

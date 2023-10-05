@@ -43,7 +43,91 @@
                 <v-container>
                   <v-row dense>
                     <v-col>
-                      <v-btn icon="mdi-note-edit-outline"></v-btn>
+                      <v-dialog
+                        v-model="area.edit"
+                        persistent
+                        width="1024"
+                      >
+                        <template v-slot:activator="{ props }">
+                          <v-btn icon="mdi-note-edit-outline" v-bind="props"></v-btn>
+                        </template>
+                        <v-card>
+                          <v-card-title>
+                            <span class="text-h5">Edit Area</span>
+                          </v-card-title>
+                          <v-card-text>
+                            <v-container>
+                              <v-row>
+                                <v-col
+                                  cols="12"
+                                  sm="6"
+                                  md="4"
+                                >
+                                  <v-text-field
+                                    label="Area name*"
+                                    required
+                                    v-model="area.area_name"
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col
+                                  cols="12"
+                                  sm="6"
+                                  md="4"
+                                >
+                                  <v-chip-group
+                                    v-model="area.area_icon"
+                                    selected-class="text-deep-purple-accent-4"
+                                    mandatory
+                                  >
+                                    <v-chip 
+                                      v-for="icon in chorestore.areaicons"
+                                      :key="icon"
+                                      :value="icon"
+                                    >
+                                    <v-icon>{{ icon }}</v-icon>
+                                    </v-chip>
+                                  </v-chip-group>
+                                </v-col>
+                              </v-row>
+                              <v-row>
+                                <v-col
+                                  cols="12"
+                                  sm="6"
+                                  md="4"
+                                >
+                                  <v-select
+                                      label="Area Group"
+                                      :items="areagroups"
+                                      item-title="group_name"
+                                      item-value="id"
+                                      v-model="area.group"
+                                      return-object   
+                                  >
+                                  </v-select>
+                                </v-col>
+                              </v-row>
+                            </v-container>
+                            <small>*indicates required field</small>
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                              color="blue-darken-1"
+                              variant="text"
+                              @click="restoreEdit(area)"
+                            >
+                              Close
+                            </v-btn>
+                            <v-btn
+                              color="blue-darken-1"
+                              variant="text"
+                              @click="callEditArea(area)"
+                            >
+                              Save
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
                       <v-dialog
                         v-model="area.delete"
                         persistent
@@ -118,10 +202,19 @@
   const listLink = (areaName) => {
     return '/list/' + areaName;
   }
+  
   const chorestore = useChoreStore();
   const getAreas = computed(() => {
     return chorestore.getAreas;
   });
+  const areagroups = computed(() => {
+    return chorestore.areagroups;
+  });
+  const restoreEdit = async (area) => {
+    area.edit = false;
+    const store = useChoreStore();
+    await store.fetchAreas();
+  }
   const callDeleteArea = async (area) => {
     try {
       const store = useChoreStore();
@@ -130,6 +223,16 @@
       showSnackbar('Area deleted successfully!', 'success');
     } catch (error) {
       showSnackbar('Area not deleted!', 'error');
+    }
+  }
+  const callEditArea = async (area) => {
+    try {
+      const store = useChoreStore();
+      await store.editArea(area);
+      area.edit = false;
+      showSnackbar('Area edited successfully!', 'success');
+    } catch (error) {
+      showSnackbar('Area not edited!', 'error');
     }
   }
   const showSnackbar = (text, color) => {
