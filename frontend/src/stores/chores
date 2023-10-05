@@ -245,6 +245,7 @@ export const useChoreStore = defineStore('chore', {
           // Add area to local storage
           //this.chores.push(chore);
           this.fetchChores();
+          this.fetchAreas();
 
           // Handle the response here (e.g., show a success message)
           console.log('Response:', response.data);

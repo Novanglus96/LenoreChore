@@ -77,7 +77,7 @@ class Area(models.Model):
         return total
 class Chore(models.Model):
     chore_name = models.CharField(max_length=254)
-    area = models.ForeignKey(Area, null=True, on_delete=models.SET_NULL)
+    area = models.ForeignKey(Area, null=True, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
     nextDue = models.DateField(default=date.today)
     lastCompleted = models.DateField(default=date.today)
