@@ -44,7 +44,7 @@
                   mandatory
                 >
                   <v-chip 
-                    v-for="icon in icons"
+                    v-for="icon in chorestore.areaicons"
                     :key="icon"
                     :value="icon"
                   >
@@ -86,9 +86,6 @@
         area_name: '',
         area_icon: 'mdi-home',
       })
-  const icons = ref([
-        'mdi-home', 'mdi-fridge', 'mdi-sofa', 'mdi-water', 'mdi-help', 'mdi-home',
-      ])
 
   const submitForm = async () => {
     try {

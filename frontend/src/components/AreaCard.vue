@@ -6,7 +6,11 @@
               :color="area.group.group_color"
             >
                   <v-card-title class="text-h5">
-                    <v-icon>{{ area.area_icon }}</v-icon>{{area.area_name}}
+                    <v-icon
+                  :icon="area.area_icon"
+                  size="25"
+                  class="me-1 pb-1"
+                ></v-icon>{{area.area_name}}
                   </v-card-title>
                   <v-card-subtitle>{{ area.group.group_name }}</v-card-subtitle>
                    <v-card-text class="py-0">
@@ -39,7 +43,7 @@
                 <v-container>
                   <v-row dense>
                     <v-col>
-                      <v-btn icon="mdi-content-save-outline"></v-btn>
+                      <v-btn icon="mdi-note-edit-outline"></v-btn>
                       <v-dialog
                         v-model="area.delete"
                         persistent
