@@ -31,7 +31,7 @@
                           <v-card-title class="text-h5">
                             Delete this Area?
                           </v-card-title>
-                          <v-card-text>Are you sure you want to delete {{ area.area_name }}? This will also delete {{ area.totalCount }} chores!</v-card-text>
+                          <v-card-text>Are you sure you want to delete <span class="text-secondary">{{ area.area_name }}</span>? This will also delete <span class="text-secondary">{{ area.totalCount }}</span> chores!</v-card-text>
                           <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn

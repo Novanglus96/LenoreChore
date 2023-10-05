@@ -239,7 +239,7 @@
                           <v-card-title class="text-h5">
                             Delete this Chore?
                           </v-card-title>
-                          <v-card-text>Are you sure you want to delete {{ chore.chore_name }} from {{ chore.area.area_name }}?</v-card-text>
+                          <v-card-text>Are you sure you want to delete <span class="text-secondary">{{ chore.chore_name }}</span> from <span class="text-secondary">{{ chore.area.area_name }}</span>?</v-card-text>
                           <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn
