@@ -53,6 +53,23 @@
                 </v-chip-group>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+                <v-select
+                    label="Area Group"
+                    :items="areagroups"
+                    item-title="group_name"
+                    item-value="id"
+                    v-model="formData.group"
+                    return-object   
+                >
+                </v-select>
+              </v-col>
+            </v-row>
           </v-container>
           <small>*indicates required field</small>
         </v-card-text>
@@ -74,26 +91,48 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+      <v-snackbar
+        v-model="snackbar"
+        :color="snackbarColor"
+        :timeout="snackbarTimeout"
+        content-class="centered-text"
+      >
+        {{ snackbarText }}
+      </v-snackbar>
     </v-dialog>
+    
 </template>
 <script setup>
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
   import { useChoreStore } from '@/stores/chores';
 
+  const snackbar = ref(false);
+  const snackbarText = ref('');
+  const snackbarColor = ref('');
+  const snackbarTimeout = ref(1500);
   const chorestore = useChoreStore();
   const dialog = ref(false)
   const formData = ref({
         area_name: '',
         area_icon: 'mdi-home',
       })
-
+  const areagroups = computed(() => {
+    return chorestore.areagroups;
+    });
   const submitForm = async () => {
     try {
       chorestore.addArea(formData.value);
       dialog.value = false;
+      showSnackbar('Area added successfully!', 'success');
     } catch (error) {
       // Handle errors (e.g., show an error message)
       console.log('Error:', error);
+      showSnackbar('Area not added!', 'error');
     }
   };
+  const showSnackbar = (text, color) => {
+    snackbarText.value = text;
+    snackbarColor.value = color;
+    snackbar.value = true;
+  }
 </script>

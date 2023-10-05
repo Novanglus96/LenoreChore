@@ -10,6 +10,7 @@ export const useChoreStore = defineStore('chore', {
   state: () => ({ 
     areas: [],
     chores: [],
+    areagroups: [],
     users: [],
     historyitems: [],
     weeklytotals: [],
@@ -54,6 +55,9 @@ export const useChoreStore = defineStore('chore', {
       })
 
         return state.areas
+      },
+      getAreaGroups(state){
+        return state.areagroups
       },
       getFilteredChores: (state) => (filter) => {
         let tempChores = state.chores
@@ -139,6 +143,7 @@ export const useChoreStore = defineStore('chore', {
           this.fetchUsers()
           this.fetchWeeklyTotals()
           this.fetchOptions()
+          this.fetchAreaGroups()
         }
         catch (error) {
           alert(error)
@@ -149,6 +154,17 @@ export const useChoreStore = defineStore('chore', {
         try {
           const data = await axios.get('https://chores.danielleandjohn.love/api/areas/')
           this.areas = data.data
+          console.log(data.data)
+        }
+        catch (error) {
+          alert(error)
+          console.log(error)
+        }
+      },
+      async fetchAreaGroups() {
+        try {
+          const data = await axios.get('https://chores.danielleandjohn.love/api/areagroups/')
+          this.areagroups = data.data
           console.log(data.data)
         }
         catch (error) {
