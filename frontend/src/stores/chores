@@ -438,6 +438,9 @@ export const useChoreStore = defineStore('chore', {
           if ('last_three_history_items' in chore) {
             delete chore['last_three_history_items']
           }
+          if ('assignee' in chore) {
+            delete chore['assignee']
+          }
           chore.expand = false
 
           // Make a POST request to your API endpoint
