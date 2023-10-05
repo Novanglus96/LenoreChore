@@ -74,18 +74,12 @@
                 <v-container theme="dark" class="bg-secondary">
                   <v-row dense class="bg-secondary">
                     <v-col>
-                      <v-text-field
-                        label="Last Completed"
-                        required
-                        v-model="chore.lastCompleted"
-                      ></v-text-field>
+                      Last Completed
+                      <VueDatePicker v-model="chore.lastCompleted" :format="dateFormat" :preview-format="dateFormat" />
                     </v-col>
                     <v-col>
-                      <v-text-field
-                        label="Next Due"
-                        required
-                        v-model="chore.nextDue"
-                      ></v-text-field>
+                      Next Due
+                      <VueDatePicker v-model="chore.nextDue" :format="dateFormat" :preview-format="dateFormat" />
                     </v-col>
                   </v-row>
                   <v-row dense>
@@ -341,7 +335,7 @@
               </v-dialog>
               <v-btn @click="callClaimChore(chore,getID)" icon="mdi-clipboard-account-outline" :disabled="!chore.active" :color="chore.isAssigned ? 'red' : 'white'"></v-btn>
               <v-btn @click="callToggleChore(chore)" icon="mdi-circle-off-outline" :color="chore.active ? 'red' : 'white'"></v-btn>
-              <v-btn @click="chore.expand = !chore.expand" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
+              <v-btn @click="callExpandChore(chore)" :icon="chore.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
               <v-btn @click="chore.history = !chore.history" icon="mdi-clipboard-text-clock-outline" :color="!chore.history ? 'white' : 'grey'"></v-btn>
             </v-card-actions>
         </v-card>
@@ -402,6 +396,15 @@
   const intervals = computed(() => {
     return chorestore.intervals;
   });
+  const callExpandChore = async (chore) => {
+    if (chore.expand) {
+      chore.expand = false
+      const store = useChoreStore()
+      await store.fetchChores()
+    } else {
+      chore.expand = true
+    }
+  }
   const callSnoozeChore = async (chore) => {
     try {
       const store = useChoreStore();
@@ -416,7 +419,7 @@
     try {
       const store = useChoreStore();
       await store.saveChore(chore);
-
+      chore.epand = false
       showSnackbar('Chore saved successfully!', 'success');
     } catch (error) {
       showSnackbar('Chore not saved!', 'error');

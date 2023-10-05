@@ -413,7 +413,50 @@ export const useChoreStore = defineStore('chore', {
         }
       },
       async saveChore(chore) {
-        console.log('Chore saved', chore.id)
+        try {
+          console.log('Chore saved', chore.id)
+          const dateFormat = (date) => {
+            const formattedDate = new Date(date);
+            const day = formattedDate.getDate();
+            const month = formattedDate.getMonth() + 1;
+            const year = formattedDate.getFullYear();
+        
+            const dateFormat = year + '-' + month + '-' + day;
+        
+            return dateFormat;
+          }
+
+          chore.nextDue = dateFormat(chore.nextDue)
+          chore.lastCompleted = dateFormat(chore.lastCompleted)
+
+          if ('dirtiness' in chore) {
+            delete chore['dirtiness']
+          }
+          if ('duedays' in chore) {
+            delete chore['duedays']
+          }
+          if ('last_three_history_items' in chore) {
+            delete chore['last_three_history_items']
+          }
+          chore.expand = false
+
+          // Make a POST request to your API endpoint
+          const response = await axios.patch('https://chores.danielleandjohn.love/api/chores/' + chore.id + '/', chore);
+
+          // Add area to local storage
+          //this.areas.push(area);
+          
+          this.fetchAreas();
+          this.fetchHistoryItems();
+          this.fetchWeeklyTotals();
+          this.fetchChores();
+
+          // Handle the response here (e.g., show a success message)
+          console.log('Response:', response.data);
+        } catch (error) {
+        // Handle errors (e.g., show an error message)
+        console.log('Error:', error);
+        }
       },
       async deleteChore(chore) {
         console.log('Chore deleted', chore.id)
