@@ -1,5 +1,5 @@
 from rest_framework import routers,serializers,viewsets
-from .models import Area, Chore, HistoryItem, Option, CustomUser, AreaGroup
+from .models import Area, Chore, HistoryItem, Option, CustomUser, AreaGroup, Month
 from django.contrib.auth.models import User
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
@@ -13,6 +13,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class AreaGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = AreaGroup
+        fields = '__all__'
+        
+class MonthSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Month
         fields = '__all__'
 
 class AreaSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
@@ -33,7 +38,7 @@ class ChoreSerializer(WritableNestedModelSerializer, serializers.ModelSerializer
     
     class Meta:
         model = Chore
-        fields = ('id', 'chore_name', 'area', 'active', 'nextDue', 'lastCompleted', 'intervalNumber', 'unit', 'm_jan', 'm_feb', 'm_mar', 'm_apr', 'm_may', 'm_jun', 'm_jul', 'm_aug', 'm_sep', 'm_oct', 'm_nov', 'm_dec', 'assignee', 'effort', 'vacationPause', 'expand', 'dirtiness', 'duedays', 'last_three_history_items')
+        fields = ('id', 'chore_name', 'area', 'active', 'nextDue', 'lastCompleted', 'intervalNumber', 'unit', 'active_months', 'assignee', 'effort', 'vacationPause', 'expand', 'dirtiness', 'duedays', 'last_three_history_items')
     
     def get_last_three_history_items(self, instance):
         # Get the last three HistoryItem objects related to the Chore

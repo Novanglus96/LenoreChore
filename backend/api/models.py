@@ -75,6 +75,12 @@ class Area(models.Model):
     def total_dirtiness(self):
         total = sum(chore.dirtiness for chore in self.chore_set.all())
         return total
+
+class Month(models.Model):
+    name = models.CharField(max_length=20)
+    
+    def __str__(self):
+        return self.name
 class Chore(models.Model):
     chore_name = models.CharField(max_length=254)
     area = models.ForeignKey(Area, null=True, on_delete=models.CASCADE)
@@ -83,18 +89,7 @@ class Chore(models.Model):
     lastCompleted = models.DateField(default=date.today)
     intervalNumber = models.IntegerField(default=1)
     unit = models.CharField(max_length=10, default='day(s)')
-    m_jan = models.BooleanField(default=True)
-    m_feb = models.BooleanField(default=True)
-    m_mar = models.BooleanField(default=True)
-    m_apr = models.BooleanField(default=True)
-    m_may = models.BooleanField(default=True)
-    m_jun = models.BooleanField(default=True)
-    m_jul = models.BooleanField(default=True)
-    m_aug = models.BooleanField(default=True)
-    m_sep = models.BooleanField(default=True)
-    m_oct = models.BooleanField(default=True)
-    m_nov = models.BooleanField(default=True)
-    m_dec = models.BooleanField(default=True)
+    active_months = models.ManyToManyField(Month)
     assignee = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
     effort = models.IntegerField(default=0)
     vacationPause = models.IntegerField(default=0)

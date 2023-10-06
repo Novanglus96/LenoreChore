@@ -1,11 +1,11 @@
 [
-    {
-      "model": "api.AreaGroup",
-      "pk": 1,
-      "fields": {
-        "group_name": "No Group",
-        "group_order": 1,
-        "group_color": "primary"
-      }
+  {
+    "model": "api.AreaGroup",
+    "pk": 1,
+    "fields": {
+      "group_name": "No Group",
+      "group_order": 1,
+      "group_color": "primary"
     }
-  ]
+  }
+]

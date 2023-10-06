@@ -74,6 +74,14 @@
                 <v-container theme="dark" class="bg-secondary">
                   <v-row dense class="bg-secondary">
                     <v-col>
+                      <v-text-field
+                        v-model="chore.chore_name"
+                        label="Chore Name"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row dense class="bg-secondary">
+                    <v-col>
                       <v-menu
                         v-model="chore.lastCompletedPicker"
                         :close-on-content-click="false"
@@ -470,7 +478,7 @@
     try {
       const store = useChoreStore();
       await store.saveChore(chore);
-      chore.epand = false
+      chore.expand = false
       showSnackbar('Chore saved successfully!', 'success');
     } catch (error) {
       showSnackbar('Chore not saved!', 'error');

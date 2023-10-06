@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
-from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer, HistoryItemCreateSerializer, ChoreCompleteSerializer, ChoreSnoozeSerializer, AreaGroupSerializer
-from .models import Area, Chore, HistoryItem, Option, CustomUser, AreaGroup
+from .serializers import AreaSerializer, ChoreSerializer, HistoryItemSerializer, OptionSerializer, CustomUserSerializer, UserLoginSerializer, HistoryItemCreateSerializer, ChoreCompleteSerializer, ChoreSnoozeSerializer, AreaGroupSerializer, MonthSerializer
+from .models import Area, Chore, HistoryItem, Option, CustomUser, AreaGroup, Month
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -103,6 +103,10 @@ class HistoryItemView(viewsets.ModelViewSet):
 class OptionView(viewsets.ModelViewSet):
     serializer_class = OptionSerializer
     queryset = Option.objects.all()
+    
+class MonthView(viewsets.ModelViewSet):
+    serializer_class = MonthSerializer
+    queryset = Month.objects.all()
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
