@@ -156,114 +156,114 @@
                   <v-row dense>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_jan"
+                        v-model="chore.active_months"
                         label="Jan"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="1"
                       ></v-checkbox>
                     </v-col>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_feb"
+                        v-model="chore.active_months"
                         label="Feb"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="2"
                       ></v-checkbox>
                     </v-col>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_mar"
+                        v-model="chore.active_months"
                         label="Mar"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="3"
                       ></v-checkbox>
                     </v-col>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_apr"
+                        v-model="chore.active_months"
                         label="Apr"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="4"
                       ></v-checkbox>
                     </v-col>
                   </v-row>
                   <v-row dense>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_may"
+                        v-model="chore.active_months"
                         label="May"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="5"
                       ></v-checkbox>
                     </v-col>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_jun"
+                        v-model="chore.active_months"
                         label="Jun"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="6"
                       ></v-checkbox>
                     </v-col>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_jul"
+                        v-model="chore.active_months"
                         label="Jul"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="7"
                       ></v-checkbox>
                     </v-col>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_aug"
+                        v-model="chore.active_months"
                         label="Aug"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="8"
                       ></v-checkbox>
                     </v-col>
                   </v-row>
                   <v-row dense>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_sep"
+                        v-model="chore.active_months"
                         label="Sep"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="9"
                       ></v-checkbox>
                     </v-col>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_oct"
+                        v-model="chore.active_months"
                         label="Oct"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="10"
                       ></v-checkbox>
                     </v-col>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_nov"
+                        v-model="chore.active_months"
                         label="Nov"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="11"
                       ></v-checkbox>
                     </v-col>
                     <v-col>
                       <v-checkbox
-                        v-model="chore.m_dec"
+                        v-model="chore.active_months"
                         label="Dec"
                         color="white"
                         hide-details
-                        :model-value="true"
+                        :value="12"
                       ></v-checkbox>
                     </v-col>
                   </v-row>
