@@ -158,7 +158,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Jan"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="1"
                       ></v-checkbox>
@@ -167,7 +167,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Feb"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="2"
                       ></v-checkbox>
@@ -176,7 +176,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Mar"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="3"
                       ></v-checkbox>
@@ -185,7 +185,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Apr"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="4"
                       ></v-checkbox>
@@ -196,7 +196,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="May"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="5"
                       ></v-checkbox>
@@ -205,7 +205,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Jun"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="6"
                       ></v-checkbox>
@@ -214,7 +214,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Jul"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="7"
                       ></v-checkbox>
@@ -223,7 +223,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Aug"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="8"
                       ></v-checkbox>
@@ -234,7 +234,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Sep"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="9"
                       ></v-checkbox>
@@ -243,7 +243,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Oct"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="10"
                       ></v-checkbox>
@@ -252,7 +252,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Nov"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="11"
                       ></v-checkbox>
@@ -261,7 +261,7 @@
                       <v-checkbox
                         v-model="chore.active_months"
                         label="Dec"
-                        color="white"
+                        color="accent"
                         hide-details
                         :value="12"
                       ></v-checkbox>

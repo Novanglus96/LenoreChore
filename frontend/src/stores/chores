@@ -297,7 +297,7 @@ export const useChoreStore = defineStore('chore', {
           } else if ( chore.unit == 'year(s)' ){
             newDate.setFullYear(today.getFullYear()+chore.intervalNumber)
           }
-          chore.active_months = active_months
+          
           chore.nextDue = newDate.toISOString().split('T')[0]
           const response = await axios.post('https://chores.danielleandjohn.love/api/chores/', chore);
           // Add area to local storage
