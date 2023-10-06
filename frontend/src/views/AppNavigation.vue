@@ -24,6 +24,7 @@
             <v-list v-if="store.isAdmin">
                 <AddAreaForm/>
                 <AddChoreForm/>
+                <AddAreaGroupForm/>
             </v-list>
         </v-menu>
         <v-app-bar-title>Chores</v-app-bar-title>
@@ -160,6 +161,7 @@
     import { useChoreStore } from '@/stores/chores'
     import AddAreaForm from '@/components/AddAreaForm.vue'
     import AddChoreForm from '@/components/AddChoreForm.vue'
+    import AddAreaGroupForm from '@/components/AddAreaGroupForm.vue'
 
     const store = useUserStore();
     const chorestore = useChoreStore();
