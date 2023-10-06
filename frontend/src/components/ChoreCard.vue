@@ -82,52 +82,10 @@
                   </v-row>
                   <v-row dense class="bg-secondary">
                     <v-col>
-                      <v-menu
-                        v-model="chore.lastCompletedPicker"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ props }">
-                          <v-text-field
-                            v-model="chore.lastCompleted"
-                            label="Last Completed"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="props"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="chore.lastCompleted"
-                          hide-actions
-                        ></v-date-picker>
-                      </v-menu>
+                      <VueDatePicker v-model="chore.lastCompleted" timezone="America/New_York" model-type="yyyy-MM-dd" :enable-time-picker="false" auto-apply format="yyyy-MM-dd"></VueDatePicker>
                     </v-col>
                     <v-col>
-                      <v-menu
-                        v-model="chore.nextDuePicker"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ props }">
-                          <v-text-field
-                            v-model="chore.nextDue"
-                            label="Next Due"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="props"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="chore.nextDue"
-                          hide-actions
-                        ></v-date-picker>
-                      </v-menu>
+                      <VueDatePicker v-model="chore.nextDue" timezone="America/New_York" model-type="yyyy-MM-dd" :enable-time-picker="false" auto-apply format="yyyy-MM-dd"></VueDatePicker>
                     </v-col>
                   </v-row>
                   <v-row dense>
@@ -360,28 +318,7 @@
                   <v-card-title>Snooze Chore</v-card-title>
                   <v-divider></v-divider>
                   <v-card-text style="height: 500px;">
-                    <v-menu
-                        v-model="chore.snoozePicker"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ props }">
-                          <v-text-field
-                            v-model="chore.nextDue"
-                            label="Next Due"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="props"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="chore.nextDue"
-                          hide-actions
-                        ></v-date-picker>
-                      </v-menu>
+                    <VueDatePicker v-model="chore.nextDue" timezone="America/New_York" model-type="yyyy-MM-dd" :enable-time-picker="false" auto-apply format="yyyy-MM-dd"></VueDatePicker>
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-card-actions>
@@ -425,7 +362,8 @@
   import { useChoreStore } from '@/stores/chores';
   import { useUserStore } from '@/stores/user';
   import { useRoute, useRouter } from 'vue-router';
-  import { VDatePicker } from 'vuetify/labs/VDatePicker';
+  import VueDatePicker from '@vuepic/vue-datepicker';
+  import '@vuepic/vue-datepicker/dist/main.css'
 
   const route = useRoute();
   const router = useRouter();

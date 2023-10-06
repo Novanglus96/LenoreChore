@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from "axios"
 import { useUserStore  } from './user'
+import { format, parseISO } from 'date-fns'
 
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
@@ -418,19 +419,9 @@ export const useChoreStore = defineStore('chore', {
       async saveChore(chore) {
         try {
           console.log('Chore saved', chore.id)
-          const dateFormat = (date) => {
-            const formattedDate = new Date(date);
-            const day = formattedDate.getDate();
-            const month = formattedDate.getMonth() + 1;
-            const year = formattedDate.getFullYear();
-        
-            const dateFormat = year + '-' + month + '-' + day;
-        
-            return dateFormat;
-          }
 
-          chore.nextDue = dateFormat(chore.nextDue)
-          chore.lastCompleted = dateFormat(chore.lastCompleted)
+          chore.nextDue = format(parseISO(chore.nextDue), 'yyyy-MM-dd')
+          chore.lastCompleted = format(parseISO(chore.lastCompleted), 'yyyy-MM-dd')
 
           if ('dirtiness' in chore) {
             delete chore['dirtiness']
