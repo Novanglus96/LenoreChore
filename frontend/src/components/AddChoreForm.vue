@@ -105,7 +105,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Jan"
-                color="red"
+                color="primary"
                 hide-details
                 :value="1"
               >
@@ -119,7 +119,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Feb"
-                color="red"
+                color="primary"
                 hide-details
                 :value="2"
               >
@@ -133,7 +133,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Mar"
-                color="red"
+                color="primary"
                 hide-details
                 :value="3"
               >
@@ -149,7 +149,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Apr"
-                color="red"
+                color="primary"
                 hide-details
                 :value="4"
               >
@@ -163,7 +163,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="May"
-                color="red"
+                color="primary"
                 hide-details
                 :value="5"
               >
@@ -177,7 +177,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Jun"
-                color="red"
+                color="primary"
                 hide-details
                 :value="6"
               >
@@ -193,7 +193,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Jul"
-                color="red"
+                color="primary"
                 hide-details
                 :value="7"
               >
@@ -207,7 +207,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Aug"
-                color="red"
+                color="primary"
                 hide-details
                 :value="8"
               >
@@ -221,7 +221,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Sep"
-                color="red"
+                color="primary"
                 hide-details
                 :value="9"
               >
@@ -237,7 +237,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Oct"
-                color="red"
+                color="primary"
                 hide-details
                 :value="10"
               >
@@ -251,7 +251,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Nov"
-                color="red"
+                color="primary"
                 hide-details
                 :value="11"
               >
@@ -265,7 +265,7 @@
               <v-checkbox
                 v-model="formData.active_months"
                 label="Dec"
-                color="red"
+                color="primary"
                 hide-details
                 :value="12"
               >
