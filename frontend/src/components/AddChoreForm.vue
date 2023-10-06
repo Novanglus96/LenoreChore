@@ -103,11 +103,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_jan"
+                v-model="formData.active_months"
                 label="Jan"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="1"
               >
               </v-checkbox>
                   </v-col>
@@ -117,11 +117,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_feb"
+                v-model="formData.active_months"
                 label="Feb"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="2"
               >
               </v-checkbox>
                   </v-col>
@@ -131,11 +131,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_mar"
+                v-model="formData.active_months"
                 label="Mar"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="3"
               >
               </v-checkbox>
                   </v-col>
@@ -147,11 +147,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_apr"
+                v-model="formData.active_months"
                 label="Apr"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="4"
               >
               </v-checkbox>
                   </v-col>               
@@ -161,11 +161,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_may"
+                v-model="formData.active_months"
                 label="May"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="5"
               >
               </v-checkbox>
                   </v-col>
@@ -175,11 +175,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_jun"
+                v-model="formData.active_months"
                 label="Jun"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="6"
               >
               </v-checkbox>
                   </v-col>
@@ -191,11 +191,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_jul"
+                v-model="formData.active_months"
                 label="Jul"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="7"
               >
               </v-checkbox>
                   </v-col>
@@ -205,11 +205,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_aug"
+                v-model="formData.active_months"
                 label="Aug"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="8"
               >
               </v-checkbox>
                   </v-col>               
@@ -219,11 +219,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_sep"
+                v-model="formData.active_months"
                 label="Sep"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="9"
               >
               </v-checkbox>
                   </v-col>
@@ -235,11 +235,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_oct"
+                v-model="formData.active_months"
                 label="Oct"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="10"
               >
               </v-checkbox>
                   </v-col>
@@ -249,11 +249,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_nov"
+                v-model="formData.active_months"
                 label="Nov"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="11"
               >
               </v-checkbox>
                   </v-col>
@@ -263,11 +263,11 @@
                 md="4"
               >
               <v-checkbox
-                v-model="formData.m_dec"
+                v-model="formData.active_months"
                 label="Dec"
                 color="red"
                 hide-details
-                :model-value="true"
+                :value="12"
               >
               </v-checkbox>
                   </v-col>
@@ -321,18 +321,7 @@
         area: '',
         unit: '',
         effort: 1,
-        m_jan: true,
-        m_feb: true,
-        m_mar: true,
-        m_apr: true,
-        m_may: true,
-        m_jun: true,
-        m_jul: true,
-        m_aug: true,
-        m_sep: true,
-        m_oct: true,
-        m_nov: true,
-        m_dec: true,
+        active_months: [1,2,3,4,5,6,7,8,9,10,11,12],
         intervalNumber: '',
       })
   const areas = computed(() => {

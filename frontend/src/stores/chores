@@ -285,20 +285,7 @@ export const useChoreStore = defineStore('chore', {
       async addChore(chore) {
         try {
           // Make a POST request to your API endpoint
-          const active_months =  [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12
-        ]
+          
           const newDate = new Date()
           const today = new Date()
           if ( chore.unit == 'day(s)' ){
