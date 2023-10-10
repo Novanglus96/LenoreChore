@@ -378,17 +378,8 @@ export const useChoreStore = defineStore('chore', {
       },
       async snoozeChore(chore) {
         const data = {}
-        const dateFormat = (date) => {
-          const day = date.getDate();
-          const month = date.getMonth() + 1;
-          const year = date.getFullYear();
-      
-          const dateFormat = year + '-' + month + '-' + day;
-      
-          return dateFormat;
-        }
 
-        data.next_due_date = dateFormat(chore.nextDue)
+        data.next_due_date = format(parseISO(chore.nextDue), 'yyyy-MM-dd')
         
         console.log('Chore snoozed', chore.id, data)
         try {
