@@ -26,7 +26,7 @@
             </v-card-item>
 
             <v-card-text class="py-0">
-              <v-row align="center" no-gutters>
+              <v-row align="center" no-gutters v-if="chore.active">
                 <v-col
                   class="text-h9"
                   cols="6"
@@ -43,7 +43,7 @@
                   </v-progress-linear>
                 </v-col>
 
-                <v-col cols="6" class="text-right">
+                <v-col cols="6" class="text-right" v-if="chore.active">
                   <span :class="chore.isOverdue ? 'text-red' : ''">Due in <strong class="text-accent">{{ chore.duedays }}</strong> day(s)</span>
                 </v-col>
               </v-row>

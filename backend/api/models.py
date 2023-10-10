@@ -52,7 +52,7 @@ class Area(models.Model):
     @property
     def dirtiness(self):
         total_dirtiness = self.total_dirtiness()
-        total_chores = self.chore_set.count()
+        total_chores = self.chore_set.filter(active=True).count()
 
         if total_chores > 0:
             # Calculate the percentage if there are chores
@@ -66,14 +66,14 @@ class Area(models.Model):
     @property
     def dueCount(self):
         today = date.today().isoformat()
-        count = self.chore_set.filter(nextDue__lte=today).count()
+        count = self.chore_set.filter(active=True, nextDue__lte=today).count()
         return count
     @property
     def totalCount(self):
-        count = self.chore_set.count()
+        count = self.chore_set.filter(active=True).count()
         return count
     def total_dirtiness(self):
-        total = sum(chore.dirtiness for chore in self.chore_set.all())
+        total = sum(chore.dirtiness for chore in self.chore_set.filter(active=True))
         return total
 
 class Month(models.Model):
