@@ -21,7 +21,7 @@ class AreaView(viewsets.ModelViewSet):
     queryset = Area.objects.all()
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     ordering_fields = '__all__'
-    ordering = ['group','area_order','area_name']
+    ordering = ['group__group_order','area_order','area_name']
 
 class AreaGroupView(viewsets.ModelViewSet):
     serializer_class = AreaGroupSerializer
