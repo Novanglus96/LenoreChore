@@ -1,11 +1,43 @@
 <template>
   <v-container>
     <v-row dense>
-      <v-col cols="12">
-        <v-chip-group v-model="filter">
-          <v-chip color="primary" key="All" class="ma-2" label value="All" @click="applyFilter('All')"><v-icon start icon="mdi-all-inclusive"></v-icon>All</v-chip>
-          <v-chip color="primary" v-for="area in getAreas" :key="area.area_name" class="ma-2" label :value="area.area_name" @click="applyFilter(area.area_name)"><v-icon start :icon="area.area_icon"></v-icon>{{ area.area_name }}</v-chip>
-        </v-chip-group>
+      <v-col cols="8">
+        <v-select
+          v-model="areafilter"
+          label="Area"
+          :items="getAreaFilter"
+          item-title="name"
+          item-value="key"
+          @select="applyFilter(areafilter, dayfilter, assigneefilter, showDisabled)"
+        >
+        </v-select>
+      </v-col>
+      <v-col cols="4">
+        <v-checkbox label="Disabled?" v-model="showDisabled" @change="applyFilter(areafilter, dayfilter, assigneefilter, showDisabled)"></v-checkbox>
+      </v-col>
+    </v-row>
+    <v-row dense>
+      <v-col>
+        <v-select
+          v-model="dayfilter"
+          label="TimeFrame"
+          :items="getDayFilter"
+          item-title="name"
+          item-value="days"
+          @select="applyFilter(areafilter, dayfilter, assigneefilter, showDisabled)"
+        >
+        </v-select>
+      </v-col>
+      <v-col>
+        <v-select
+          v-model="assigneefilter"
+          label="Assignee"
+          :items="getAssigneeFilter"
+          item-title="fullname"
+          item-value="value"
+          @select="applyFilter(areafilter, dayfilter, assigneefilter, showDisabled)"
+        >
+        </v-select>
       </v-col>
     </v-row>
     <v-row dense v-for="chore in getFilteredChores" :key="chore.id">
@@ -367,7 +399,10 @@
 
   const route = useRoute();
   const router = useRouter();
-  const filter = ref(route.params.areaName);
+  const areafilter = ref(route.params.areaName);
+  const dayfilter = ref(-99);
+  const assigneefilter = ref(0);
+  const showDisabled = ref(false);
   const snackbar = ref(false);
   const snackbarText = ref('');
   const snackbarColor = ref('');
@@ -375,15 +410,21 @@
   const chorestore = useChoreStore();
   const userstore = useUserStore();
   const getFilteredChores = computed(() => {
-    return chorestore.getFilteredChores(filter.value);
+    return chorestore.getFilteredChores(areafilter.value, dayfilter.value, assigneefilter.value, showDisabled.value);
   });
   const applyFilter = (areaName) => {
-    filter.value = areaName;
+    areafilter.value = areaName;
     router.push({ name: 'listfilter', params: { areaName }});
   }
-  const getAreas = computed(() => {
-    return chorestore.getAreas;
-  });
+  const getAreaFilter = computed(() => {
+    return chorestore.getAreaFilter;
+  })
+  const getDayFilter = computed(() => {
+    return chorestore.getDayFilter;
+  })
+  const getAssigneeFilter = computed(() => {
+    return chorestore.getAssigneeFilter;
+  })
   const getID = computed(() => {
     return userstore.getID;
   });

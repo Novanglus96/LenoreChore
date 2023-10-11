@@ -169,6 +169,7 @@
     const menus = [
         { title: 'Dashboard', url: '/', icon: 'mdi-home' },
         { title: 'List', url: '/list/All', icon: 'mdi-view-list' },
+        { title: 'Views', url: '/views', icon: 'mdi-eye-outline'},
         { title: 'Graphs', url: '/graphs', icon: 'mdi-chart-bar' },
         { title: 'History', url: '/history', icon: 'mdi-clipboard-clock-outline' },
       ]

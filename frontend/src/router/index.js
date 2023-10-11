@@ -8,6 +8,7 @@ import SettingsView from '../views/SettingsView.vue'
 import LogoutView from '../views/LogoutView.vue'
 import LoginView from '../views/LoginView.vue'
 import FourView from '../views/FourView.vue'
+import ViewsView from '../views/ViewsView.vue'
 
 const routes = [
   {
@@ -20,6 +21,12 @@ const routes = [
     path: '/list',
     name: 'list',
     component: ListView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/views',
+    name: 'views',
+    component: ViewsView,
     meta: { requiresAuth: true },
   },
   {

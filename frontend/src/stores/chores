@@ -17,6 +17,30 @@ export const useChoreStore = defineStore('chore', {
     weeklytotals: [],
     units: ['day(s)', 'week(s)', 'month(s)', 'year(s)'],
     intervals: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+    dayfilter: [
+      {
+        name: 'All',
+        days: -99,
+      },
+      {
+        name: 'Due Today',
+        days: 0,
+      },
+      {
+        name: 'Due Tomorrow',
+        days: 1,
+      },
+      {
+        name: 'Due within 3 Days',
+        days: 3,
+      },
+      {
+        name: 'Due within a week',
+        days: 7,
+      },
+    ],
+    areafilter: [],
+    assigneefilter: [],
     areaicons: [
       'mdi-fridge',
       'mdi-stove',
@@ -57,16 +81,78 @@ export const useChoreStore = defineStore('chore', {
 
         return state.areas
       },
+      getAreaFilter(state){
+        const areafilter = []
+        state.areas.forEach((area) => {
+          const temp = {}
+          temp.name = area.area_name
+          temp.key = area.area_name
+          areafilter.push(temp)
+        })
+        const tempall = {
+          name: 'All',
+          key: 'All',
+        }
+        areafilter.unshift(tempall)
+        return areafilter
+      },
+      getAssigneeFilter(state){
+        const assigneefilter = []
+        state.users.forEach((user) => {
+          const temp = {}
+          temp.fullname = user.fullname
+          temp.value = user.id
+          assigneefilter.push(temp)
+        })
+        const tempall = {
+          fullname: 'All',
+          value: 0
+        }
+        assigneefilter.unshift(tempall)
+        return assigneefilter
+      },
+      getDayFilter(state){
+        return state.dayfilter
+      },
       getAreaGroups(state){
         return state.areagroups
       },
-      getFilteredChores: (state) => (filter) => {
+      getFilteredChores: (state) => (area, days, assignee, showDisabled) => {
+        console.log("show disabled:", showDisabled)
         let tempChores = state.chores
         
-        if (filter != 'All' && filter) {
+        if (showDisabled == false) {
           tempChores = tempChores.filter((chore) => {
-            return (chore.area.area_name == filter)
+            return (chore.active == true)
           })
+        }
+
+        if (area != 'All' && area) {
+          tempChores = tempChores.filter((chore) => {
+            return (chore.area.area_name == area)
+          })
+        }
+
+        const filterAssignees = (item) => {
+          if (!item.assignee) {
+            return false;
+          } else {
+            if (item.assignee.id == assignee){
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }
+        
+        if (days != -99 && days != null) {
+          tempChores = tempChores.filter((chore) => {
+            return (chore.duedays <= days)
+          })
+        }
+
+        if (assignee != 0 && assignee) {
+          tempChores = tempChores.filter(filterAssignees);
         }
 
         tempChores.forEach((chore) => {
