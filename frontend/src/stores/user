@@ -40,7 +40,6 @@ export const useUserStore = defineStore('user', {
       },
       async updateProfile(user) {
         try {
-          console.log("User profile updated", user.id)
           // Make a POST request to your API endpoint
           const response = await axios.patch('https://chores.danielleandjohn.love/api/users/' + user.id + '/', user);
 
@@ -48,8 +47,6 @@ export const useUserStore = defineStore('user', {
           //this.areas.push(area);
           this.loginUser(user.first_name, user.last_name, user.email, user.isAdmin, user.male, user.id, user.user_color);
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);

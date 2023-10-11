@@ -118,7 +118,6 @@ export const useChoreStore = defineStore('chore', {
         return state.areagroups
       },
       getFilteredChores: (state) => (area, days, assignee, showDisabled) => {
-        console.log("show disabled:", showDisabled)
         let tempChores = state.chores
         
         if (showDisabled == false) {
@@ -241,7 +240,6 @@ export const useChoreStore = defineStore('chore', {
         try {
           const data = await axios.get('https://chores.danielleandjohn.love/api/areas/')
           this.areas = data.data
-          console.log(data.data)
         }
         catch (error) {
           alert(error)
@@ -252,7 +250,6 @@ export const useChoreStore = defineStore('chore', {
         try {
           const data = await axios.get('https://chores.danielleandjohn.love/api/areagroups/')
           this.areagroups = data.data
-          console.log(data.data)
         }
         catch (error) {
           alert(error)
@@ -263,7 +260,6 @@ export const useChoreStore = defineStore('chore', {
         try {
           const data = await axios.get('https://chores.danielleandjohn.love/api/chores/')
           this.chores = data.data
-          console.log('Fetched Chores:', data.data)
         }
         catch (error) {
           alert(error)
@@ -328,8 +324,6 @@ export const useChoreStore = defineStore('chore', {
           this.fetchHistoryItems();
           this.fetchWeeklyTotals();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
@@ -344,8 +338,6 @@ export const useChoreStore = defineStore('chore', {
           //this.areas.push(area);
           this.fetchAreas();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
@@ -360,8 +352,6 @@ export const useChoreStore = defineStore('chore', {
           //this.areas.push(area);
           this.fetchAreaGroups();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
@@ -369,7 +359,6 @@ export const useChoreStore = defineStore('chore', {
       },
       async editArea(area) {
         try {
-          console.log("Area Edited", area.id)
           // Make a POST request to your API endpoint
           const response = await axios.patch('https://chores.danielleandjohn.love/api/areas/' + area.id + '/', area);
 
@@ -378,8 +367,6 @@ export const useChoreStore = defineStore('chore', {
           this.fetchAreas();
           this.fetchChores();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
@@ -408,15 +395,12 @@ export const useChoreStore = defineStore('chore', {
           this.fetchChores();
           this.fetchAreas();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
         }
       },
       async claimChore(chore,user) {
-        console.log('Chore claimed', chore.id)
 
         const data = {
           "assignee": { 'id': ''}
@@ -435,8 +419,6 @@ export const useChoreStore = defineStore('chore', {
           //this.areas.push(area);
           this.fetchChores();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
@@ -444,7 +426,6 @@ export const useChoreStore = defineStore('chore', {
       },
       async completeChore(chore) {
 
-        console.log('Chore completed', chore.id)
         try {
           // Make a POST request to your API endpoint
           const response = await axios.patch('https://chores.danielleandjohn.love/api/chore-complete/' + chore.id +'/');
@@ -454,9 +435,7 @@ export const useChoreStore = defineStore('chore', {
           this.addHistoryItem(chore);
           this.fetchChores();
           this.fetchAreas();
-          
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
+
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
@@ -467,7 +446,6 @@ export const useChoreStore = defineStore('chore', {
 
         data.next_due_date = format(parseISO(chore.nextDue), 'yyyy-MM-dd')
         
-        console.log('Chore snoozed', chore.id, data)
         try {
           // Make a POST request to your API endpoint
           const response = await axios.patch('https://chores.danielleandjohn.love/api/chore-snooze/' + chore.id +'/', data);
@@ -475,15 +453,13 @@ export const useChoreStore = defineStore('chore', {
           // Add area to local storage
           //this.areas.push(area);
           this.fetchChores();
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
+
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
         }
       },
       async toggleChore(chore) {
-        console.log('Chore toggled', chore.id)
 
         const data = {
           "active": ''
@@ -502,8 +478,6 @@ export const useChoreStore = defineStore('chore', {
           //this.areas.push(area);
           this.fetchChores();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
@@ -511,7 +485,6 @@ export const useChoreStore = defineStore('chore', {
       },
       async saveChore(chore) {
         try {
-          console.log('Chore saved', chore.id)
 
           chore.nextDue = format(parseISO(chore.nextDue), 'yyyy-MM-dd')
           chore.lastCompleted = format(parseISO(chore.lastCompleted), 'yyyy-MM-dd')
@@ -529,7 +502,6 @@ export const useChoreStore = defineStore('chore', {
             delete chore['assignee']
           }
           chore.expand = false
-          console.log('Save Chore:', chore)
           // Make a POST request to your API endpoint
           const response = await axios.patch('https://chores.danielleandjohn.love/api/chores/' + chore.id + '/', chore);
 
@@ -541,15 +513,12 @@ export const useChoreStore = defineStore('chore', {
           this.fetchWeeklyTotals();
           this.fetchChores();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
         // Handle errors (e.g., show an error message)
         console.log('Error:', error);
         }
       },
       async deleteChore(chore) {
-        console.log('Chore deleted', chore.id)
 
         try {
           // Make a POST request to your API endpoint
@@ -562,15 +531,12 @@ export const useChoreStore = defineStore('chore', {
           this.fetchHistoryItems();
           this.fetchWeeklyTotals();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
         }
       },
       async deleteArea(area) {
-        console.log('Area deleted', area.id)
 
         try {
           // Make a POST request to your API endpoint
@@ -583,8 +549,6 @@ export const useChoreStore = defineStore('chore', {
           this.fetchHistoryItems();
           this.fetchWeeklyTotals();
 
-          // Handle the response here (e.g., show a success message)
-          console.log('Response:', response.data);
         } catch (error) {
           // Handle errors (e.g., show an error message)
           console.log('Error:', error);
