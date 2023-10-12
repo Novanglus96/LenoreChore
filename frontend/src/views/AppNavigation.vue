@@ -39,7 +39,7 @@
             </template>
 
             <v-card min-width="300">
-                <v-list>
+                <v-list bg-color="accent">
                     <v-list-item
                         :prepend-avatar="store.avatar"
                     >
@@ -48,7 +48,7 @@
                     </v-list-item>
                 </v-list>
 
-                <v-divider :thickness="3" color="error"></v-divider>
+                <v-divider :thickness="3" color="accent"></v-divider>
 
                 <v-list>
                     <v-list-item>
