@@ -19,7 +19,6 @@ services:
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
-      - ./backup:/backup
     expose:
       - 8000
     depends_on:
@@ -34,6 +33,7 @@ services:
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./backup:/backup
     env_file:
       - ./.env.db
     networks:
