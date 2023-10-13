@@ -43,9 +43,13 @@
             <v-row>
               <v-col>
                 Pick Your Avatar
-                <v-radio-group v-model="formData.male">
-                  <v-radio :value="true"><v-avatar image="male_avatar.jpg"></v-avatar></v-radio>
-                  <v-radio :value="false"><v-avatar image="female_avatar.jpg"></v-avatar></v-radio>
+                <v-radio-group v-model="formData.male" v-if="!userstore.isChild">
+                  <v-radio :value="true"><v-avatar image="adult_male_avatar.jpg"></v-avatar></v-radio>
+                  <v-radio :value="false"><v-avatar image="adult_female_avatar.jpg"></v-avatar></v-radio>
+                </v-radio-group>
+                <v-radio-group v-model="formData.male" v-if="userstore.isChild">
+                  <v-radio :value="true"><v-avatar image="child_male_avatar.jpg"></v-avatar></v-radio>
+                  <v-radio :value="false"><v-avatar image="child_female_avatar.jpg"></v-avatar></v-radio>
                 </v-radio-group>
               </v-col>
               <v-col>
