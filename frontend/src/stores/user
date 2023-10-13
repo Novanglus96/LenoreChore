@@ -21,15 +21,25 @@ export const useUserStore = defineStore('user', {
         this.id = id
         this.user_color = user_color
         this.male = male
-        if (male) {
-          this.avatar = 'male_avatar.jpg';
-        } else {
-          this.avatar = 'female_avatar.jpg';
-        }
+        
         if (groups.includes(1)){
           this.isChild = true
         } else {
           this.isChild = false
+        }
+
+        if (male) {
+          if (this.isChild) {
+            this.avatar = 'child_male_avatar.jpg'
+          } else {
+            this.avatar = 'adult_male_avatar.jpg';
+          }
+        } else {
+          if (this.isChild) {
+            this.avatar = 'child_female_avatar.jpg'
+          } else {
+            this.avatar = 'adult_female_avatar.jpg';
+          }
         }
       },
       logoutUser() {
