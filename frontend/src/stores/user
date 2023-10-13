@@ -6,13 +6,13 @@ import axios from "axios"
 // and `Store` (e.g. `useUserStore`, `useCartStore`, `useProductStore`)
 // the first argument is a unique id of the store across your application
 export const useUserStore = defineStore('user', {
-    state: () => ({ firstname: 'FirstName', lastname: 'LastName', email: 'someone@someplace.org', isAdmin: false, isLoggedIn: false, avatar: 'male_avatar.png', id: '', user_color: '', male: true }),
+    state: () => ({ firstname: 'FirstName', lastname: 'LastName', email: 'someone@someplace.org', isAdmin: false, isLoggedIn: false, avatar: 'male_avatar.png', id: '', user_color: '', male: true, isChild: false }),
     getters: {
       fullname: (state) => state.firstname + ' ' + state.lastname,
       getID: (state) => state.id,
     },
     actions: {
-      loginUser(firstname, lastname, email, isAdmin, male, id, user_color) {
+      loginUser(firstname, lastname, email, isAdmin, male, id, user_color, groups) {
         this.firstname = firstname
         this.lastname = lastname
         this.email = email
@@ -25,6 +25,11 @@ export const useUserStore = defineStore('user', {
           this.avatar = 'male_avatar.jpg';
         } else {
           this.avatar = 'female_avatar.jpg';
+        }
+        if (groups.includes(1)){
+          this.isChild = true
+        } else {
+          this.isChild = false
         }
       },
       logoutUser() {

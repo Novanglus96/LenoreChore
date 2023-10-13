@@ -125,8 +125,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
                 # Retrieve or create a token for the authenticated user
                 token, _ = Token.objects.get_or_create(user=user)
+                
+                groups_data = CustomUserSerializer(user).data.get('groups')
 
-                return Response({'token': token.key, 'firstname':  user.first_name, 'lastname': user.last_name, 'email': user.email, 'isAdmin': user.is_superuser, 'male': user.male, 'id': user.id, 'detail': 'Login successful'}, status=status.HTTP_200_OK)
+                return Response({'token': token.key, 'firstname':  user.first_name, 'lastname': user.last_name, 'email': user.email, 'isAdmin': user.is_superuser, 'male': user.male, 'id': user.id, 'groups': groups_data, 'detail': 'Login successful'}, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 

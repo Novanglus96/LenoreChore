@@ -84,7 +84,7 @@ export default {
 
         // Store the token in local storage or Vuex store
         localStorage.setItem('authToken', token);
-        this.loginUser(response.data.firstname, response.data.lastname, response.data.email, response.data.isAdmin, response.data.male, response.data.id, response.data.user_color)
+        this.loginUser(response.data.firstname, response.data.lastname, response.data.email, response.data.isAdmin, response.data.male, response.data.id, response.data.user_color, response.data.groups)
 
         //this.userStore.picture = response.data.picture
         

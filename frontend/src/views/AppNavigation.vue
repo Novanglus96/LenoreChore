@@ -21,10 +21,10 @@
                 </v-list-item>
             </v-list>
             <v-divider></v-divider>
-            <v-list v-if="store.isAdmin">
-                <AddAreaForm/>
-                <AddChoreForm/>
-                <AddAreaGroupForm/>
+            <v-list v-if="!store.isChild">
+                <AddAreaForm />
+                <AddChoreForm />
+                <AddAreaGroupForm />
             </v-list>
         </v-menu>
         <v-app-bar-title>Chores</v-app-bar-title>
@@ -51,7 +51,7 @@
                 <v-divider :thickness="3" color="accent"></v-divider>
 
                 <v-list>
-                    <v-list-item>
+                    <v-list-item v-if="!store.isChild">
                         <v-switch
                             v-model="chorestore.vacation_mode"
                             color="purple"
@@ -59,7 +59,7 @@
                             hide-details
                         ></v-switch>
                     </v-list-item>
-                    <v-list-item>
+                    <v-list-item v-if="store.isAdmin">
                         <div>
                             <div class="text-caption">
                                 Medium Threshold
@@ -84,7 +84,7 @@
                             </v-slider>
                         </div>
                     </v-list-item>
-                    <v-list-item>
+                    <v-list-item v-if="store.isAdmin">
                         <div>
                             <div class="text-caption">
                                 High Threshold
