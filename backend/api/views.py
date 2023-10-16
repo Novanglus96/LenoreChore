@@ -104,6 +104,45 @@ class OptionView(viewsets.ModelViewSet):
     serializer_class = OptionSerializer
     queryset = Option.objects.all()
     
+    @action(detail=False, methods=['POST'])
+    def enable_vacation_mode(self, request):
+        # Retrieve the Option object (consider adding a condition to ensure only one Option exists)
+        option = Option.objects.first()
+
+        # Set vacation_mode to True and save the object
+        option.vacation_mode = True
+        option.save()
+
+        chores = Chore.objects.all()
+        for chore in chores:
+            chore.active = False
+            chore.vacationPause = chore.duedays
+            chore.save()
+
+        return Response({'message': 'Vacation mode enabled'}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['POST'])
+    def disable_vacation_mode(self, request):
+        # Retrieve the Option object (consider adding a condition to ensure only one Option exists)
+        option = Option.objects.first()
+
+        # Set vacation_mode to False and save the object
+        option.vacation_mode = False
+        option.save()
+
+        current_month = date.today().month
+        
+        chores = Chore.objects.filter(active_months__in=[current_month])
+        
+        for chore in chores:
+            next_due_date = date.today() + timedelta(days=chore.vacationPause)
+            chore.active = True
+            chore.nextDue = next_due_date 
+            chore.vacationPause = 0
+            chore.save()
+
+        return Response({'message': 'Vacation mode disabled'}, status=status.HTTP_200_OK)
+    
 class MonthView(viewsets.ModelViewSet):
     serializer_class = MonthSerializer
     queryset = Month.objects.all()

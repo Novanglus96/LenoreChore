@@ -48,16 +48,18 @@
                     </v-list-item>
                 </v-list>
 
-                <v-divider :thickness="3" color="accent"></v-divider>
+                <v-divider :thickness="3" color="black"></v-divider>
 
                 <v-list>
                     <v-list-item v-if="!store.isChild">
-                        <v-switch
-                            v-model="chorestore.vacation_mode"
-                            color="purple"
-                            label="Enable Vacation Mode"
-                            hide-details
-                        ></v-switch>
+                        <v-list-item-title> Vacation Mode </v-list-item-title>
+                        <v-btn-toggle v-model="chorestore.vacation_mode" divided variant="outlined" color="primary" mandatory @update:modelValue="toggleVacationMode(chorestore.vacation_mode)">
+                            <v-btn :value="true">On</v-btn>
+                            <v-btn :value="false">Off</v-btn>
+                        </v-btn-toggle>
+                    </v-list-item>
+                    <v-list-item v-if="store.isAdmin">
+                        <v-divider :thickness="3" color="black"></v-divider>
                     </v-list-item>
                     <v-list-item v-if="store.isAdmin">
                         <div>
@@ -122,7 +124,7 @@
                     <v-btn
                         color="primary"
                         variant="text"
-                        @click="menu = false"
+                        @click="callSaveOptions(chorestore.med_thresh, chorestore.high_thresh)"
                     >
                         Save
                     </v-btn>
@@ -165,6 +167,29 @@
 
     const store = useUserStore();
     const chorestore = useChoreStore();
+
+    const callSaveOptions = async (med_thresh, high_thresh) => {
+        try {
+            const store = useChoreStore();
+            await store.saveOptions(med_thresh, high_thresh);
+            menu.value = false;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const toggleVacationMode = async (enable) => {
+        try {
+            const store = useChoreStore();
+            if (enable){
+                await store.enableVacationMode();
+            } else {
+                await store.disableVacationMode();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const menus = [
         { title: 'Dashboard', url: '/', icon: 'mdi-home' },

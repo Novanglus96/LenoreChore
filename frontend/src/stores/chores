@@ -441,6 +441,36 @@ export const useChoreStore = defineStore('chore', {
           console.log('Error:', error);
         }
       },
+      async disableVacationMode() {
+
+        try {
+          // Make a POST request to your API endpoint
+          const response = await axios.post('https://chores.danielleandjohn.love/api/options/disable_vacation_mode/');
+
+          // Add area to local storage
+          //this.areas.push(area);
+          this.fetchAll();
+
+        } catch (error) {
+          // Handle errors (e.g., show an error message)
+          console.log('Error:', error);
+        }
+      },
+      async enableVacationMode() {
+
+        try {
+          // Make a POST request to your API endpoint
+          const response = await axios.post('https://chores.danielleandjohn.love/api/options/enable_vacation_mode/');
+
+          // Add area to local storage
+          //this.areas.push(area);
+          this.fetchAll();
+
+        } catch (error) {
+          // Handle errors (e.g., show an error message)
+          console.log('Error:', error);
+        }
+      },
       async snoozeChore(chore) {
         const data = {}
 
@@ -512,6 +542,27 @@ export const useChoreStore = defineStore('chore', {
           this.fetchHistoryItems();
           this.fetchWeeklyTotals();
           this.fetchChores();
+
+        } catch (error) {
+        // Handle errors (e.g., show an error message)
+        console.log('Error:', error);
+        }
+      },
+      async saveOptions(med_thresh, high_thresh) {
+        try {
+
+          const data = {
+              "med_thresh": med_thresh,
+              "high_thresh": high_thresh,
+            }
+
+          // Make a POST request to your API endpoint
+          const response = await axios.patch('https://chores.danielleandjohn.love/api/options/1/', data);
+          console.log('Options:', data)
+          // Add area to local storage
+          //this.areas.push(area);
+          
+          this.fetchAll();
 
         } catch (error) {
         // Handle errors (e.g., show an error message)
