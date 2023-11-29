@@ -5,13 +5,13 @@ services:
     build: ./frontend
     networks:
       - default
-    labels:
-      - "traefik.enable=false"
     restart: unless-stopped
     expose:
       - 80
     env_file:
       - ./.env.fe
+    image: chores_frontend:development
+    container_name: chores_frontend_dev
   backend:
     build:
       context: ./backend
@@ -25,10 +25,10 @@ services:
       - db
     networks:
       - default
-    labels:
-      - "traefik.enable=false"
     env_file:
       - ./.env
+    image: chores_backend:development
+    container_name: chores_backend_dev
   db:
     image: postgres:15
     volumes:
@@ -38,10 +38,9 @@ services:
       - ./.env.db
     networks:
       - default
-    labels:
-      - "traefik.enable=false"
+    container_name: chores_db_dev
   nginx:
-    build: ./nginx
+    image: registry.danielleandjohn.love/django_vue_proxy:latest
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
@@ -49,22 +48,10 @@ services:
       - backend
       - frontend
     networks:
-      - web
       - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.chores.rule=Host(`chores.danielleandjohn.love`)"
-      - "traefik.http.routers.chores.entrypoints=websecure"
-      - "traefik.http.services.chores.loadbalancer.server.port=80"
-      - "traefik.http.routers.chores.service=chores"
-      - "traefik.http.routers.chores.tls.certresolver=myresolver"
-      - "traefik.http.routers.chores.middlewares=secure-headers@file,rate-limit@file,geo-block@file"
-      - "traefik.docker.network=web"
-
-networks:
-  web:
-    name: web
-    external: true
+    ports:
+      - 7000:80
+    container_name: chores_proxy_dev
 
 volumes:
   postgres_data:
