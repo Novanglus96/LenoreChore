@@ -238,7 +238,7 @@ export const useChoreStore = defineStore('chore', {
       },
       async fetchAreas() {
         try {
-          const data = await axios.get('https://chores.danielleandjohn.love/api/areas/')
+          const data = await axios.get('/api/areas/')
           this.areas = data.data
         }
         catch (error) {
@@ -248,7 +248,7 @@ export const useChoreStore = defineStore('chore', {
       },
       async fetchAreaGroups() {
         try {
-          const data = await axios.get('https://chores.danielleandjohn.love/api/areagroups/')
+          const data = await axios.get('/api/areagroups/')
           this.areagroups = data.data
         }
         catch (error) {
@@ -258,7 +258,7 @@ export const useChoreStore = defineStore('chore', {
       },
       async fetchChores() {
         try {
-          const data = await axios.get('https://chores.danielleandjohn.love/api/chores/')
+          const data = await axios.get('/api/chores/')
           this.chores = data.data
         }
         catch (error) {
@@ -268,7 +268,7 @@ export const useChoreStore = defineStore('chore', {
       },
       async fetchWeeklyTotals() {
         try {
-          const data = await axios.get('https://chores.danielleandjohn.love/api/historyitems/weekly_totals/')
+          const data = await axios.get('/api/historyitems/weekly_totals/')
           this.weeklytotals = data.data
         }
         catch (error) {
@@ -278,7 +278,7 @@ export const useChoreStore = defineStore('chore', {
       },
       async fetchUsers() {
         try {
-          const data = await axios.get('https://chores.danielleandjohn.love/api/users/')
+          const data = await axios.get('/api/users/')
           this.users = data.data
         }
         catch (error) {
@@ -288,7 +288,7 @@ export const useChoreStore = defineStore('chore', {
       },
       async fetchHistoryItems() {
         try {
-          const data = await axios.get('https://chores.danielleandjohn.love/api/historyitems/')
+          const data = await axios.get('/api/historyitems/')
           this.historyitems = data.data
         }
         catch (error) {
@@ -298,7 +298,7 @@ export const useChoreStore = defineStore('chore', {
       },
       async fetchOptions() {
         try {
-          const data = await axios.get('https://chores.danielleandjohn.love/api/options/')
+          const data = await axios.get('/api/options/')
           this.vacation_mode = data.data[0].vacation_mode
           this.med_thresh = data.data[0].med_thresh
           this.high_thresh = data.data[0].high_thresh
@@ -317,7 +317,7 @@ export const useChoreStore = defineStore('chore', {
         
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.post('https://chores.danielleandjohn.love/api/historyitem-create/', data);
+          const response = await axios.post('/api/historyitem-create/', data);
 
           // Add area to local storage
           //this.areas.push(area);
@@ -332,7 +332,7 @@ export const useChoreStore = defineStore('chore', {
       async addArea(area) {
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.post('https://chores.danielleandjohn.love/api/areas/', area);
+          const response = await axios.post('/api/areas/', area);
 
           // Add area to local storage
           //this.areas.push(area);
@@ -346,7 +346,7 @@ export const useChoreStore = defineStore('chore', {
       async addAreaGroup(areagroup) {
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.post('https://chores.danielleandjohn.love/api/areagroups/', areagroup);
+          const response = await axios.post('/api/areagroups/', areagroup);
 
           // Add area to local storage
           //this.areas.push(area);
@@ -360,7 +360,7 @@ export const useChoreStore = defineStore('chore', {
       async editArea(area) {
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.patch('https://chores.danielleandjohn.love/api/areas/' + area.id + '/', area);
+          const response = await axios.patch('/api/areas/' + area.id + '/', area);
 
           // Add area to local storage
           //this.areas.push(area);
@@ -389,7 +389,7 @@ export const useChoreStore = defineStore('chore', {
           }
           
           chore.nextDue = newDate.toISOString().split('T')[0]
-          const response = await axios.post('https://chores.danielleandjohn.love/api/chores/', chore);
+          const response = await axios.post('/api/chores/', chore);
           // Add area to local storage
           //this.chores.push(chore);
           this.fetchChores();
@@ -413,7 +413,7 @@ export const useChoreStore = defineStore('chore', {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.patch('https://chores.danielleandjohn.love/api/chores/' + chore.id +'/', data);
+          const response = await axios.patch('/api/chores/' + chore.id +'/', data);
 
           // Add area to local storage
           //this.areas.push(area);
@@ -428,7 +428,7 @@ export const useChoreStore = defineStore('chore', {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.patch('https://chores.danielleandjohn.love/api/chore-complete/' + chore.id +'/');
+          const response = await axios.patch('/api/chore-complete/' + chore.id +'/');
 
           // Add area to local storage
           //this.areas.push(area);
@@ -445,7 +445,7 @@ export const useChoreStore = defineStore('chore', {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.post('https://chores.danielleandjohn.love/api/options/disable_vacation_mode/');
+          const response = await axios.post('/api/options/disable_vacation_mode/');
 
           // Add area to local storage
           //this.areas.push(area);
@@ -460,7 +460,7 @@ export const useChoreStore = defineStore('chore', {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.post('https://chores.danielleandjohn.love/api/options/enable_vacation_mode/');
+          const response = await axios.post('/api/options/enable_vacation_mode/');
 
           // Add area to local storage
           //this.areas.push(area);
@@ -478,7 +478,7 @@ export const useChoreStore = defineStore('chore', {
         
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.patch('https://chores.danielleandjohn.love/api/chore-snooze/' + chore.id +'/', data);
+          const response = await axios.patch('/api/chore-snooze/' + chore.id +'/', data);
 
           // Add area to local storage
           //this.areas.push(area);
@@ -502,7 +502,7 @@ export const useChoreStore = defineStore('chore', {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.patch('https://chores.danielleandjohn.love/api/chores/' + chore.id +'/', data);
+          const response = await axios.patch('/api/chores/' + chore.id +'/', data);
 
           // Add area to local storage
           //this.areas.push(area);
@@ -533,7 +533,7 @@ export const useChoreStore = defineStore('chore', {
           }
           chore.expand = false
           // Make a POST request to your API endpoint
-          const response = await axios.patch('https://chores.danielleandjohn.love/api/chores/' + chore.id + '/', chore);
+          const response = await axios.patch('/api/chores/' + chore.id + '/', chore);
 
           // Add area to local storage
           //this.areas.push(area);
@@ -557,7 +557,7 @@ export const useChoreStore = defineStore('chore', {
             }
 
           // Make a POST request to your API endpoint
-          const response = await axios.patch('https://chores.danielleandjohn.love/api/options/1/', data);
+          const response = await axios.patch('/api/options/1/', data);
           console.log('Options:', data)
           // Add area to local storage
           //this.areas.push(area);
@@ -573,7 +573,7 @@ export const useChoreStore = defineStore('chore', {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.delete('https://chores.danielleandjohn.love/api/chores/' + chore.id +'/');
+          const response = await axios.delete('/api/chores/' + chore.id +'/');
 
           // Add area to local storage
           //this.areas.push(area);
@@ -591,7 +591,7 @@ export const useChoreStore = defineStore('chore', {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.delete('https://chores.danielleandjohn.love/api/areas/' + area.id +'/');
+          const response = await axios.delete('/api/areas/' + area.id +'/');
 
           // Add area to local storage
           //this.areas.push(area);

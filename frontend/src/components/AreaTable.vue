@@ -46,7 +46,7 @@ export default {
   methods: {
     fetchData() {
       // Make an Axios GET request to your Django API endpoint
-      axios.get('https://chores.danielleandjohn.love/api/areas/')
+      axios.get('/api/areas/')
         .then((response) => {
           this.items = response.data; // Assign the fetched data to the items array
         })

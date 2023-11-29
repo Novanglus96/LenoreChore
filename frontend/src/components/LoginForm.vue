@@ -79,7 +79,7 @@ export default {
 
     async login() {
       try {
-        const response = await axios.post('https://chores.danielleandjohn.love/api/users/login/', this.credentials);
+        const response = await axios.post('/api/users/login/', this.credentials);
         const { token } = response.data.token;
 
         // Store the token in local storage or Vuex store
