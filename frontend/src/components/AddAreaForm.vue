@@ -103,8 +103,9 @@
     
 </template>
 <script setup>
-  import { computed, ref } from 'vue';
+  import { ref } from 'vue';
   import { useChoreStore } from '@/stores/chores';
+  import { useAreaGroups } from '@/composables/areaGroupsComposable'
 
   const snackbar = ref(false);
   const snackbarText = ref('');
@@ -116,9 +117,8 @@
         area_name: '',
         area_icon: 'mdi-home',
       })
-  const areagroups = computed(() => {
-    return chorestore.areagroups;
-    });
+
+  const { areagroups } = useAreaGroups()
   const submitForm = async () => {
     try {
       chorestore.addArea(formData.value);

@@ -10,16 +10,16 @@ const apiClient = axios.create({
 })
 
 export default {
-    createItem(newItem) {
-        return apiClient.post('/items', newItem)
+    createAreaGroup(newAreaGroup) {
+        return apiClient.post('/areagroups/', newAreaGroup)
     },
-    updateItem(updatedItem) {
-        return apiClient.put('/items/' + updatedItem.id, updatedItem)
+    updateAreaGroup(updatedAreaGroup) {
+        return apiClient.put('/areagroups/' + updatedAreaGroup.id, updatedAreaGroup)
     },
-    deleteItem(deletedItem) {
-        return apiClient.delete('/items/' + deletedItem.id)
+    deleteAreaGroup(deletedAreaGroup) {
+        return apiClient.delete('/areagroups/' + deletedAreaGroup.id)
     },
-    getItems() {
-        return apiClient.call("get", "/items")
+    getAreaGroups() {
+        return apiClient.get('/areagroups/')
     }
 }

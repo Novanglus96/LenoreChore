@@ -11,7 +11,6 @@ export const useChoreStore = defineStore('chore', {
   state: () => ({ 
     areas: [],
     chores: [],
-    areagroups: [],
     users: [],
     historyitems: [],
     weeklytotals: [],
@@ -113,9 +112,6 @@ export const useChoreStore = defineStore('chore', {
       },
       getDayFilter(state){
         return state.dayfilter
-      },
-      getAreaGroups(state){
-        return state.areagroups
       },
       getFilteredChores: (state) => (area, days, assignee, showDisabled) => {
         let tempChores = state.chores
@@ -229,7 +225,6 @@ export const useChoreStore = defineStore('chore', {
           this.fetchUsers()
           this.fetchWeeklyTotals()
           this.fetchOptions()
-          this.fetchAreaGroups()
         }
         catch (error) {
           alert(error)
@@ -240,16 +235,6 @@ export const useChoreStore = defineStore('chore', {
         try {
           const data = await axios.get('/api/areas/')
           this.areas = data.data
-        }
-        catch (error) {
-          alert(error)
-          console.log(error)
-        }
-      },
-      async fetchAreaGroups() {
-        try {
-          const data = await axios.get('/api/areagroups/')
-          this.areagroups = data.data
         }
         catch (error) {
           alert(error)
@@ -337,20 +322,6 @@ export const useChoreStore = defineStore('chore', {
           // Add area to local storage
           //this.areas.push(area);
           this.fetchAreas();
-
-        } catch (error) {
-          // Handle errors (e.g., show an error message)
-          console.log('Error:', error);
-        }
-      },
-      async addAreaGroup(areagroup) {
-        try {
-          // Make a POST request to your API endpoint
-          const response = await axios.post('/api/areagroups/', areagroup);
-
-          // Add area to local storage
-          //this.areas.push(area);
-          this.fetchAreaGroups();
 
         } catch (error) {
           // Handle errors (e.g., show an error message)

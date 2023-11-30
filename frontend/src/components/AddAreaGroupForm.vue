@@ -88,7 +88,7 @@
 </template>
 <script setup>
   import { ref } from 'vue';
-  import { useChoreStore } from '@/stores/chores';
+  import { useAreaGroups } from '@/composables/areaGroupsComposable';
 
   const colors = ref([
     {
@@ -121,14 +121,15 @@
   const snackbarText = ref('');
   const snackbarColor = ref('');
   const snackbarTimeout = ref(1500);
-  const chorestore = useChoreStore();
   const dialog = ref(false)
   const formData = ref({
         group_name: '',
       })
+
+  const { addAreaGroup } = useAreaGroups()
   const submitForm = async () => {
     try {
-      chorestore.addAreaGroup(formData.value);
+      addAreaGroup(formData.value);
       dialog.value = false;
       showSnackbar('Area Group added successfully!', 'success');
     } catch (error) {
