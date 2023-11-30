@@ -1,0 +1,284 @@
+from ninja import NinjaAPI, Schema
+from api.models import CustomUser, AreaGroup, Area, Month, Chore, HistoryItem, Option
+from typing import List, Optional
+from django.shortcuts import get_object_or_404
+from datetime import date
+
+api = NinjaAPI()
+
+
+class CustomUserSchema(Schema):
+    email: str
+    profile_picture: str = None
+    male: bool
+    user_color: str
+
+
+class AreaGroupIn(Schema):
+    group_name: str
+    group_order: int
+    group_color: str
+
+
+class AreaGroupOut(Schema):
+    id: int
+    group_name: str
+    group_order: int
+    group_color: str
+
+
+class AreaIn(Schema):
+    area_name: str
+    area_icon: str
+    group_id: int
+
+
+class AreaOut(Schema):
+    id: int
+    area_name: str
+    area_icon: str
+    group_id: int
+    dirtiness: int
+    dueCount: int
+    totalCount: int
+    total_dirtiness: int
+
+
+class MonthOut(Schema):
+    id: int
+    name: str
+
+
+class ChoreIn(Schema):
+    chore_name: str
+    area_id: int
+    active: bool
+    nextDue: date
+    lastCompleted: date
+    intervalNumber: int
+    unit: str
+    active_months: List[MonthOut]
+    assignee: Optional[int]
+    effort: int
+    vacationPause: int
+    expand: bool
+
+
+class ChoreOut(Schema):
+    id: int
+    chore_name: str
+    area_id: int
+    active: bool
+    nextDue: date
+    lastCompleted: date
+    intervalNumber: int
+    unit: str
+    active_months: List[MonthOut]
+    assignee: Optional[int]
+    effort: int
+    vacationPause: int
+    expand: bool
+    dirtiness: int
+    duedays: int
+
+
+class HistoryItemIn(Schema):
+    completed_date: date
+    completed_by: int
+    chore_id: int
+
+
+class HistoryItemOut(Schema):
+    id: int
+    completed_date: date
+    completed_by: int
+    chore_id: int
+
+
+class OptionIn(Schema):
+    vacation_mode: bool
+    med_thresh: int
+    high_thresh: int
+
+
+class OptionOut(Schema):
+    id: int
+    vacation_mode: bool
+    med_thresh: int
+    high_thresh: int
+
+
+@api.get("/me", response=CustomUserSchema)
+def me(request):
+    return request.user
+
+
+@api.post("/areagroups")
+def create_areagroup(request, payload: AreaGroupIn):
+    areagroup = AreaGroup.objects.create(**payload.dict())
+    return {"id": areagroup.id}
+
+
+@api.post("/areas")
+def create_area(request, payload: AreaIn):
+    area = Area.objects.create(**payload.dict())
+    return {"id": area.id}
+
+
+@api.post("/chores")
+def create_chore(request, payload: ChoreIn):
+    chore = Chore.objects.create(**payload.dict())
+    return {"id": chore.id}
+
+
+@api.post("/historyitems")
+def create_historyitem(request, payload: HistoryItemIn):
+    historyitem = HistoryItem.objects.create(**payload.dict())
+    return {"id": historyitem.id}
+
+
+@api.get("/areagroups/{areagroup_id}", response=AreaGroupOut)
+def get_areagroup(request, areagroup_id: int):
+    areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
+    return areagroup
+
+
+@api.get("/areas/{area_id}", response=AreaOut)
+def get_area(request, area_id: int):
+    area = get_object_or_404(Area, id=area_id)
+    return area
+
+
+@api.get("/chores/{chore_id}", response=ChoreOut)
+def get_chore(request, chore_id: int):
+    chore = get_object_or_404(Chore, id=chore_id)
+    return chore
+
+
+@api.get("/historyitems/{historyitem_id}", response=HistoryItemOut)
+def get_historyitem(request, historyitem_id: int):
+    historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
+    return historyitem
+
+
+@api.get("/options/{option_id}", response=OptionOut)
+def get_option(request, option_id: int):
+    option = get_object_or_404(Option, id=option_id)
+    return option
+
+
+@api.get("/areagroups", response=List[AreaGroupOut])
+def list_areagroups(request):
+    qs = AreaGroup.objects.all()
+    return qs
+
+
+@api.get("/areas", response=List[AreaOut])
+def list_areas(request):
+    qs = Area.objects.all().order_by('group__group_order', 'area_name')
+    return qs
+
+
+@api.get("/chores", response=List[ChoreOut])
+def list_chores(request):
+    qs = Chore.objects.all()
+    return qs
+
+
+@api.get("/historyitems", response=List[HistoryItemOut])
+def list_historyitems(request):
+    qs = HistoryItem.objects.all()
+    return qs
+
+
+@api.get("/options", response=List[OptionOut])
+def list_options(request):
+    qs = Option.objects.all()
+    return qs
+
+
+@api.put("/areagroups/{areagroup_id}")
+def update_areagroup(request, areagroup_id: int, payload: AreaGroupIn):
+    areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
+    areagroup.group_name = payload.group_name
+    areagroup.group_order = payload.group_order
+    areagroup.group_color = payload.group_color
+    areagroup.save()
+    return {"success": True}
+
+
+@api.put("/areas/{area_id}")
+def update_area(request, area_id: int, payload: AreaIn):
+    area = get_object_or_404(Area, id=area_id)
+    area.area_name = payload.area_name
+    area.area_icon = payload.area_area_icon
+    area.group_id = payload.group_id
+    area.save()
+    return {"success": True}
+
+
+@api.put("/chores/{chore_id}")
+def update_chore(request, chore_id: int, payload: ChoreIn):
+    chore = get_object_or_404(Chore, id=chore_id)
+    chore.chore_name = payload.chore_name
+    chore.area_id = payload.area_id
+    chore.active = payload.active
+    chore.nextDue = payload.nextDue
+    chore.lastCompleted = payload.lastCompleted
+    chore.intervalNumber = payload.intervalNumber
+    chore.unit = payload.unit
+    chore.active_months = payload.active_months
+    chore.assignee = payload.assignee
+    chore.effort = payload.effort
+    chore.vacationPause = payload.vacationPause
+    chore.expand = payload.expand
+    chore.save()
+    return {"success": True}
+
+
+@api.put("/historyitems/{historyitem_id}")
+def update_historyitem(request, historyitem_id: int, payload: HistoryItemIn):
+    historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
+    historyitem.completed_date = payload.completed_date
+    historyitem.completed_by = payload.completed_by
+    historyitem.chore_id = payload.chore_id
+    historyitem.save()
+    return {"success": True}
+
+
+@api.put("/options/{option_id}")
+def update_option(request, option_id: int, payload: OptionIn):
+    option = get_object_or_404(Option, id=option_id)
+    option.vacation_mode = payload.vacation_mode
+    option.med_thresh = payload.med_thresh
+    option.high_thresh = payload.high_thresh
+    option.save()
+    return {"success": True}
+
+
+@api.delete("/areagroups/{areagroup_id}")
+def delete_areagroup(request, areagroup_id: int):
+    areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
+    areagroup.delete()
+    return {"success": True}
+
+
+@api.delete("/areas/{area_id}")
+def delete_area(request, area_id: int):
+    area = get_object_or_404(Area, id=area_id)
+    area.delete()
+    return {"success": True}
+
+
+@api.delete("/chores/{chore_id}")
+def delete_chore(request, chore_id: int):
+    chore = get_object_or_404(Chore, id=chore_id)
+    chore.delete()
+    return {"success": True}
+
+
+@api.delete("/historyitems/{historyitem_id}")
+def delete_historyitem(request, historyitem_id: int):
+    historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
+    historyitem.delete()
+    return {"success": True}
