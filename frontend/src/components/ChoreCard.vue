@@ -5,9 +5,9 @@
         <v-select
           v-model="areafilter"
           label="Area"
-          :items="getAreaFilter"
-          item-title="name"
-          item-value="key"
+          :items="areas"
+          item-title="area_name"
+          item-value="id"
           @select="applyFilter(areafilter, dayfilter, assigneefilter, showDisabled)"
         >
         </v-select>
@@ -395,8 +395,10 @@
   import { useUserStore } from '@/stores/user';
   import { useRoute, useRouter } from 'vue-router';
   import VueDatePicker from '@vuepic/vue-datepicker';
-  import '@vuepic/vue-datepicker/dist/main.css'
+  import '@vuepic/vue-datepicker/dist/main.css';
+  import { useAreas } from '@/composables/areasComposable';
 
+  const { areas } = useAreas();
   const route = useRoute();
   const router = useRouter();
   const areafilter = ref(route.params.areaName);
@@ -416,9 +418,6 @@
     areafilter.value = areaName;
     router.push({ name: 'listfilter', params: { areaName }});
   }
-  const getAreaFilter = computed(() => {
-    return chorestore.getAreaFilter;
-  })
   const getDayFilter = computed(() => {
     return chorestore.getDayFilter;
   })

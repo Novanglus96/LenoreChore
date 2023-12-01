@@ -1,7 +1,7 @@
 <template>
       <v-container>
         <v-row dense>
-          <v-col cols="12" v-for="area in getAreas" :key="area.id">
+          <v-col cols="12" v-for="area in areas" :key="area.id">
             <v-card
               :color="area.group.group_color"
             >
@@ -21,7 +21,7 @@
                       >
                         <v-progress-linear
                           v-model="area.dirtiness"
-                          :color="area.dirtycolor"
+                          :color="getDirtyColor(area)"
                           height="25"
                           striped
                         >
@@ -192,9 +192,12 @@
 </template>
 
 <script setup>
-  import { computed, ref } from 'vue';
-  import { useChoreStore } from '@/stores/chores';
+  import { ref } from 'vue';
+  import { useAreas } from '@/composables/areasComposable';
+  import { useAreaGroups } from '@/composables/areaGroupsComposable';
+  import { useChoreStore } from '@/stores/chores'
 
+  
   const snackbar = ref(false);
   const snackbarText = ref('');
   const snackbarColor = ref('');
@@ -203,22 +206,14 @@
     return '/list/' + areaName;
   }
   
-  const chorestore = useChoreStore();
-  const getAreas = computed(() => {
-    return chorestore.getAreas;
-  });
-  const areagroups = computed(() => {
-    return chorestore.areagroups;
-  });
+  const { areas, removeArea, editArea } = useAreas()
+  const { areagroups } = useAreaGroups()
   const restoreEdit = async (area) => {
     area.edit = false;
-    const store = useChoreStore();
-    await store.fetchAreas();
   }
   const callDeleteArea = async (area) => {
     try {
-      const store = useChoreStore();
-      await store.deleteArea(area);
+      removeArea(area)
       area.delete = false;
       showSnackbar('Area deleted successfully!', 'success');
     } catch (error) {
@@ -227,13 +222,25 @@
   }
   const callEditArea = async (area) => {
     try {
-      const store = useChoreStore();
-      await store.editArea(area);
+      editArea(area)
       area.edit = false;
       showSnackbar('Area edited successfully!', 'success');
     } catch (error) {
       showSnackbar('Area not edited!', 'error');
     }
+  }
+  const getDirtyColor = (area) => {
+    const chorestore = useChoreStore()
+    let dirtycolor = "error"
+    if (area.dirtiness <= chorestore.med_thresh ) {
+      dirtycolor = 'success'
+    }else if (area.dirtiness > chorestore.med_thresh && area.dirtiness <= chorestore.high_thresh){
+      dirtycolor = 'warning'
+    }else if (area.dirtiness > chorestore.high_thresh){
+      dirtycolor = 'error'
+    }
+    
+    return dirtycolor
   }
   const showSnackbar = (text, color) => {
     snackbarText.value = text;

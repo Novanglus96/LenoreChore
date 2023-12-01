@@ -104,24 +104,26 @@
 </template>
 <script setup>
   import { ref } from 'vue';
-  import { useChoreStore } from '@/stores/chores';
   import { useAreaGroups } from '@/composables/areaGroupsComposable'
+  import { useAreas } from '@/composables/areasComposable'
+  import { useChoreStore } from '@/stores/chores';
 
+  const chorestore = useChoreStore()
   const snackbar = ref(false);
   const snackbarText = ref('');
   const snackbarColor = ref('');
   const snackbarTimeout = ref(1500);
-  const chorestore = useChoreStore();
   const dialog = ref(false)
   const formData = ref({
         area_name: '',
         area_icon: 'mdi-home',
       })
 
+  const { addArea } = useAreas()
   const { areagroups } = useAreaGroups()
   const submitForm = async () => {
     try {
-      chorestore.addArea(formData.value);
+      addArea(formData.value);
       dialog.value = false;
       showSnackbar('Area added successfully!', 'success');
     } catch (error) {

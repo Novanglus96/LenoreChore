@@ -313,6 +313,7 @@
 <script setup>
   import { ref, computed } from 'vue';
   import { useChoreStore } from '@/stores/chores';
+  import { useAreas } from '@/composables/areasComposable'
 
   const chorestore = useChoreStore();
   const dialog = ref(false)
@@ -324,9 +325,8 @@
         active_months: [1,2,3,4,5,6,7,8,9,10,11,12],
         intervalNumber: '',
       })
-  const areas = computed(() => {
-    return chorestore.areas;
-    });
+  const { areas } = useAreas()
+
   const units = computed(() => {
     return chorestore.units;
   });

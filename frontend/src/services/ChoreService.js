@@ -21,5 +21,17 @@ export default {
     },
     getAreaGroups() {
         return apiClient.get('/areagroups/')
+    },
+    createArea(newArea) {
+        return apiClient.post('/areas/', newArea)
+    },
+    updateArea(updatedArea) {
+        return apiClient.put('/areas/' + updatedArea.id, updatedArea)
+    },
+    deleteArea(deletedArea) {
+        return apiClient.delete('/areas/' + deletedArea.id)
+    },
+    getAreas() {
+        return apiClient.get('/areas/')
     }
 }
