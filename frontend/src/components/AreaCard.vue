@@ -44,7 +44,7 @@
                   <v-row dense>
                     <v-col>
                       <v-dialog
-                        v-model="area.edit"
+                        v-model="editCards[index]"
                         persistent
                         width="1024"
                       >
@@ -66,7 +66,7 @@
                                   <v-text-field
                                     label="Area name*"
                                     required
-                                    v-model="area.area_name"
+                                    v-model="editForm.area_name"
                                   ></v-text-field>
                                 </v-col>
                                 <v-col
@@ -75,7 +75,7 @@
                                   md="4"
                                 >
                                   <v-chip-group
-                                    v-model="area.area_icon"
+                                    v-model="editForm.area_icon"
                                     selected-class="text-deep-purple-accent-4"
                                     mandatory
                                   >
@@ -100,7 +100,7 @@
                                       :items="areagroups"
                                       item-title="group_name"
                                       item-value="id"
-                                      v-model="area.group"
+                                      v-model="editForm.group"
                                       return-object   
                                   >
                                   </v-select>
@@ -114,14 +114,14 @@
                             <v-btn
                               color="blue-darken-1"
                               variant="text"
-                              @click="restoreEdit(area)"
+                              @click="restoreEdit(index)"
                             >
                               Close
                             </v-btn>
                             <v-btn
                               color="blue-darken-1"
                               variant="text"
-                              @click="callEditArea(area)"
+                              @click="callEditArea(editForm, index)"
                             >
                               Save
                             </v-btn>
@@ -129,7 +129,7 @@
                         </v-card>
                       </v-dialog>
                       <v-dialog
-                        v-model="area.delete"
+                        v-model="deleteCards[index]"
                         persistent
                         width="auto"
                       >
@@ -146,14 +146,14 @@
                             <v-btn
                               color="primary-darken-1"
                               variant="text"
-                              @click="area.delete = false"
+                              @click="toggleDelete(index)"
                             >
                               Close
                             </v-btn>
                             <v-btn
                               color="primary-darken-1"
                               variant="text"
-                              @click="callDeleteArea(area)"
+                              @click="callDeleteArea(area, index)"
                             >
                               Delete
                             </v-btn>
@@ -175,7 +175,7 @@
                     >
                       See Chores
                     </v-btn>
-                    <v-btn @click="toggleExpand(index)" :icon="area.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
+                    <v-btn @click="toggleExpand(index)" :icon="expandedCards[index] ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
                   </v-card-actions>
             </v-card>
           </v-col>
@@ -197,11 +197,13 @@
   import { useAreaGroups } from '@/composables/areaGroupsComposable';
   import { useChoreStore } from '@/stores/chores'
 
-  const toggleExpand = (index) => {
-    // Toggle the expanded state for the clicked card
-    expandedCards.value[index] = !expandedCards.value[index];
-  };
-
+  const editForm = {
+    id: 0,
+    area_name: '',
+    group: '',
+    area_icon: ''
+  }
+  const chorestore = useChoreStore();
   const snackbar = ref(false);
   const snackbarText = ref('');
   const snackbarColor = ref('');
@@ -212,23 +214,35 @@
   
   const { areas, removeArea, editArea } = useAreas()
   const expandedCards = ref(Array.from({ length: areas.length }, () => false));
-  const { areagroups } = useAreaGroups()
-  const restoreEdit = async (area) => {
-    area.edit = false;
+  const toggleExpand = (index) => {
+    // Toggle the expanded state for the clicked card
+    expandedCards.value[index] = !expandedCards.value[index];
+  };
+  const deleteCards = ref(Array.from({ length: areas.length }, () => false));
+  const toggleDelete = (index) => {
+    deleteCards.value[index] = !deleteCards.value[index];
   }
-  const callDeleteArea = async (area) => {
+  const editCards = ref(Array.from({ length: areas.length }, () => false));
+  const toggleEdit = (index) => {
+    editCards.value[index] = !editCards.value[index];
+  }
+  const { areagroups } = useAreaGroups()
+  const restoreEdit = async (index) => {
+    toggleEdit(index);
+  }
+  const callDeleteArea = async (area, index) => {
     try {
       removeArea(area)
-      area.delete = false;
+      toggleDelete(index);
       showSnackbar('Area deleted successfully!', 'success');
     } catch (error) {
       showSnackbar('Area not deleted!', 'error');
     }
   }
-  const callEditArea = async (area) => {
+  const callEditArea = async (area, index) => {
     try {
       editArea(area)
-      area.edit = false;
+      toggleEdit(index);
       showSnackbar('Area edited successfully!', 'success');
     } catch (error) {
       showSnackbar('Area not edited!', 'error');

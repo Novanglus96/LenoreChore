@@ -49,7 +49,7 @@ import ChoreService from '@/services/ChoreService.js'
     const createAreaMutation = useMutation({
       mutationFn: createAreaFunction,
       onSuccess: () => {
-        console.log('Success adding area group')
+        console.log('Success adding area')
         queryClient.invalidateQueries({ queryKey: ['areas'] })
       }
     })
@@ -57,7 +57,7 @@ import ChoreService from '@/services/ChoreService.js'
     const updateAreaMutation = useMutation({
       mutationFn: updateAreaFunction,
       onSuccess: () => {
-        console.log('Success updating area group')
+        console.log('Success updating area')
         queryClient.invalidateQueries({ queryKey: ['areas']})
       }
     })
@@ -65,7 +65,7 @@ import ChoreService from '@/services/ChoreService.js'
     const deleteAreaMutation = useMutation({
       mutationFn: deleteAreaFunction,
       onSuccess: () => {
-        console.log('Success deleting area group')
+        console.log('Success deleting area')
         queryClient.invalidateQueries({ queryKey: ['areas']})
       }
     })
