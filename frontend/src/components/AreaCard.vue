@@ -1,7 +1,7 @@
 <template>
       <v-container>
         <v-row dense>
-          <v-col cols="12" v-for="area in areas" :key="area.id">
+          <v-col cols="12" v-for="(area, index) in areas" :key="index">
             <v-card
               :color="area.group.group_color"
             >
@@ -39,7 +39,7 @@
                     </v-row>
                       </v-card-text>
                   <v-expand-transition>
-              <div v-if="area.expand">
+              <div v-if="expandedCards[index]">
                 <v-container>
                   <v-row dense>
                     <v-col>
@@ -175,7 +175,7 @@
                     >
                       See Chores
                     </v-btn>
-                    <v-btn @click="area.expand = !area.expand" :icon="area.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
+                    <v-btn @click="toggleExpand(index)" :icon="area.expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-btn>
                   </v-card-actions>
             </v-card>
           </v-col>
@@ -197,7 +197,13 @@
   import { useAreaGroups } from '@/composables/areaGroupsComposable';
   import { useChoreStore } from '@/stores/chores'
 
-  
+  const expandedCards = ref(Array.from({ length: 50 }, () => false));
+
+  const toggleExpand = (index) => {
+    // Toggle the expanded state for the clicked card
+    expandedCards.value[index] = !expandedCards.value[index];
+  };
+
   const snackbar = ref(false);
   const snackbarText = ref('');
   const snackbarColor = ref('');
