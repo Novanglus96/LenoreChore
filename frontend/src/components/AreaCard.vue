@@ -197,8 +197,6 @@
   import { useAreaGroups } from '@/composables/areaGroupsComposable';
   import { useChoreStore } from '@/stores/chores'
 
-  const expandedCards = ref(Array.from({ length: 50 }, () => false));
-
   const toggleExpand = (index) => {
     // Toggle the expanded state for the clicked card
     expandedCards.value[index] = !expandedCards.value[index];
@@ -213,6 +211,7 @@
   }
   
   const { areas, removeArea, editArea } = useAreas()
+  const expandedCards = ref(Array.from({ length: areas.length }, () => false));
   const { areagroups } = useAreaGroups()
   const restoreEdit = async (area) => {
     area.edit = false;
