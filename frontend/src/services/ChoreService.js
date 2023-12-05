@@ -32,6 +32,19 @@ export default {
         return apiClient.delete('/areas/' + deletedArea.id)
     },
     getAreas() {
-        return apiClient.get('/areas/')
+        return apiClient.get('/options/')
+    },
+    createOption(newOption) {
+        return apiClient.post('/options/', newOption)
+    },
+    updateOption(updatedOption) {
+        return apiClient.put('/options/' + updatedOption.id, updatedOption)
+    },
+    deleteOption(deletedOption) {
+        return apiClient.delete('/options/' + deletedOption.id)
+    },
+    getOptions() {
+        console.log('I ran!')
+        return apiClient.get('/options/1/')
     }
 }
