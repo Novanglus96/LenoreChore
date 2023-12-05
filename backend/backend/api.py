@@ -347,7 +347,7 @@ def login_user(request, payload: LoginSchema):
         raise HttpError(401, "Invalid credentials")
 
 
-@router.post("/logout", auth=TokenAuth)
+@router.post("/logout")
 def logout_user(request):
     # Log the user out
     logout(request)
