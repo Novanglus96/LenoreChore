@@ -1,10 +1,32 @@
-from ninja import NinjaAPI, Schema
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.tokens import default_token_generator
+from ninja import NinjaAPI, Schema, Router
 from api.models import CustomUser, AreaGroup, Area, Month, Chore, HistoryItem, Option
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
 from datetime import date
+from ninja.errors import HttpError
+from ninja.security import HttpBearer
 
 api = NinjaAPI()
+router = Router()
+api.title = "Chores API"
+api.version = "1.1.0"
+api.description = "API documentation for Chores"
+
+
+class TokenAuth(HttpBearer):
+    def authenticate(self, request, token):
+        try:
+            user = default_token_generator.get_user(token)
+        except Exception as e:
+            raise HttpError(401, f"Invalid token: {str(e)}")
+        return user
+
+
+class LoginSchema(Schema):
+    username: str
+    password: str
 
 
 class CustomUserSchema(Schema):
@@ -12,6 +34,12 @@ class CustomUserSchema(Schema):
     profile_picture: str = None
     male: bool
     user_color: str
+    first_name: str
+    last_name: str
+    fullname: str
+    is_superuser: bool
+    is_staff: bool
+    is_active: bool
 
 
 class AreaGroupIn(Schema):
@@ -38,6 +66,7 @@ class AreaOut(Schema):
     area_name: str
     area_icon: str
     group_id: int
+    group: AreaGroupOut
     dirtiness: int
     dueCount: int
     totalCount: int
@@ -68,13 +97,15 @@ class ChoreOut(Schema):
     id: int
     chore_name: str
     area_id: int
+    area: AreaOut
     active: bool
     nextDue: date
     lastCompleted: date
     intervalNumber: int
     unit: str
     active_months: List[MonthOut]
-    assignee: Optional[int]
+    assignee_id: Optional[int]
+    assignee: CustomUserSchema = None
     effort: int
     vacationPause: int
     expand: bool
@@ -91,8 +122,8 @@ class HistoryItemIn(Schema):
 class HistoryItemOut(Schema):
     id: int
     completed_date: date
-    completed_by: int
-    chore_id: int
+    completed_by: CustomUserSchema
+    chore: ChoreOut
 
 
 class OptionIn(Schema):
@@ -197,6 +228,12 @@ def list_options(request):
     return qs
 
 
+@api.get("/users", response=List[CustomUserSchema])
+def list_users(request):
+    qs = CustomUser.objects.all()
+    return qs
+
+
 @api.put("/areagroups/{areagroup_id}")
 def update_areagroup(request, areagroup_id: int, payload: AreaGroupIn):
     areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
@@ -282,3 +319,39 @@ def delete_historyitem(request, historyitem_id: int):
     historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
     historyitem.delete()
     return {"success": True}
+
+
+@router.post("/login")
+def login_user(request, payload: LoginSchema):
+    username = payload.username
+    password = payload.password
+
+    user = authenticate(request, username=username, password=password)
+    if user:
+        login(request, user)
+
+        # Retrieve or create a token for the authenticated user
+        token = default_token_generator.make_token(user)
+
+        return {
+            'token': token,
+            'firstname': user.first_name,
+            'lastname': user.last_name,
+            'email': user.email,
+            'isAdmin': user.is_superuser,
+            'male': user.male,
+            'id': user.id,
+            'user_color': user.user_color
+        }
+    else:
+        raise HttpError(401, "Invalid credentials")
+
+
+@router.post("/logout", auth=TokenAuth)
+def logout_user(request):
+    # Log the user out
+    logout(request)
+    return {'detail': 'Logout successful'}
+
+
+api.add_router("/auth", router)
