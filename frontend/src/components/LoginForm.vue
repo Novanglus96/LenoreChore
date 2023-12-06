@@ -56,46 +56,17 @@
   </div>
 </template>
 
-<script>
-import axios from 'axios';
-import { mapActions } from 'pinia';
-import { useUserStore } from '../stores/user';
+<script setup>
+import { defineEmits, ref } from 'vue';
 
-export default {
-  data() {
-    return {
-      credentials: {
-        username: '',
-        password: '',
-      },
-      errormsg: '',
-    };
-  },
-  computed: {
-    
-  },
-  methods: {
-    ...mapActions(useUserStore, ['loginUser']),
+const emit = defineEmits(['loginUser'])
 
-    async login() {
-      try {
-        const response = await axios.post('/api/users/login/', this.credentials);
-        const { token } = response.data.token;
+const credentials = ref({
+  username: '',
+  password: ''
+})
 
-        // Store the token in local storage or Vuex store
-        localStorage.setItem('authToken', token);
-        this.loginUser(response.data.firstname, response.data.lastname, response.data.email, response.data.isAdmin, response.data.male, response.data.id, response.data.user_color, response.data.groups)
-
-        //this.userStore.picture = response.data.picture
-        
-        // Redirect to the desired page (e.g., dashboard)
-        this.$router.push('/');
-      } catch (error) {
-        console.error('Login failed:', error);
-        // Handle login error (e.g., show an error message)
-        this.errormsg = 'Login failed'
-      }
-    },
-  },
-};
+const login = async () => {
+  emit('loginUser', credentials)
+}
 </script>

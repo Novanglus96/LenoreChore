@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: '/api/v2',
   withCredentials: false,
   headers: {
     Accept: 'application/json',
@@ -11,19 +11,19 @@ const apiClient = axios.create({
 
 export default {
     createAreaGroup(newAreaGroup) {
-        return apiClient.post('/areagroups/', newAreaGroup)
+        return apiClient.post('/areagroups', newAreaGroup)
     },
     updateAreaGroup(updatedAreaGroup) {
-        return apiClient.put('/areagroups/' + updatedAreaGroup.id, updatedAreaGroup)
+        return apiClient.put('/areagroups' + updatedAreaGroup.id, updatedAreaGroup)
     },
     deleteAreaGroup(deletedAreaGroup) {
-        return apiClient.delete('/areagroups/' + deletedAreaGroup.id)
+        return apiClient.delete('/areagroups' + deletedAreaGroup.id)
     },
     getAreaGroups() {
-        return apiClient.get('/areagroups/')
+        return apiClient.get('/areagroups')
     },
     createArea(newArea) {
-        return apiClient.post('/areas/', newArea)
+        return apiClient.post('/areas', newArea)
     },
     updateArea(updatedArea) {
         return apiClient.put('/areas/' + updatedArea.id, updatedArea)
@@ -32,10 +32,10 @@ export default {
         return apiClient.delete('/areas/' + deletedArea.id)
     },
     getAreas() {
-        return apiClient.get('/options/')
+        return apiClient.get('/options')
     },
     createOption(newOption) {
-        return apiClient.post('/options/', newOption)
+        return apiClient.post('/options', newOption)
     },
     updateOption(updatedOption) {
         return apiClient.put('/options/' + updatedOption.id, updatedOption)
@@ -44,7 +44,12 @@ export default {
         return apiClient.delete('/options/' + deletedOption.id)
     },
     getOptions() {
-        console.log('I ran!')
         return apiClient.get('/options/1/')
+    },
+    loginUser(credentials) {
+        return apiClient.post('/auth/login', credentials)
+    },
+    getUsers() {
+        return apiClient.get('/users')
     }
 }
