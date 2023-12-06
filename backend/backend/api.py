@@ -29,6 +29,20 @@ class LoginSchema(Schema):
     password: str
 
 
+class LoginUserSchema(Schema):
+    email: str
+    profile_picture: str = None
+    male: bool
+    user_color: str
+    first_name: str
+    last_name: str
+    fullname: str
+    is_superuser: bool
+    is_staff: bool
+    is_active: bool
+    groups: List[int]
+
+
 class CustomUserSchema(Schema):
     email: str
     profile_picture: str = None
@@ -341,7 +355,8 @@ def login_user(request, payload: LoginSchema):
             'isAdmin': user.is_superuser,
             'male': user.male,
             'id': user.id,
-            'user_color': user.user_color
+            'user_color': user.user_color,
+            'groups': [group.id for group in user.groups.all()]
         }
     else:
         raise HttpError(401, "Invalid credentials")
