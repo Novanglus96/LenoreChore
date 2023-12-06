@@ -21,7 +21,6 @@ import { useRouter } from 'vue-router';
 import ChoreService from '@/services/ChoreService.js'
 
 const router = useRouter();
-// FIXME
 const login = async (credentials) => {
   ChoreService.loginUser(credentials)
     .then((response) => {
