@@ -16,20 +16,20 @@
 <script setup>
 // @ is an alias to /src
 import LoginForm from '@/components/LoginForm.vue';
-import { useUserStore } from '../stores/user';
+import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
-import { ChoreService } from '@/services/ChoreService'
+import ChoreService from '@/services/ChoreService.js'
 
 const router = useRouter();
 // FIXME
 const login = async (credentials) => {
-  
   ChoreService.loginUser(credentials)
     .then((response) => {
       const user = response.data
       const token = user.token
       const userstore = useUserStore();
       localStorage.setItem('authToken', token);
+      console.log('user:', user)
       userstore.loginUser(user.firstname, user.lastname, user.email, user.isAdmin, user.male, user.id, user.user_color, user.groups)
       router.push('/');
     })
