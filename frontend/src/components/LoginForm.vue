@@ -67,6 +67,6 @@ const credentials = ref({
 })
 
 const login = async () => {
-  emit('loginUser', credentials)
+  emit('loginUser', credentials.value)
 }
 </script>
