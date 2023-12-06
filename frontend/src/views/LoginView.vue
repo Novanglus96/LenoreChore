@@ -28,7 +28,6 @@ const login = async (credentials) => {
       const token = user.token
       const userstore = useUserStore();
       localStorage.setItem('authToken', token);
-      console.log('user:', user)
       userstore.loginUser(user.firstname, user.lastname, user.email, user.isAdmin, user.male, user.id, user.user_color, user.groups)
       router.push('/');
     })
