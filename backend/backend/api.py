@@ -262,7 +262,7 @@ def update_areagroup(request, areagroup_id: int, payload: AreaGroupIn):
 def update_area(request, area_id: int, payload: AreaIn):
     area = get_object_or_404(Area, id=area_id)
     area.area_name = payload.area_name
-    area.area_icon = payload.area_area_icon
+    area.area_icon = payload.area_icon
     area.group_id = payload.group_id
     area.save()
     return {"success": True}
