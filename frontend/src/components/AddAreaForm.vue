@@ -64,8 +64,7 @@
                     :items="areagroups"
                     item-title="group_name"
                     item-value="id"
-                    v-model="formData.group"
-                    return-object   
+                    v-model="formData.group_id"
                 >
                 </v-select>
               </v-col>
@@ -117,6 +116,7 @@
   const formData = ref({
         area_name: '',
         area_icon: 'mdi-home',
+        group_id: 1
       })
 
   const { addArea } = useAreas()
