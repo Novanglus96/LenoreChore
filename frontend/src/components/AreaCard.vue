@@ -1,6 +1,8 @@
 <template>
   <v-card
     :color="props.area.group.group_color"
+    border
+    elevation="3"
   >
     <v-card-title class="text-h5">
       <v-icon
