@@ -1,39 +1,92 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
-import ChoreService from '@/services/ChoreService.js'
+import axios from 'axios'
+
+const apiClient = axios.create({
+  baseURL: '/api/v2',
+  withCredentials: false,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json'
+  }
+})
 
   async function createOptionFunction(newOption) {
 
-    ChoreService.createOption(newOption)
-    .then((response) => {
+    try {
+      const response = await apiClient.post('/options', newOption)
       return response.data
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data)
+        console.error('Status code:', error.response.status)
+        console.error('Headers', error.response.headers)
+      } else if (error.request){
+        console.error('No response received:', error.request)
+      } else {
+        console.error('Error during request setup:', error.message)
+      }
+      throw error
+    }
 
   }
 
   async function updateOptionFunction(updatedOption) {
 
-    ChoreService.updateOption(updatedOption)
-    .then((response) => {
+    try {
+      const response = await apiClient.put('/options/' + updatedOption.id, updatedOption)
       return response.data
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data)
+        console.error('Status code:', error.response.status)
+        console.error('Headers', error.response.headers)
+      } else if (error.request){
+        console.error('No response received:', error.request)
+      } else {
+        console.error('Error during request setup:', error.message)
+      }
+      throw error
+    }
 
   }
 
   async function deleteOptionFunction(deletedOption) {
     
-    ChoreService.deleteOption(deletedOption)
-    .then((response) => {
+    try {
+      const response = await apiClient.delete('/options/' + deletedOption.id)
       return response.data
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data)
+        console.error('Status code:', error.response.status)
+        console.error('Headers', error.response.headers)
+      } else if (error.request){
+        console.error('No response received:', error.request)
+      } else {
+        console.error('Error during request setup:', error.message)
+      }
+      throw error
+    }
+
+  }
+
+  async function getOptionsFunction() {
+    
+    try {
+      const response = await apiClient.get('/options/1/')
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data)
+        console.error('Status code:', error.response.status)
+        console.error('Headers', error.response.headers)
+      } else if (error.request){
+        console.error('No response received:', error.request)
+      } else {
+        console.error('Error during request setup:', error.message)
+      }
+      throw error
+    }
 
   }
   
@@ -42,8 +95,8 @@ import ChoreService from '@/services/ChoreService.js'
 
     const { data: options, isLoading } = useQuery({
       queryKey: ['options'],
-      queryFn: () => ChoreService.getOptions(),
-      select: (response) => response.data
+      queryFn: getOptionsFunction,
+      select: (response) => response
     })
     
     const createOptionMutation = useMutation({
