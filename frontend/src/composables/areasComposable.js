@@ -1,49 +1,100 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
-import ChoreService from '@/services/ChoreService.js'
+import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query"
+import axios from 'axios'
+
+const apiClient = axios.create({
+  baseURL: '/api/v2',
+  withCredentials: false,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json'
+  }
+})
 
   async function createAreaFunction(newArea) {
 
-    ChoreService.createArea(newArea)
-    .then((response) => {
+    try {
+      const response = await apiClient.post('/areas', newArea)
       return response.data
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data)
+        console.error('Status code:', error.response.status)
+        console.error('Headers', error.response.headers)
+      } else if (error.request){
+        console.error('No response received:', error.request)
+      } else {
+        console.error('Error during request setup:', error.message)
+      }
+      throw error
+    }
 
   }
 
   async function updateAreaFunction(updatedArea) {
-
-    ChoreService.updateArea(updatedArea)
-    .then((response) => {
+    try {
+      const response = await apiClient.put('/areas/' + updatedArea.id, updatedArea)
       return response.data
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data)
+        console.error('Status code:', error.response.status)
+        console.error('Headers', error.response.headers)
+      } else if (error.request){
+        console.error('No response received:', error.request)
+      } else {
+        console.error('Error during request setup:', error.message)
+      }
+      throw error
+    }
   }
 
   async function deleteAreaFunction(deletedArea) {
     
-    ChoreService.deleteArea(deletedArea)
-    .then((response) => {
+    try {
+      const response = await apiClient.delete('/areas/' + deletedArea.id)
       return response.data
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data)
+        console.error('Status code:', error.response.status)
+        console.error('Headers', error.response.headers)
+      } else if (error.request){
+        console.error('No response received:', error.request)
+      } else {
+        console.error('Error during request setup:', error.message)
+      }
+      throw error
+    }
 
   }
-  
+
+  async function getAreasFunction() {
+    
+    try {
+      const response = await apiClient.get('/areas')
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data)
+        console.error('Status code:', error.response.status)
+        console.error('Headers', error.response.headers)
+      } else if (error.request){
+        console.error('No response received:', error.request)
+      } else {
+        console.error('Error during request setup:', error.message)
+      }
+      throw error
+    }
+
+  }
+
   export function useAreas() {
     const queryClient = useQueryClient()
 
     const { data: areas, isLoading } = useQuery({
       queryKey: ['areas'],
-      queryFn: () => ChoreService.getAreas(),
-      select: (response) => response.data
+      queryFn: getAreasFunction,
+      select: (response) => response
     })
     
     const createAreaMutation = useMutation({
@@ -81,7 +132,7 @@ import ChoreService from '@/services/ChoreService.js'
     async function removeArea(deletedArea) {
       deleteAreaMutation.mutate(deletedArea);
     }
-  
+    
     return {
       areas,
       isLoading,
