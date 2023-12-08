@@ -8,7 +8,11 @@ import { format, parseISO } from 'date-fns'
 // and `Store` (e.g. `useUserStore`, `useCartStore`, `useProductStore`)
 // the first argument is a unique id of the store across your application
 export const useChoreStore = defineStore('chore', {
-  state: () => ({ 
+  state: () => ({
+    snackbarText: '',
+    snackbarColor: '',
+    snackbar: false,
+    snackbarTimeout: 1500,
     chores: [],
     users: [],
     historyitems: [],
@@ -187,6 +191,11 @@ export const useChoreStore = defineStore('chore', {
       },
     },
     actions: {
+      async showSnackbar(text, color) {
+        this.snackbarText = text;
+        this.snackbarColor = color;
+        this.snackbar = true;
+      },
       async fetchAll() {
         try {
           this.fetchChores()
