@@ -12,50 +12,33 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-snackbar
-      v-model="snackbar"
-      :color="snackbarColor"
-      :timeout="snackbarTimeout"
-      content-class="centered-text"
-    >
-      {{ snackbarText }}
-    </v-snackbar>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import AreaCard from '@/components/AreaCard.vue';
 import { useAreas } from '@/composables/areasComposable';
+import { useChoreStore } from '@/stores/chores'
 
-const snackbar = ref(false);
-const snackbarText = ref('');
-const snackbarColor = ref('');
-const snackbarTimeout = ref(1500);
+const chorestore = useChoreStore();
 const { areas, isLoading, editArea, removeArea } = useAreas();
 
 const updateArea = async (updatedArea) => {
   try{
     await editArea(updatedArea)
-    showSnackbar('Area updated', 'success')
+    chorestore.showSnackbar('Area updated', 'success')
   } catch {
-    showSnackbar('Area not updated', 'error')
+    chorestore.showSnackbar('Area not updated', 'error')
   }
 }
 
 const deleteArea = async (deletedArea) => {
   try{
     await removeArea(deletedArea)
-    showSnackbar('Area deleted', 'success')
+    chorestore.showSnackbar('Area deleted', 'success')
   } catch {
-    showSnackbar('Area not deleted', 'error')
+    chorestore.showSnackbar('Area not deleted', 'error')
   }
-}
-
-const showSnackbar = (text, color) => {
-  snackbarText.value = text;
-  snackbarColor.value = color;
-  snackbar.value = true;
 }
 
 </script>
