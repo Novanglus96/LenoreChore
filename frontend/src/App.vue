@@ -5,6 +5,14 @@
             <v-container fluid class="pa-2">
                 <router-view/>
             </v-container>
+            <v-snackbar
+                v-model="chorestore.snackbar"
+                :color="chorestore.snackbarColor"
+                :timeout="chorestore.snackbarTimeout"
+                content-class="centered-text"
+            >
+                {{ chorestore.snackbarText }}
+            </v-snackbar>
         </v-main>
     </v-app>
 </template>
@@ -19,6 +27,7 @@
     onMounted(() => {
       chorestore.fetchAll();
     });
+
 </script>
 
 <style>
