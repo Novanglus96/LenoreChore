@@ -75,14 +75,6 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-      <v-snackbar
-        v-model="snackbar"
-        :color="snackbarColor"
-        :timeout="snackbarTimeout"
-        content-class="centered-text"
-      >
-        {{ snackbarText }}
-      </v-snackbar>
     </v-dialog>
     
 </template>
@@ -116,31 +108,17 @@
       value: "area6",
     },
   ],
-  );  
-  const snackbar = ref(false);
-  const snackbarText = ref('');
-  const snackbarColor = ref('');
-  const snackbarTimeout = ref(1500);
+  );
   const dialog = ref(false)
   const formData = ref({
         group_name: '',
+        group_color: 'area1',
+        group_order: 1
       })
 
   const { addAreaGroup } = useAreaGroups()
   const submitForm = async () => {
-    try {
-      addAreaGroup(formData.value);
-      dialog.value = false;
-      showSnackbar('Area Group added successfully!', 'success');
-    } catch (error) {
-      // Handle errors (e.g., show an error message)
-      console.log('Error:', error);
-      showSnackbar('Area Group not added!', 'error');
-    }
+    addAreaGroup(formData.value);
+    dialog.value = false;
   };
-  const showSnackbar = (text, color) => {
-    snackbarText.value = text;
-    snackbarColor.value = color;
-    snackbar.value = true;
-  }
 </script>
