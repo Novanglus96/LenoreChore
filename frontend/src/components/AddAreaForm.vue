@@ -8,6 +8,7 @@
         <v-list-item
                 key="1"
                 v-bind="props"
+                @click="menu = false"
               >
                 <template v-slot:prepend>
                   <v-icon icon="mdi-plus-circle"></v-icon>
@@ -95,8 +96,8 @@
 </template>
 <script setup>
   import { ref } from 'vue';
-  import { useAreaGroups } from '@/composables/areaGroupsComposable'
   import { useAreas } from '@/composables/areasComposable'
+  import { useAreaGroups } from '@/composables/areaGroupsComposable'
   import { useChoreStore } from '@/stores/chores';
 
   const chorestore = useChoreStore()
