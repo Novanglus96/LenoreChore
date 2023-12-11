@@ -13,6 +13,7 @@
                     v-for="(menu, i) in menus"
                     :key="i"
                     :to="menu.url"
+                    @click="menu = false"
                 >
                 <template v-slot:prepend>
                     <v-icon :icon="menu.icon"></v-icon>
