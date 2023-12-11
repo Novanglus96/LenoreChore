@@ -95,16 +95,10 @@ class MonthOut(Schema):
 class ChoreIn(Schema):
     chore_name: str
     area_id: int
-    active: bool
-    nextDue: date
-    lastCompleted: date
     intervalNumber: int
     unit: str
-    active_months: List[MonthOut]
-    assignee: Optional[int]
+    active_months: List[int]
     effort: int
-    vacationPause: int
-    expand: bool
 
 
 class ChoreOut(Schema):
@@ -172,7 +166,21 @@ def create_area(request, payload: AreaIn):
 
 @api.post("/chores")
 def create_chore(request, payload: ChoreIn):
-    chore = Chore.objects.create(**payload.dict())
+    # Convert active_months IDs into Month instances
+    active_months = Month.objects.filter(id__in=payload.active_months)
+
+    # Create the Chore object
+    chore = Chore.objects.create(
+        chore_name=payload.chore_name,
+        area_id=payload.area_id,
+        intervalNumber=payload.intervalNumber,
+        unit=payload.unit,
+        effort=payload.effort,
+    )
+
+    # Set the active_months field
+    chore.active_months.set(active_months)
+
     return {"id": chore.id}
 
 
