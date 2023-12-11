@@ -1,5 +1,6 @@
 <template>
     <v-app>
+        <VueQueryDevtools/>
         <AppNavigationVue/>
         <v-main>
             <v-container fluid class="pa-2">
@@ -21,6 +22,7 @@
     import AppNavigationVue from "./views/AppNavigation.vue";
     import { onMounted } from 'vue';
     import { useChoreStore } from '@/stores/chores';
+    import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
     const chorestore = useChoreStore();
 
