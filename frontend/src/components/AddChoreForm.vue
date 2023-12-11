@@ -44,8 +44,7 @@
                     :items="areas"
                     item-title="area_name"
                     item-value="id"
-                    v-model="formData.area"
-                    return-object   
+                    v-model="formData.area_id"  
                 >
                 </v-select>
               </v-col>
@@ -314,16 +313,17 @@
   import { ref, computed } from 'vue';
   import { useChoreStore } from '@/stores/chores';
   import { useAreas } from '@/composables/areasComposable'
+  import { useChores } from '@/composables/choresComposasble'
 
   const chorestore = useChoreStore();
   const dialog = ref(false)
   const formData = ref({
         chore_name: '',
-        area: '',
+        area_id: '',
         unit: '',
         effort: 1,
         active_months: [1,2,3,4,5,6,7,8,9,10,11,12],
-        intervalNumber: '',
+        intervalNumber: '', 
       })
   const { areas } = useAreas()
 
@@ -334,13 +334,9 @@
     return chorestore.intervals;
   });
 
+  const { addChore } = useChores()
   const submitForm = async () => {
-    try {
-      chorestore.addChore(formData.value);
-      dialog.value = false;
-    } catch (error) {
-      // Handle errors (e.g., show an error message)
-      console.log('Error:', error);
-    }
+    addChore(formData.value);
+    dialog.value = false;
   };
 </script>
