@@ -72,13 +72,13 @@ function handleApiError(error, message) {
 
   }
   
-  export function useOptions() {
+export function useOptions() {
     const queryClient = useQueryClient()
-
     const { data: options, isLoading } = useQuery({
       queryKey: ['options'],
       queryFn: getOptionsFunction,
-      select: (response) => response
+      select: (response) => response,
+      client: queryClient
     })
     
     const createOptionMutation = useMutation({

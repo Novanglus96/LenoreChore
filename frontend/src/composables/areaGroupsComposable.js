@@ -74,11 +74,11 @@ function handleApiError(error, message) {
   
   export function useAreaGroups() {
     const queryClient = useQueryClient()
-
     const { data: areagroups, isLoading } = useQuery({
       queryKey: ['areagroups'],
       queryFn: getAreaGroupsFunction,
-      select: (response) => response
+      select: (response) => response,
+      client: queryClient
     })
     
     const createAreaGroupMutation = useMutation({

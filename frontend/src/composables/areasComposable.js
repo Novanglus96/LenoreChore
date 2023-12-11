@@ -71,13 +71,13 @@ function handleApiError(error, message) {
 
   }
 
-  export function useAreas() {
+export function useAreas() {
     const queryClient = useQueryClient()
-
     const { data: areas, isLoading } = useQuery({
       queryKey: ['areas'],
       queryFn: getAreasFunction,
-      select: (response) => response
+      select: (response) => response,
+      client: queryClient
     })
     
     const createAreaMutation = useMutation({

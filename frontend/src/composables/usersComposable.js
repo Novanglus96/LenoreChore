@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/vue-query";
-import { ref } from 'vue';
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import axios from 'axios'
 import { useChoreStore } from '@/stores/chores'
 
@@ -37,12 +36,13 @@ async function getUsersFunction() {
 
 }
   
-  export function useUsers() {
-
+export function useUsers() {
+    const queryClient = useQueryClient()
     const { data: users, isLoading } = useQuery({
       queryKey: ['users'],
       queryFn: getUsersFunction,
-      select: (response) => response
+      select: (response) => response,
+      client: queryClient
     })
   
     return {
@@ -51,21 +51,16 @@ async function getUsersFunction() {
     }
   }
 
-  export async function loginUser(credentials) {
-    const chorestore = useChoreStore();
-    const user = ref(null);
-    const error = ref(null);
+    
+    export async function loginUser(credentials) {
+        const chorestore = useChoreStore();
 
-    try {
-      const response = await apiClient.post('/auth/login', credentials)
-      chorestore.showSnackbar('User logged in successfully!', 'success')
-      user.value = response.data;
-    } catch (error) {
-      handleApiError(error, 'User not logged in: ')
+        try {
+            const response = await apiClient.post('/auth/login', credentials)
+            chorestore.showSnackbar('User logged in successfully!', 'success')
+            const user = response.data
+            return user
+        } catch (error) {
+            handleApiError(error, 'User not logged in: ')
+        }
     }
-
-    return {
-        user,
-        error
-    }
-  }
