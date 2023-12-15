@@ -93,12 +93,16 @@ class MonthOut(Schema):
 
 
 class ChoreIn(Schema):
-    chore_name: str
-    area_id: int
-    intervalNumber: int
-    unit: str
-    active_months: List[int]
-    effort: int
+    chore_name: Optional[str]
+    area_id: Optional[int]
+    intervalNumber: Optional[int]
+    unit: Optional[str]
+    active_months: Optional[List[int]]
+    effort: Optional[int]
+    active: Optional[bool]
+    nextDue: Optional[date]
+    lastCompleted: Optional[date]
+    assignee_id: Optional[int]
 
 
 class ChoreOut(Schema):
@@ -234,8 +238,13 @@ def list_areas(request):
 
 @api.get("/chores", response=List[ChoreOut])
 def list_chores(request):
-    qs = Chore.objects.all()
+    qs = Chore.objects.all().order_by('-active', 'nextDue')
     return qs
+
+
+def calculate_duedays(next_due):
+    delta = next_due - date.today()
+    return delta.days
 
 
 @api.get("/historyitems", response=List[HistoryItemOut])
@@ -286,11 +295,9 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
     chore.lastCompleted = payload.lastCompleted
     chore.intervalNumber = payload.intervalNumber
     chore.unit = payload.unit
-    chore.active_months = payload.active_months
-    chore.assignee = payload.assignee
+    chore.active_months.set(payload.active_months)
+    chore.assignee_id = payload.assignee_id
     chore.effort = payload.effort
-    chore.vacationPause = payload.vacationPause
-    chore.expand = payload.expand
     chore.save()
     return {"success": True}
 
