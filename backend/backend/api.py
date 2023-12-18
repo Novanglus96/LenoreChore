@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from datetime import date
 from ninja.errors import HttpError
 from ninja.security import HttpBearer
+from dateutil.relativedelta import relativedelta
 
 api = NinjaAPI()
 router = Router()
@@ -105,6 +106,22 @@ class ChoreIn(Schema):
     assignee_id: Optional[int]
 
 
+class TogglActive(Schema):
+    active: bool
+
+
+class CompleteChore(Schema):
+    lastCompleted: date
+
+
+class SnoozeChore(Schema):
+    nextDue: date
+
+
+class ClaimChore(Schema):
+    assignee_id: Optional[int]
+
+
 class ChoreOut(Schema):
     id: int
     chore_name: str
@@ -190,7 +207,13 @@ def create_chore(request, payload: ChoreIn):
 
 @api.post("/historyitems")
 def create_historyitem(request, payload: HistoryItemIn):
-    historyitem = HistoryItem.objects.create(**payload.dict())
+    completed_by_id = payload.completed_by
+    completed_by_object = get_object_or_404(CustomUser, id=completed_by_id)
+    historyitem = HistoryItem.objects.create(
+        completed_date=payload.completed_date,
+        completed_by=completed_by_object,
+        chore_id=payload.chore_id
+    )
     return {"id": historyitem.id}
 
 
@@ -298,6 +321,46 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
     chore.active_months.set(payload.active_months)
     chore.assignee_id = payload.assignee_id
     chore.effort = payload.effort
+    chore.save()
+    return {"success": True}
+
+
+@api.patch("/chores/togglechore/{chore_id}")
+def toggle_chore(request, chore_id: int, payload: TogglActive):
+    chore = get_object_or_404(Chore, id=chore_id)
+    chore.active = payload.active
+    chore.save()
+    return {"success": True}
+
+
+@api.patch("/chores/snoozechore/{chore_id}")
+def snooze_chore(request, chore_id: int, payload: SnoozeChore):
+    chore = get_object_or_404(Chore, id=chore_id)
+    chore.nextDue = payload.nextDue
+    chore.save()
+    return {"success": True}
+
+
+@api.patch("/chores/claimchore/{chore_id}")
+def claim_chore(request, chore_id: int, payload: ClaimChore):
+    chore = get_object_or_404(Chore, id=chore_id)
+    chore.assignee_id = payload.assignee_id
+    chore.save()
+    return {"success": True}
+
+
+@api.patch("/chores/completechore/{chore_id}")
+def complete_chore(request, chore_id: int, payload: CompleteChore):
+    chore = get_object_or_404(Chore, id=chore_id)
+    chore.lastCompleted = payload.lastCompleted
+    if chore.unit == 'day(s)':
+        chore.nextDue = payload.lastCompleted + relativedelta(days=chore.intervalNumber)
+    elif chore.unit == 'week(s)':
+        chore.nextDue = payload.lastCompleted + relativedelta(weeks=chore.intervalNumber)
+    elif chore.unit == 'month(s)':
+        chore.nextDue = payload.lastCompleted + relativedelta(months=chore.intervalNumber)
+    elif chore.unit == 'year(s)':
+        chore.nextDue = payload.lastCompleted + relativedelta(years=chore.intervalNumber)
     chore.save()
     return {"success": True}
 
