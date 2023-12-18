@@ -45,7 +45,7 @@
         density="compact"
         :prepend-icon="localchore.isAssigned ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
       >
-        <v-list-item-subtitle>{{ localchore.isAssigned ? localchore.assignee.fullname : "Unassigned" }}</v-list-item-subtitle>
+        <v-list-item-subtitle>{{ localchore.assignee ? localchore.assignee.fullname : "Unassigned" }}</v-list-item-subtitle>
       </v-list-item>
 
       <v-list-item
@@ -309,7 +309,7 @@
     <v-divider :thickness="2"></v-divider>
 
     <v-card-actions>
-      <v-btn @click="callCompleteChore(localchore)" icon="mdi-check" :disabled="!localchore.active || expand"></v-btn>
+      <v-btn @click="callCompleteChore(localchore.id, getID)" icon="mdi-check" :disabled="!localchore.active || expand"></v-btn>
       <v-dialog
         v-model="snooze"
         scrollable
@@ -340,22 +340,22 @@
             <v-btn
               color="blue darken-1"
               text
-              @click="callSnoozeChore(localchore)"
+              @click="callSnoozeChore(localchore.id, localchore.nextDue)"
             >
               Save
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-btn @click="callClaimChore(localchore,getID)" icon="mdi-clipboard-account-outline" :disabled="!localchore.active || expand" :color="localchore.isAssigned ? 'red' : 'white'"></v-btn>
-      <v-btn @click="callToggleChore(localchore)" icon="mdi-circle-off-outline" :color="localchore.active ? 'red' : 'white'" :disabled="expand"></v-btn>
+      <v-btn @click="callClaimChore(localchore.id, localchore.assignee_id)" icon="mdi-clipboard-account-outline" :disabled="!localchore.active || expand" :color="localchore.isAssigned ? 'red' : 'white'"></v-btn>
+      <v-btn @click="callToggleChore(localchore.id, !localchore.active)" icon="mdi-circle-off-outline" :color="localchore.active ? 'red' : 'white'" :disabled="expand"></v-btn>
       <v-btn @click="expand = !expand" :icon="expand ? 'mdi-chevron-up' : 'mdi-chevron-down'" :disabled="saveEnabled"></v-btn>
       <v-btn @click="localchore.history = !localchore.history" icon="mdi-clipboard-text-clock-outline" :color="!localchore.history ? 'white' : 'grey'" :disabled="expand"></v-btn>
     </v-card-actions>
   </v-card>
 </template>
 <script setup>
-import { computed, defineProps, defineEmits, ref } from 'vue';
+import { computed, defineProps, defineEmits, ref, watch } from 'vue';
 import { useChoreStore } from '@/stores/chores';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
@@ -404,6 +404,43 @@ const localchore = ref({
   expand: props.chore.expand,
   dirtiness: props.chore.dirtiness,
   duedays: props.chore.duedays
+})
+
+watch(() => props.chore, (updatedChore) => {
+  localchore.value = {
+    id: updatedChore.chore.id,
+    chore_name: updatedChore.chore_name,
+    area_id: updatedChore.area_id,
+    area: {
+      id: updatedChore.area.id,
+      area_name: updatedChore.area.area_name,
+      area_icon: updatedChore.area.area_icon,
+      group_id: updatedChore.area.group_id,
+      group: {
+        id: updatedChore.area.group.id,
+        group_name: updatedChore.area.group.group_name,
+        group_order: updatedChore.area.group.group_order,
+        group_color: updatedChore.area.group.group_color
+      },
+      dirtiness: updatedChore.area.dirtiness,
+      dueCount: updatedChore.area.dueCount,
+      totalCount: updatedChore.area.totalCount,
+      total_dirtiness: updatedChore.area.total_dirtiness
+    },
+    active: updatedChore.active,
+    nextDue: updatedChore.nextDue,
+    lastCompleted: updatedChore.lastCompleted,
+    intervalNumber: updatedChore.intervalNumber,
+    unit: updatedChore.unit,
+    active_months: updatedChore.active_months.map(month => month.id),
+    assignee_id: updatedChore.assignee_id,
+    assignee: updatedChore.assignee,
+    effort: updatedChore.effort,
+    vacationPause: updatedChore.vacationPause,
+    expand: updatedChore.expand,
+    dirtiness: updatedChore.dirtiness,
+    duedays: updatedChore.duedays
+  }
 })
 const callResetChore = async () => {
   localchore.value.dirtiness = props.chore.dirtiness
@@ -482,8 +519,8 @@ const getDirtyColor = (dirtiness) => {
   }
   return color
 }
-const callSnoozeChore = async (snoozeChore) => {
-  emit('snoozeChore', snoozeChore)
+const callSnoozeChore = async (chore_id, next_due) => {
+  emit('snoozeChore', chore_id, next_due)
   snooze.value = !snooze.value
 }
 const callSaveChore = async (saveChore) => {
@@ -495,14 +532,20 @@ const callDeleteChore = async (deleteChore) => {
   emit('removeChore', deleteChore)
   deleteDialog.value = !deleteDialog.value
 }
-const callCompleteChore = async (completeChore) => {
-  emit('completeChore', completeChore)
+const callCompleteChore = async (chore_id, user_id) => {
+  emit('completeChore', chore_id, user_id)
 }
-const callClaimChore = async (claimChore,claimUser) => {
-  emit('claimChore', claimChore, claimUser)
+const callClaimChore = async (chore_id, user_id) => {
+  let assignee = null
+  if (getID.value == user_id) {
+    assignee = null
+  } else {
+    assignee = getID.value
+  }
+  emit('claimChore', chore_id, assignee)
 }
-const callToggleChore = async (toggleChore) => {
-  emit('toggleActivation', toggleChore)
+const callToggleChore = async (chore_id, active) => {
+  emit('toggleActivation', chore_id, active)
 }
 </script>
 <style scoped>
