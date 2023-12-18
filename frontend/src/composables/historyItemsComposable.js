@@ -25,3 +25,53 @@ function handleApiError(error, message) {
   chorestore.showSnackbar(message + 'Error #' + error.response.status, 'error')
   throw error
 }
+
+async function createHistoryItemFunction(newHistoryItem) {
+    const chorestore = useChoreStore();
+    try {
+      const response = await apiClient.post('/historyitems', newHistoryItem)
+      chorestore.showSnackbar('History Item created successfully!', 'success')
+      return response.data
+    } catch (error) {
+      handleApiError(error, 'History Item not created: ')
+    }
+
+  }
+
+  async function getHistoryItemsFunction() {
+    try {
+      const response = await apiClient.get('/historyitems')
+      return response.data
+    } catch (error) {
+      handleApiError(error, 'History Items not fetched: ')
+    }
+
+  }
+
+  export function useHistoryItems() {
+    const queryClient = useQueryClient()
+    const { data: historyItems, isLoading } = useQuery({
+      queryKey: ['historyitems'],
+      queryFn: getHistoryItemsFunction,
+      select: (response) => response,
+      client: queryClient
+    })
+    
+    const createHistoryItemMutation = useMutation({
+      mutationFn: createHistoryItemFunction,
+      onSuccess: () => {
+        console.log('Success adding history item')
+        queryClient.invalidateQueries({ queryKey: ['historyitems'] })
+      }
+    })
+  
+    async function addHistoryItem(newHistoryItem) {
+      createHistoryItemMutation.mutate(newHistoryItem);
+    }
+    
+    return {
+      historyItems,
+      isLoading,
+      addHistoryItem
+    }
+  }
