@@ -7,6 +7,7 @@ import ProfileView from '../views/ProfileView.vue'
 import SettingsView from '../views/SettingsView.vue'
 import LogoutView from '../views/LogoutView.vue'
 import LoginView from '../views/LoginView.vue'
+import FourView from '../views/FourView.vue'
 
 const routes = [
   {
@@ -18,6 +19,12 @@ const routes = [
   {
     path: '/list',
     name: 'list',
+    component: ListView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/list/:areaName',
+    name: 'listfilter',
     component: ListView,
     meta: { requiresAuth: true },
   },
@@ -54,12 +61,17 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: LoginView
+    component: LoginView,
+  },
+  { 
+    path: '/:catchAll(.*)', 
+    component: FourView,
+    name: 'NotFound'
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(),
   routes
 })
 

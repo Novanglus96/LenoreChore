@@ -1,22 +1,31 @@
 <template>
   <div>
-    <h2>Logout</h2>
-    <button @click="logout">Logout</button>
+    <v-btn
+        block
+        class="mb-8"
+        color="blue"
+        size="large"
+        variant="tonal"
+        type="submit"
+        @click="logout"
+      >
+        Log Out
+      </v-btn>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from 'pinia';
+import { useUserStore } from '../stores/user';
 
 export default {
   methods: {
-    ...mapActions(['clearAuthToken']), // Vuex action to clear the auth token
+    ...mapActions(useUserStore, ['logoutUser']),
 
     logout() {
       // Clear the token from local storage or Vuex
       localStorage.removeItem('authToken');
-      this.clearAuthToken(); // Dispatch the Vuex action to clear the token
-
+      this.logoutUser()
       // Redirect to the login page or another desired page
       this.$router.push('/login');
     },

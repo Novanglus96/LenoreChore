@@ -1,0 +1,11 @@
+[
+  {
+    "model": "api.Option",
+    "pk": 1,
+    "fields": {
+      "vacation_mode": false,
+      "med_thresh": 49,
+      "high_thresh": 74
+    }
+  }
+]
