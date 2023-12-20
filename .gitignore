@@ -145,7 +145,7 @@ venv.bak/
 /site
 
 # db backups
-/backup
+backup/
 
 # mypy
 .mypy_cache/
