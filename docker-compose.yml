@@ -1,57 +1,53 @@
-version: '3.8'
+version: "3.8"
 
 services:
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     networks:
       - default
     restart: unless-stopped
-    expose:
-      - 80
-    env_file:
-      - ./.env.fe
+    ports:
+      - 8081:8080
     image: chores_frontend:development
     container_name: chores_frontend_dev
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NODE_ENV=development
+      - TZ=America/New_York
   backend:
     build:
       context: ./backend
-    command: /home/app/web/start.sh
+      dockerfile: Dockerfile.dev
+    command: /usr/src/app/start.dev.sh
     volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-    expose:
-      - 8000
+      - ./backend:/usr/src/app
+    environment:
+      - DEBUG=1
+      - TZ=America/New_York
+    ports:
+      - 8001:8001
     depends_on:
       - db
     networks:
       - default
     env_file:
-      - ./.env
+      - ./.env.dev
     image: chores_backend:development
     container_name: chores_backend_dev
   db:
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./backup:/backup
     env_file:
-      - ./.env.db
+      - ./.env.dev.db
     networks:
       - default
     container_name: chores_db_dev
-  nginx:
-    image: registry.danielleandjohn.love/django_vue_proxy:latest
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - default
-    ports:
-      - 7000:80
-    container_name: chores_proxy_dev
+    environment:
+      - TZ=America/New_York
 
 volumes:
   postgres_data:
