@@ -1,3 +1,3 @@
-# chores App
+# LenoreChore App
 
 A simple chores app.

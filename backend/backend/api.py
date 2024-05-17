@@ -1,7 +1,15 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.tokens import default_token_generator
 from ninja import NinjaAPI, Schema, Router
-from api.models import CustomUser, AreaGroup, Area, Month, Chore, HistoryItem, Option
+from api.models import (
+    CustomUser,
+    AreaGroup,
+    Area,
+    Month,
+    Chore,
+    HistoryItem,
+    Option,
+)
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
 from datetime import date
@@ -11,9 +19,9 @@ from dateutil.relativedelta import relativedelta
 
 api = NinjaAPI()
 router = Router()
-api.title = "Chores API"
+api.title = "LenoreChore API"
 api.version = "1.1.0"
-api.description = "API documentation for Chores"
+api.description = "API documentation for LenoreChore"
 
 
 class TokenAuth(HttpBearer):
@@ -232,7 +240,7 @@ def create_historyitem(request, payload: HistoryItemIn):
     historyitem = HistoryItem.objects.create(
         completed_date=payload.completed_date,
         completed_by=completed_by_object,
-        chore_id=payload.chore_id
+        chore_id=payload.chore_id,
     )
     return {"id": historyitem.id}
 
@@ -275,13 +283,13 @@ def list_areagroups(request):
 
 @api.get("/areas", response=List[AreaOut])
 def list_areas(request):
-    qs = Area.objects.all().order_by('group__group_order', 'area_name')
+    qs = Area.objects.all().order_by("group__group_order", "area_name")
     return qs
 
 
 @api.get("/chores", response=List[ChoreOut])
 def list_chores(request):
-    qs = Chore.objects.all().order_by('-active', 'nextDue')
+    qs = Chore.objects.all().order_by("-active", "nextDue")
     chore_list = []
 
     for chore in qs:
@@ -400,14 +408,22 @@ def claim_chore(request, chore_id: int, payload: ClaimChore):
 def complete_chore(request, chore_id: int, payload: CompleteChore):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.lastCompleted = payload.lastCompleted
-    if chore.unit == 'day(s)':
-        chore.nextDue = payload.lastCompleted + relativedelta(days=chore.intervalNumber)
-    elif chore.unit == 'week(s)':
-        chore.nextDue = payload.lastCompleted + relativedelta(weeks=chore.intervalNumber)
-    elif chore.unit == 'month(s)':
-        chore.nextDue = payload.lastCompleted + relativedelta(months=chore.intervalNumber)
-    elif chore.unit == 'year(s)':
-        chore.nextDue = payload.lastCompleted + relativedelta(years=chore.intervalNumber)
+    if chore.unit == "day(s)":
+        chore.nextDue = payload.lastCompleted + relativedelta(
+            days=chore.intervalNumber
+        )
+    elif chore.unit == "week(s)":
+        chore.nextDue = payload.lastCompleted + relativedelta(
+            weeks=chore.intervalNumber
+        )
+    elif chore.unit == "month(s)":
+        chore.nextDue = payload.lastCompleted + relativedelta(
+            months=chore.intervalNumber
+        )
+    elif chore.unit == "year(s)":
+        chore.nextDue = payload.lastCompleted + relativedelta(
+            years=chore.intervalNumber
+        )
     chore.save()
     return {"success": True}
 
@@ -473,15 +489,15 @@ def login_user(request, payload: LoginSchema):
         token = default_token_generator.make_token(user)
 
         return {
-            'token': token,
-            'firstname': user.first_name,
-            'lastname': user.last_name,
-            'email': user.email,
-            'isAdmin': user.is_superuser,
-            'male': user.male,
-            'id': user.id,
-            'user_color': user.user_color,
-            'groups': [group.id for group in user.groups.all()]
+            "token": token,
+            "firstname": user.first_name,
+            "lastname": user.last_name,
+            "email": user.email,
+            "isAdmin": user.is_superuser,
+            "male": user.male,
+            "id": user.id,
+            "user_color": user.user_color,
+            "groups": [group.id for group in user.groups.all()],
         }
     else:
         raise HttpError(401, "Invalid credentials")
@@ -491,7 +507,7 @@ def login_user(request, payload: LoginSchema):
 def logout_user(request):
     # Log the user out
     logout(request)
-    return {'detail': 'Logout successful'}
+    return {"detail": "Logout successful"}
 
 
 api.add_router("/auth", router)
