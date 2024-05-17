@@ -355,7 +355,7 @@
   </v-card>
 </template>
 <script setup>
-import { computed, defineProps, defineEmits, ref, watch } from 'vue';
+import { computed, defineProps, defineEmits, ref, watch, onMounted } from 'vue';
 import { useChoreStore } from '@/stores/chores';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
@@ -371,77 +371,17 @@ const emit = defineEmits(['editChore', 'removeChore', 'snoozeChore', 'completeCh
 const props = defineProps({
   chore: Array
 })
-const localchore = ref({
-  id: props.chore.id,
-  chore_name: props.chore.chore_name,
-  area_id: props.chore.area_id,
-  area: {
-    id: props.chore.area.id,
-    area_name: props.chore.area.area_name,
-    area_icon: props.chore.area.area_icon,
-    group_id: props.chore.area.group_id,
-    group: {
-      id: props.chore.area.group.id,
-      group_name: props.chore.area.group.group_name,
-      group_order: props.chore.area.group.group_order,
-      group_color: props.chore.area.group.group_color
-    },
-    dirtiness: props.chore.area.dirtiness,
-    dueCount: props.chore.area.dueCount,
-    totalCount: props.chore.area.totalCount,
-    total_dirtiness: props.chore.area.total_dirtiness
-  },
-  active: props.chore.active,
-  nextDue: props.chore.nextDue,
-  lastCompleted: props.chore.lastCompleted,
-  intervalNumber: props.chore.intervalNumber,
-  unit: props.chore.unit,
-  active_months: props.chore.active_months.map(month => month.id),
-  assignee_id: props.chore.assignee_id,
-  assignee: props.chore.assignee,
-  effort: props.chore.effort,
-  vacationPause: props.chore.vacationPause,
-  expand: props.chore.expand,
-  dirtiness: props.chore.dirtiness,
-  duedays: props.chore.duedays
-})
+const localchore = ref(null)
 
 watch(() => props.chore, (updatedChore) => {
-  localchore.value = {
-    id: updatedChore.chore.id,
-    chore_name: updatedChore.chore_name,
-    area_id: updatedChore.area_id,
-    area: {
-      id: updatedChore.area.id,
-      area_name: updatedChore.area.area_name,
-      area_icon: updatedChore.area.area_icon,
-      group_id: updatedChore.area.group_id,
-      group: {
-        id: updatedChore.area.group.id,
-        group_name: updatedChore.area.group.group_name,
-        group_order: updatedChore.area.group.group_order,
-        group_color: updatedChore.area.group.group_color
-      },
-      dirtiness: updatedChore.area.dirtiness,
-      dueCount: updatedChore.area.dueCount,
-      totalCount: updatedChore.area.totalCount,
-      total_dirtiness: updatedChore.area.total_dirtiness
-    },
-    active: updatedChore.active,
-    nextDue: updatedChore.nextDue,
-    lastCompleted: updatedChore.lastCompleted,
-    intervalNumber: updatedChore.intervalNumber,
-    unit: updatedChore.unit,
-    active_months: updatedChore.active_months.map(month => month.id),
-    assignee_id: updatedChore.assignee_id,
-    assignee: updatedChore.assignee,
-    effort: updatedChore.effort,
-    vacationPause: updatedChore.vacationPause,
-    expand: updatedChore.expand,
-    dirtiness: updatedChore.dirtiness,
-    duedays: updatedChore.duedays
-  }
+  localchore.value = updatedChore
 })
+
+onMounted(() => {
+  localchore.value = props.chore
+  console.log('chore: ', localchore.value)
+})
+
 const callResetChore = async () => {
   localchore.value.dirtiness = props.chore.dirtiness
   localchore.value.duedays = props.chore.duedays

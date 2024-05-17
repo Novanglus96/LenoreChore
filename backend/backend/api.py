@@ -132,6 +132,26 @@ class ChoreOut(Schema):
     lastCompleted: date
     intervalNumber: int
     unit: str
+    active_months: List[int]
+    assignee_id: Optional[int]
+    assignee: CustomUserSchema = None
+    effort: int
+    vacationPause: int
+    expand: bool
+    dirtiness: int
+    duedays: int
+
+
+class ChoreOutFull(Schema):
+    id: int
+    chore_name: str
+    area_id: int
+    area: AreaOut
+    active: bool
+    nextDue: date
+    lastCompleted: date
+    intervalNumber: int
+    unit: str
     active_months: List[MonthOut]
     assignee_id: Optional[int]
     assignee: CustomUserSchema = None
@@ -152,7 +172,7 @@ class HistoryItemOut(Schema):
     id: int
     completed_date: date
     completed_by: CustomUserSchema
-    chore: ChoreOut
+    chore: ChoreOutFull
 
 
 class OptionIn(Schema):
@@ -262,7 +282,34 @@ def list_areas(request):
 @api.get("/chores", response=List[ChoreOut])
 def list_chores(request):
     qs = Chore.objects.all().order_by('-active', 'nextDue')
-    return qs
+    chore_list = []
+
+    for chore in qs:
+        active_months = list(chore.active_months.all())
+        active_month_ids = [month.id for month in active_months]
+
+        chore_data = ChoreOut(
+            id=chore.id,
+            chore_name=chore.chore_name,
+            area_id=chore.area_id,
+            area=chore.area,  # Assuming AreaOut is a valid representation
+            active=chore.active,
+            nextDue=chore.nextDue,
+            lastCompleted=chore.lastCompleted,
+            intervalNumber=chore.intervalNumber,
+            unit=chore.unit,
+            active_months=active_month_ids,  # Set active_months to the list of IDs
+            assignee_id=chore.assignee_id,
+            assignee=chore.assignee,
+            effort=chore.effort,
+            vacationPause=chore.vacationPause,
+            expand=chore.expand,
+            dirtiness=chore.dirtiness,
+            duedays=chore.duedays,
+        )
+        chore_list.append(chore_data)
+
+    return chore_list
 
 
 def calculate_duedays(next_due):
