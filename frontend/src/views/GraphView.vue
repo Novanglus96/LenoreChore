@@ -1,10 +1,9 @@
 <template>
   <div class="graphs">
-    <ChoreGraphs/>
+    <ChoreGraphs />
   </div>
 </template>
 
 <script setup>
-import ChoreGraphs from '@/components/ChoreGraphs.vue'
-
+import ChoreGraphs from "@/components/ChoreGraphs.vue";
 </script>

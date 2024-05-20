@@ -7,7 +7,7 @@
     </header>
     <main>
       <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <LogoutForm/>
+        <LogoutForm />
       </div>
     </main>
   </div>
@@ -15,12 +15,12 @@
 
 <script>
 // @ is an alias to /src
-import LogoutForm from '@/components/LogoutForm.vue'
+import LogoutForm from "@/components/LogoutForm.vue";
 
 export default {
-  name: 'ListView',
+  name: "ListView",
   components: {
-    LogoutForm
-  }
-}
+    LogoutForm,
+  },
+};
 </script>
