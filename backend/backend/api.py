@@ -291,7 +291,7 @@ def list_areas(request):
 @api.get("/chores", response=List[ChoreOut])
 def list_chores(request):
     qs = Chore.objects.all().order_by(
-        "-active", "nextDue", "effort", "chore_name", "id"
+        "-active", "nextDue", "lastCompleted", "effort", "chore_name", "id"
     )
     chore_list = []
 
