@@ -120,6 +120,7 @@ class TogglActive(Schema):
 
 class CompleteChore(Schema):
     lastCompleted: date
+    completed_by_id: int
 
 
 class SnoozeChore(Schema):
@@ -289,7 +290,9 @@ def list_areas(request):
 
 @api.get("/chores", response=List[ChoreOut])
 def list_chores(request):
-    qs = Chore.objects.all().order_by("-active", "nextDue")
+    qs = Chore.objects.all().order_by(
+        "-active", "nextDue", "effort", "chore_name", "id"
+    )
     chore_list = []
 
     for chore in qs:
@@ -425,6 +428,11 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
             years=chore.intervalNumber
         )
     chore.save()
+    historyitem = HistoryItem.objects.create(
+        completed_date=payload.lastCompleted,
+        completed_by_id=payload.completed_by_id,
+        chore=chore,
+    )
     return {"success": True}
 
 
