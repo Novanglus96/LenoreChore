@@ -20,7 +20,7 @@ from dateutil.relativedelta import relativedelta
 api = NinjaAPI()
 router = Router()
 api.title = "LenoreChore API"
-api.version = "1.1.0"
+api.version = "1.1.1"
 api.description = "API documentation for LenoreChore"
 
 
