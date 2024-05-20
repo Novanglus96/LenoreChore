@@ -17,8 +17,8 @@
       >
         <td class="text-center">{{ item.completed_date }}</td>
         <td class="text-center">
-          <v-icon :icon="item.chore.area.area_icon"></v-icon>{{
-          item.chore.area.area_name }}
+          <v-icon :icon="item.chore.area.area_icon"></v-icon
+          >{{ item.chore.area.area_name }}
         </td>
         <td class="text-center">{{ item.chore.chore_name }}</td>
         <td class="text-center">{{ item.completed_by.fullname }}</td>
@@ -27,21 +27,20 @@
   </v-table>
 </template>
 <script setup>
-  import { computed } from 'vue';
-  import { useChoreStore } from '@/stores/chores';
+import { computed } from "vue";
+import { useChoreStore } from "@/stores/chores";
 
-  const chorestore = useChoreStore();
-  const getHistoryItems = computed(() => {
-    return chorestore.getHistoryItems;
-  });
-
+const chorestore = useChoreStore();
+const getHistoryItems = computed(() => {
+  return chorestore.getHistoryItems;
+});
 </script>
 <style scoped>
-  .even-row {
-    background-color: #f2f2f2; /* Define the background color for even rows */
-  }
+.even-row {
+  background-color: #f2f2f2; /* Define the background color for even rows */
+}
 
-  .odd-row {
-    background-color: #ffffff; /* Define the background color for odd rows */
-  }
+.odd-row {
+  background-color: #ffffff; /* Define the background color for odd rows */
+}
 </style>

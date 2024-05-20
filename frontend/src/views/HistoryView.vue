@@ -1,10 +1,9 @@
 <template>
   <div class="history">
-    <HistoryTable/>
+    <HistoryTable />
   </div>
 </template>
 
 <script setup>
-import HistoryTable from '@/components/HistoryTable.vue'
-
+import HistoryTable from "@/components/HistoryTable.vue";
 </script>

@@ -3,7 +3,13 @@
     <v-container>
       <v-row dense v-if="!isLoading">
         <v-col cols="12">
-          <AreaCard v-for="area in areas" :area="area" :key="area.id" @edit-area="updateArea" @remove-area="deleteArea"/>
+          <AreaCard
+            v-for="area in areas"
+            :area="area"
+            :key="area.id"
+            @edit-area="updateArea"
+            @remove-area="deleteArea"
+          />
         </v-col>
       </v-row>
       <v-row dense v-else>
@@ -16,29 +22,16 @@
 </template>
 
 <script setup>
-import AreaCard from '@/components/AreaCard.vue';
-import { useAreas } from '@/composables/areasComposable';
-import { useChoreStore } from '@/stores/chores'
+import AreaCard from "@/components/AreaCard.vue";
+import { useAreas } from "@/composables/areasComposable";
 
-const chorestore = useChoreStore();
 const { areas, isLoading, editArea, removeArea } = useAreas();
 
-const updateArea = async (updatedArea) => {
-  try{
-    await editArea(updatedArea)
-    chorestore.showSnackbar('Area updated', 'success')
-  } catch {
-    chorestore.showSnackbar('Area not updated', 'error')
-  }
-}
+const updateArea = async updatedArea => {
+  await editArea(updatedArea);
+};
 
-const deleteArea = async (deletedArea) => {
-  try{
-    await removeArea(deletedArea)
-    chorestore.showSnackbar('Area deleted', 'success')
-  } catch {
-    chorestore.showSnackbar('Area not deleted', 'error')
-  }
-}
-
+const deleteArea = async deletedArea => {
+  await removeArea(deletedArea);
+};
 </script>
