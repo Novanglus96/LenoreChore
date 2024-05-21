@@ -410,7 +410,7 @@ def calculate_duedays(next_due):
 
 @api.get("/historyitems", response=List[HistoryItemOut])
 def list_historyitems(request):
-    qs = HistoryItem.objects.all()
+    qs = HistoryItem.objects.all().order_by("-completed_date", "-id")
     return qs
 
 
