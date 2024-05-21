@@ -1,6 +1,6 @@
 <template>
-  <div style="height: 400px">
-    <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
+  <div style="height: 400px" v-if="!isLoading">
+    <Bar id="my-chart-id" :options="chartOptions" :data="weeklyTotals" />
   </div>
 </template>
 <script setup>
@@ -14,9 +14,9 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
-import { useChoreStore } from "@/stores/chores";
+import { useWeeklyTotals } from "@/composables/historyItemsComposable";
 
-const chorestore = useChoreStore();
+const { weeklyTotals, isLoading } = useWeeklyTotals();
 
 ChartJS.register(
   Title,
@@ -26,11 +26,6 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
 );
-
-const chartData = {
-  labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  datasets: chorestore.weeklytotals,
-};
 
 const chartOptions = {
   responsive: true,
