@@ -12,10 +12,13 @@ from api.models import (
 )
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
-from datetime import date
+from datetime import date, timedelta
 from ninja.errors import HttpError
 from ninja.security import HttpBearer
 from dateutil.relativedelta import relativedelta
+from django.db.models import Count
+from django.utils import timezone
+from django.db.models.functions import TruncDate
 
 api = NinjaAPI()
 router = Router()
@@ -195,6 +198,83 @@ class OptionOut(Schema):
     vacation_mode: bool
     med_thresh: int
     high_thresh: int
+
+
+# The class DatasetObject is a schema representing a Graph Forecast Dataset.
+class DatasetObject(Schema):
+    backgroundColor: Optional[str]
+    data: Optional[List[int]]
+    label: Optional[str]
+
+
+# The class GraphData is a schema representing a graph data object.
+class GraphData(Schema):
+    labels: List[str]
+    datasets: List[DatasetObject]
+
+
+@api.get("/weeklytotals", response=GraphData)
+def get_weeklytotals(request):
+    """
+    The function `get_weeklytotals` retrieves the weekly totals
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        GraphData: the graph data
+
+    Raises:
+
+    """
+    labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    datasets = []
+    users = CustomUser.objects.all()
+    for user in users:
+        user_name = None
+        if user.first_name and user.first_name != "":
+            user_name = user.first_name
+        else:
+            if len(user.email) > 15:
+                if "@" in user.email:
+                    parts = user.email.split("@")
+                    if len(parts[0]) <= 9:
+                        user_name = parts[0] + "@"
+                    else:
+                        user_name = parts[0][:8] + "*@"
+                    if len(parts[1]) <= 5:
+                        user_name += parts[1]
+                    else:
+                        user_name += parts[1][:4] + "*"
+                else:
+                    user_name = user.email[:14] + "*"
+            else:
+                user_name = user.email
+        records_this_week = HistoryItem.objects.filter(
+            completed_by=user,
+            completed_date__gte=start_of_week,
+            completed_date__lt=start_of_week + timedelta(days=7),
+        )
+        daily_counts = (
+            records_this_week.values("completed_date")
+            .annotate(count=Count("id"))
+            .order_by("completed_date")
+        )
+        weekly_counts = [0] * 7
+        i = 0
+        for record in daily_counts:
+            weekly_counts[i] = record["count"]
+            i += 1
+        dataset_obj = DatasetObject(
+            backgroundColor=user.user_color,
+            data=weekly_counts,
+            label=user_name,
+        )
+        datasets.append(dataset_obj)
+    graph = GraphData(labels=labels, datasets=datasets)
+    return graph
 
 
 @api.get("/me", response=CustomUserSchema)
