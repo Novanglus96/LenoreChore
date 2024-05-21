@@ -20,15 +20,10 @@
 
 <script setup>
 import AppNavigationVue from "./views/AppNavigation.vue";
-import { onMounted } from "vue";
 import { useChoreStore } from "@/stores/chores";
 import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
 
 const chorestore = useChoreStore();
-
-onMounted(() => {
-  chorestore.fetchAll();
-});
 </script>
 
 <style></style>
