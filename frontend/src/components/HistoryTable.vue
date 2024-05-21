@@ -1,5 +1,5 @@
 <template>
-  <v-table>
+  <v-table v-if="!isLoading">
     <thead>
       <tr class="bg-secondary">
         <th class="text-center text-accent font-weight-bold">Date</th>
@@ -10,7 +10,7 @@
     </thead>
     <tbody>
       <tr
-        v-for="(item, index) in getHistoryItems"
+        v-for="(item, index) in historyItems"
         :key="item.chore.chore_name"
         :class="index % 2 === 0 ? 'even-row' : 'odd-row'"
         dense
@@ -27,13 +27,9 @@
   </v-table>
 </template>
 <script setup>
-import { computed } from "vue";
-import { useChoreStore } from "@/stores/chores";
+import { useHistoryItems } from "@/composables/historyItemsComposable";
 
-const chorestore = useChoreStore();
-const getHistoryItems = computed(() => {
-  return chorestore.getHistoryItems;
-});
+const { historyItems, isLoading } = useHistoryItems();
 </script>
 <style scoped>
 .even-row {
