@@ -161,6 +161,7 @@ export function useChores() {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
       queryClient.invalidateQueries({ queryKey: ["historyitems"] });
+      queryClient.invalidateQueries({ queryKey: ["weeklytotals"] });
     },
   });
 
