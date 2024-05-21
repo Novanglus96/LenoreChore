@@ -508,7 +508,7 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
             years=chore.intervalNumber
         )
     chore.save()
-    historyitem = HistoryItem.objects.create(
+    HistoryItem.objects.create(
         completed_date=payload.lastCompleted,
         completed_by_id=payload.completed_by_id,
         chore=chore,
