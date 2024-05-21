@@ -46,6 +46,15 @@ async function getHistoryItemsFunction() {
   }
 }
 
+async function getWeeklyTotalsFunction() {
+  try {
+    const response = await apiClient.get("/weeklytotals");
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "Weekly Totals not fetched: ");
+  }
+}
+
 export function useHistoryItems() {
   const queryClient = useQueryClient();
   const { data: historyItems, isLoading } = useQuery({
@@ -71,5 +80,20 @@ export function useHistoryItems() {
     historyItems,
     isLoading,
     addHistoryItem,
+  };
+}
+
+export function useWeeklyTotals() {
+  const queryClient = useQueryClient();
+  const { data: weeklyTotals, isLoading } = useQuery({
+    queryKey: ["weeklytotals"],
+    queryFn: getWeeklyTotalsFunction,
+    select: response => response,
+    client: queryClient,
+  });
+
+  return {
+    isLoading,
+    weeklyTotals,
   };
 }
