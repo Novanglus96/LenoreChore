@@ -65,13 +65,68 @@ class CustomUserAdmin(UserAdmin):
 class HistoryItemAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ["completed_date", "completed_by", "chore"]
 
+    ordering = ["completed_date", "chore", "completed_by"]
+
+
+class AreaAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = [
+        "area_name",
+        "area_icon",
+        "group",
+        "area_order",
+        "dirtiness",
+        "dueCount",
+    ]
+
+    ordering = ["group", "area_order", "area_name"]
+
+
+class AreaGroupAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ["group_name", "group_order", "group_color"]
+
+    ordering = ["group_order", "group_name"]
+
+
+class OptionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ["vacation_mode", "med_thresh", "high_thresh"]
+
+
+class MonthAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ["name"]
+
+    ordering = ["id"]
+
+
+class ChoreAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = [
+        "chore_name",
+        "area",
+        "active",
+        "nextDue",
+        "lastCompleted",
+        "assignee",
+        "effort",
+        "vacationPause",
+        "dirtiness",
+        "duedays",
+    ]
+
+    ordering = [
+        "-active",
+        "nextDue",
+        "lastCompleted",
+        "effort",
+        "chore_name",
+        "id",
+    ]
+
 
 # Register your models here.
 
-admin.site.register(Area)
-admin.site.register(AreaGroup)
-admin.site.register(Chore)
+admin.site.register(Area, AreaAdmin)
+admin.site.register(AreaGroup, AreaGroupAdmin)
+admin.site.register(Chore, ChoreAdmin)
 admin.site.register(HistoryItem, HistoryItemAdmin)
-admin.site.register(Option)
+admin.site.register(Option, OptionAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Month)
+admin.site.register(Month, MonthAdmin)
