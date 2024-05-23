@@ -79,6 +79,8 @@ class AreaAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     ]
 
     ordering = ["group", "area_order", "area_name"]
+    
+    list_filter = ["group"]
 
 
 class AreaGroupAdmin(ImportExportModelAdmin, admin.ModelAdmin):
@@ -119,6 +121,8 @@ class ChoreAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         "chore_name",
         "id",
     ]
+
+    list_filter = ["area"]
 
 
 # Register your models here.
