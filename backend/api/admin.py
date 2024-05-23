@@ -9,6 +9,7 @@ from .models import (
     AreaGroup,
     Month,
 )
+from import_export.admin import ImportExportModelAdmin
 
 
 class CustomUserAdmin(UserAdmin):
@@ -61,7 +62,7 @@ class CustomUserAdmin(UserAdmin):
     ordering = ("email",)
 
 
-class HistoryItemAdmin(admin.ModelAdmin):
+class HistoryItemAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ["completed_date", "completed_by", "chore"]
 
 
