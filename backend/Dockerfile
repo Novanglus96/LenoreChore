@@ -67,8 +67,8 @@ RUN sed -i 's/\r$//g' $APP_HOME/start.sh
 RUN chmod +x $APP_HOME/start.sh
 
 # copy logos
-COPY ./staticfiles/logov2.png $APP_HOME/staticfiles/logov2.png
-COPY ./staticfiles/favicon.ico $APP_HOME/staticfiles/favicon.ico
+COPY ./logos/logov2.png $APP_HOME/staticfiles/logov2.png
+COPY ./logos/favicon.ico $APP_HOME/staticfiles/favicon.ico
 
 # copy project
 COPY . $APP_HOME
