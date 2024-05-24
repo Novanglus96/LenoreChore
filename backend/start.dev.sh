@@ -16,6 +16,6 @@ python manage.py loaddata groups
 python manage.py loaddata options
 python manage.py loaddata month
 python manage.py loaddata usergroups
-python manage.py loaddata admin_interface_theme_lenorechore_dev
+#python manage.py loaddata admin_interface_theme_lenorechore_dev
 
 python manage.py runserver 0.0.0.0:8001
