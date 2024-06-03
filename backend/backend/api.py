@@ -372,7 +372,7 @@ def list_areas(request):
 def list_chores(
     request,
     inactive: bool = False,
-    timeframe: int = 0,
+    timeframe: int = -99,
     assignee_id: int = None,
     area_id: int = None,
 ):
@@ -381,7 +381,7 @@ def list_chores(
     )
     if inactive == False:
         qs = qs.filter(active=True)
-    if timeframe > 0:
+    if timeframe != -99:
         today = timezone.now().date()
         target_date = today + timedelta(days=timeframe)
         qs = qs.filter(nextDue__lte=target_date)
