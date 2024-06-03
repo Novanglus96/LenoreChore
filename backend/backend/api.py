@@ -369,10 +369,26 @@ def list_areas(request):
 
 
 @api.get("/chores", response=List[ChoreOut])
-def list_chores(request):
+def list_chores(
+    request,
+    inactive: bool = False,
+    timeframe: int = 0,
+    assignee_id: int = None,
+    area_id: int = None,
+):
     qs = Chore.objects.all().order_by(
         "-active", "nextDue", "lastCompleted", "effort", "chore_name", "id"
     )
+    if inactive == False:
+        qs = qs.filter(active=True)
+    if timeframe > 0:
+        today = timezone.now().date()
+        target_date = today + timedelta(days=timeframe)
+        qs = qs.filter(nextDue__lte=target_date)
+    if assignee_id is not None:
+        qs = qs.filter(assignee_id=assignee_id)
+    if area_id is not None:
+        qs = qs.filter(area_id=area_id)
     chore_list = []
 
     for chore in qs:
