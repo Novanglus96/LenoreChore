@@ -118,9 +118,21 @@ async function deleteChoreFunction(deletedChore) {
   }
 }
 
-async function getChoresFunction() {
+async function getChoresFunction(filters) {
   try {
-    const response = await apiClient.get("/chores");
+    let params = "";
+    params = "inactive=" + filters.inactive;
+    if (filters.timeframe != null) {
+      params = params + "&timeframe=" + filters.timeframe;
+    }
+    if (filters.assignee_id) {
+      params = params + "&assignee_id=" + filters.assignee_id;
+    }
+    if (filters.area_id) {
+      params = params + "&area_id=" + filters.area_id;
+    }
+    const response = await apiClient.get("/chores?" + params);
+    console.log("filters", filters);
     return response.data;
   } catch (error) {
     handleApiError(error, "Chores not fetched: ");
@@ -129,9 +141,10 @@ async function getChoresFunction() {
 
 export function useChores() {
   const queryClient = useQueryClient();
+  const chorestore = useChoreStore();
   const { data: chores, isLoading } = useQuery({
-    queryKey: ["chores"],
-    queryFn: getChoresFunction,
+    queryKey: ["chores", chorestore.filters],
+    queryFn: () => getChoresFunction(chorestore.filters),
     select: response => response,
     client: queryClient,
   });

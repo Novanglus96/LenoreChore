@@ -1,99 +1,76 @@
 <template>
   <div class="chores">
     <v-container>
-      <v-row dense v-if="!isLoading">
+      <v-row dense>
         <v-col cols="12">
           <v-row dense>
             <v-col cols="8">
               <v-select
-                v-model="areafilter"
+                v-model="chorestore.filters.area_id"
                 label="Area"
                 :items="areas"
                 item-title="area_name"
                 item-value="id"
-                @select="
-                  applyFilter(
-                    areafilter,
-                    dayfilter,
-                    assigneefilter,
-                    showDisabled,
-                  )
-                "
                 density="compact"
+                clearable
               >
               </v-select>
             </v-col>
             <v-col cols="4">
               <v-checkbox
                 label="Disabled?"
-                v-model="showDisabled"
-                @change="
-                  applyFilter(
-                    areafilter,
-                    dayfilter,
-                    assigneefilter,
-                    showDisabled,
-                  )
-                "
+                v-model="chorestore.filters.inactive"
               ></v-checkbox>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col>
               <v-select
-                v-model="dayfilter"
+                v-model="chorestore.filters.timeframe"
                 label="TimeFrame"
                 :items="chorestore.getDayFilter"
                 item-title="name"
                 item-value="days"
-                @select="
-                  applyFilter(
-                    areafilter,
-                    dayfilter,
-                    assigneefilter,
-                    showDisabled,
-                  )
-                "
                 density="compact"
+                clearable
               >
               </v-select>
             </v-col>
             <v-col>
               <v-select
-                v-model="assigneefilter"
+                v-model="chorestore.filters.assignee_id"
                 label="Assignee"
-                :items="users"
-                item-title="fullname"
-                item-value="value"
-                @select="
-                  applyFilter(
-                    areafilter,
-                    dayfilter,
-                    assigneefilter,
-                    showDisabled,
-                  )
-                "
+                :items="computedUsers"
+                item-title="displayName"
+                item-value="id"
                 density="compact"
+                clearable
               >
               </v-select>
             </v-col>
           </v-row>
-          <ChoreCard
-            v-for="chore in chores"
-            :chore="chore"
-            :key="chore.id"
-            @edit-chore="updateChore"
-            @remove-chore="deleteChore"
-            @complete-chore="completeChore"
-            @snooze-chore="snoozeChore"
-            @claim-chore="claimChore"
-            @toggle-activation="toggleChore"
-          />
-        </v-col>
-      </v-row>
-      <v-row dense v-else>
-        <v-col cols="12">
-          <v-skeleton-loader type="card" color="primary"></v-skeleton-loader>
+          <v-row dense v-if="!isLoading"
+            ><v-col>
+              <ChoreCard
+                v-for="chore in chores"
+                :chore="chore"
+                :key="chore.id"
+                @edit-chore="updateChore"
+                @remove-chore="deleteChore"
+                @complete-chore="completeChore"
+                @snooze-chore="snoozeChore"
+                @claim-chore="claimChore"
+                @toggle-activation="toggleChore"
+              /> </v-col
+          ></v-row>
+          <v-row dense v-else>
+            <v-col cols="12">
+              <v-skeleton-loader
+                type="card"
+                color="primary"
+              ></v-skeleton-loader>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-container>
@@ -106,14 +83,8 @@ import { useChores } from "@/composables/choresComposasble";
 import { useChoreStore } from "@/stores/chores";
 import { useAreas } from "@/composables/areasComposable";
 import { useUsers } from "@/composables/usersComposable";
-import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { computed } from "vue";
 
-const route = useRoute();
-const areafilter = ref(route.params.areaName);
-const dayfilter = ref(-99);
-const assigneefilter = ref(0);
-const showDisabled = ref(false);
 const chorestore = useChoreStore();
 const { areas } = useAreas();
 const { users } = useUsers();
@@ -170,4 +141,17 @@ const toggleChore = async (chore_id, active) => {
 const deleteChore = async deletedChore => {
   await removeChore(deletedChore);
 };
+
+const computedUsers = computed(() => {
+  if (!users.value) {
+    return [];
+  }
+  return users.value.map(item => ({
+    ...item,
+    displayName:
+      !item.fullname || item.fullname.trim() === ""
+        ? item.email
+        : item.fullname,
+  }));
+});
 </script>

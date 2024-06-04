@@ -1,7 +1,5 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import { useUserStore } from "./user";
-import { format, parseISO } from "date-fns";
 
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
@@ -23,10 +21,6 @@ export const useChoreStore = defineStore("chore", {
       22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     ],
     dayfilter: [
-      {
-        name: "All",
-        days: -99,
-      },
       {
         name: "Due Today",
         days: 0,
@@ -70,6 +64,12 @@ export const useChoreStore = defineStore("chore", {
     med_thresh: 0,
     high_thresh: 10,
     vacation_mode: false,
+    filters: {
+      inactive: false,
+      timeframe: null,
+      assignee_id: null,
+      area_id: null,
+    },
   }),
   getters: {
     getAssigneeFilter(state) {
@@ -234,5 +234,4 @@ export const useChoreStore = defineStore("chore", {
       }
     },
   },
-  persist: true,
 });

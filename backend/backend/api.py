@@ -56,6 +56,7 @@ class LoginUserSchema(Schema):
 
 
 class CustomUserSchema(Schema):
+    id: int
     email: str
     profile_picture: str = None
     male: bool
@@ -372,7 +373,7 @@ def list_areas(request):
 def list_chores(
     request,
     inactive: bool = False,
-    timeframe: int = -99,
+    timeframe: int = None,
     assignee_id: int = None,
     area_id: int = None,
 ):
@@ -381,9 +382,11 @@ def list_chores(
     )
     if inactive == False:
         qs = qs.filter(active=True)
-    if timeframe != -99:
+    if timeframe is not None:
         today = timezone.now().date()
-        target_date = today + timedelta(days=timeframe)
+        target_date = today
+        if timeframe > 0:
+            target_date = today + timedelta(days=timeframe)
         qs = qs.filter(nextDue__lte=target_date)
     if assignee_id is not None:
         qs = qs.filter(assignee_id=assignee_id)
