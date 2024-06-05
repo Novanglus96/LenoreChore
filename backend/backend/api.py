@@ -380,7 +380,7 @@ def list_chores(
     qs = Chore.objects.all().order_by(
         "-active", "nextDue", "lastCompleted", "effort", "chore_name", "id"
     )
-    if inactive == False:
+    if not inactive:
         qs = qs.filter(active=True)
     if timeframe is not None:
         today = timezone.now().date()
