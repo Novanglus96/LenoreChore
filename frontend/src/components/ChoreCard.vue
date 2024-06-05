@@ -48,9 +48,7 @@
           localchore.assignee ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'
         "
       >
-        <v-list-item-subtitle>{{
-          localchore.assignee ? localchore.assignee.email : "Unassigned"
-        }}</v-list-item-subtitle>
+        <v-list-item-subtitle>{{ computedAssignee }}</v-list-item-subtitle>
       </v-list-item>
 
       <v-list-item density="compact">
@@ -590,6 +588,23 @@ const callClaimChore = async (chore_id, user_id) => {
 const callToggleChore = async (chore_id, active) => {
   emit("toggleActivation", chore_id, active);
 };
+const computedAssignee = computed(() => {
+  if (!localchore.value) {
+    return "";
+  }
+  if (!localchore.value.assignee_id) {
+    return "Unassigned";
+  }
+  if (!localchore.value.assignee.fullname) {
+    return localchore.value.assignee.email;
+  } else {
+    if (localchore.value.assignee.fullname == " ") {
+      return localchore.value.assignee.email;
+    } else {
+      return localchore.value.assignee.fullname;
+    }
+  }
+});
 </script>
 <style scoped>
 .centered-text {
