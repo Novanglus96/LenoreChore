@@ -150,7 +150,7 @@
         class="ms-2"
         variant="outlined"
         size="small"
-        :to="listLink(props.area.id)"
+        @click="setArea(props.area.id)"
       >
         See Chores
       </v-btn>
@@ -166,7 +166,9 @@
 import { defineProps, defineEmits, ref } from "vue";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
 import { useChoreStore } from "@/stores/chores";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const expandcard = ref(false);
 const editcard = ref(false);
 const deletecard = ref(false);
@@ -182,11 +184,13 @@ const editForm = ref({
   group_id: props.area.group.id || 0,
   area_icon: props.area.area_icon || "",
 });
-const listLink = areaName => {
-  return "/list/" + areaName;
-};
 
 const { areagroups } = useAreaGroups();
+
+const setArea = async areaID => {
+  chorestore.filters.area_id = areaID;
+  router.push({ name: "list" });
+};
 
 const callDeleteArea = async deletedArea => {
   deletecard.value = false;

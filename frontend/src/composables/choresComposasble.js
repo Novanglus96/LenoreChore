@@ -132,7 +132,6 @@ async function getChoresFunction(filters) {
       params = params + "&area_id=" + filters.area_id;
     }
     const response = await apiClient.get("/chores?" + params);
-    console.log("filters", filters);
     return response.data;
   } catch (error) {
     handleApiError(error, "Chores not fetched: ");

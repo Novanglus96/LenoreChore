@@ -478,7 +478,6 @@ watch(
 
 onMounted(() => {
   localchore.value = props.chore;
-  console.log("chore: ", localchore.value);
 });
 
 const callResetChore = async () => {

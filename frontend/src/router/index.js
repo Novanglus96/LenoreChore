@@ -23,12 +23,6 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/list/:areaName",
-    name: "listfilter",
-    component: ListView,
-    meta: { requiresAuth: true },
-  },
-  {
     path: "/graphs",
     name: "graphs",
     component: GraphView,
