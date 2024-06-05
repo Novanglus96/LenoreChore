@@ -16,11 +16,19 @@
               >
               </v-select>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="3">
               <v-checkbox
                 label="Disabled?"
                 v-model="chorestore.filters.inactive"
-              ></v-checkbox>
+              ></v-checkbox
+            ></v-col>
+            <v-col cols="1">
+              <v-btn
+                icon="mdi-filter-off"
+                size="sm"
+                variant="plain"
+                @click="resetFilter()"
+              ></v-btn>
             </v-col>
           </v-row>
           <v-row dense>
@@ -129,7 +137,12 @@ const claimChore = async (chore_id, user_id) => {
   };
   await claim(data);
 };
-
+const resetFilter = async () => {
+  chorestore.filters.area_id = null;
+  chorestore.filters.timeframe = null;
+  chorestore.filters.inactive = false;
+  chorestore.filters.assignee_id = null;
+}
 const toggleChore = async (chore_id, active) => {
   let data = {
     id: chore_id,
