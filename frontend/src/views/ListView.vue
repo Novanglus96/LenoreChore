@@ -4,7 +4,7 @@
       <v-row dense>
         <v-col cols="12">
           <v-row dense>
-            <v-col cols="8">
+            <v-col cols="7">
               <v-select
                 v-model="chorestore.filters.area_id"
                 label="Area"
@@ -16,7 +16,7 @@
               >
               </v-select>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="4">
               <v-checkbox
                 label="Disabled?"
                 v-model="chorestore.filters.inactive"
@@ -142,7 +142,7 @@ const resetFilter = async () => {
   chorestore.filters.timeframe = null;
   chorestore.filters.inactive = false;
   chorestore.filters.assignee_id = null;
-}
+};
 const toggleChore = async (chore_id, active) => {
   let data = {
     id: chore_id,
