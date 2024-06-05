@@ -23,7 +23,7 @@ from django.db.models.functions import TruncDate
 api = NinjaAPI()
 router = Router()
 api.title = "LenoreChore API"
-api.version = "1.1.3"
+api.version = "1.1.4"
 api.description = "API documentation for LenoreChore"
 
 
