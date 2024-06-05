@@ -150,7 +150,7 @@
         class="ms-2"
         variant="outlined"
         size="small"
-        :to="listLink(props.area.area_name)"
+        :to="listLink(props.area.id)"
       >
         See Chores
       </v-btn>

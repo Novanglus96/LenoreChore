@@ -83,8 +83,10 @@ import { useChores } from "@/composables/choresComposasble";
 import { useChoreStore } from "@/stores/chores";
 import { useAreas } from "@/composables/areasComposable";
 import { useUsers } from "@/composables/usersComposable";
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const chorestore = useChoreStore();
 const { areas } = useAreas();
 const { users } = useUsers();
@@ -98,6 +100,16 @@ const {
   toggle,
   claim,
 } = useChores();
+
+watch(
+  () => route.query.areaName,
+  newValue => {
+    if (newValue) {
+      chorestore.filters.area_id = newValue;
+    }
+  },
+  { immaediate: true },
+);
 
 const updateChore = async updatedChore => {
   await editChore(updatedChore);

@@ -184,7 +184,7 @@ const toggleVacationMode = async enable => {
 
 const menus = [
   { title: "Dashboard", url: "/", icon: "mdi-home" },
-  { title: "List", url: "/list/All", icon: "mdi-view-list" },
+  { title: "List", url: "/list", icon: "mdi-view-list" },
   { title: "Graphs", url: "/graphs", icon: "mdi-chart-bar" },
   { title: "History", url: "/history", icon: "mdi-clipboard-clock-outline" },
 ];
