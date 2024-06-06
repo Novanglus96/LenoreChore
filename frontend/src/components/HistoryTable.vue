@@ -21,7 +21,13 @@
           >{{ item.chore.area.area_name }}
         </td>
         <td class="text-center">{{ item.chore.chore_name }}</td>
-        <td class="text-center">{{ item.completed_by.fullname }}</td>
+        <td class="text-center">
+          {{
+            item.completed_by.fullname == " "
+              ? item.completed_by.email
+              : item.completed_by.fullname
+          }}
+        </td>
       </tr>
     </tbody>
   </v-table>
