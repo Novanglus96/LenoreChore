@@ -359,7 +359,7 @@
           <v-divider></v-divider>
           <v-card-text style="height: 500px">
             <VueDatePicker
-              v-model="localchore.nextDue"
+              v-model="snooze_date"
               timezone="America/New_York"
               model-type="yyyy-MM-dd"
               :enable-time-picker="false"
@@ -375,7 +375,7 @@
             <v-btn
               color="blue darken-1"
               text
-              @click="callSnoozeChore(localchore.id, localchore.nextDue)"
+              @click="callSnoozeChore(localchore.id, snooze_date)"
             >
               Save
             </v-btn>
@@ -466,11 +466,12 @@ const localchore = ref({
   dirtiness: 0,
   duedays: 0,
 });
-
+const snooze_date = ref(props.chore.nextDue);
 watch(
   () => props.chore,
   updatedChore => {
     localchore.value = updatedChore;
+    snooze_date.value = updatedChore.nextDue;
   },
 );
 
