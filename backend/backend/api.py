@@ -135,6 +135,11 @@ class ClaimChore(Schema):
     assignee_id: Optional[int]
 
 
+class LastHistoryItem(Schema):
+    completed_date: date
+    completed_by: str
+
+
 class ChoreOut(Schema):
     id: int
     chore_name: str
@@ -153,6 +158,7 @@ class ChoreOut(Schema):
     expand: bool
     dirtiness: int
     duedays: int
+    last_three_history_items: List[LastHistoryItem]
 
 
 class ChoreOutFull(Schema):
@@ -397,7 +403,21 @@ def list_chores(
     for chore in qs:
         active_months = list(chore.active_months.all())
         active_month_ids = [month.id for month in active_months]
-
+        last_three_query = HistoryItem.objects.filter(chore=chore).order_by(
+            "-completed_date"
+        )[:3]
+        last_three = []
+        for item in last_three_query:
+            display_name = ""
+            if item.completed_by.fullname == " ":
+                display_name = item.completed_by.email
+            else:
+                display_name = item.completed_by.fullname
+            last_three_object = LastHistoryItem(
+                completed_date=item.completed_date,
+                completed_by=display_name,
+            )
+            last_three.append(last_three_object)
         chore_data = ChoreOut(
             id=chore.id,
             chore_name=chore.chore_name,
@@ -416,6 +436,7 @@ def list_chores(
             expand=chore.expand,
             dirtiness=chore.dirtiness,
             duedays=chore.duedays,
+            last_three_history_items=last_three,
         )
         chore_list.append(chore_data)
 
