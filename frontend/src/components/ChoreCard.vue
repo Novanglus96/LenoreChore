@@ -359,7 +359,7 @@
           <v-divider></v-divider>
           <v-card-text style="height: 500px">
             <VueDatePicker
-              v-model="snooze_date"
+              v-model="localchore.nextDue"
               timezone="America/New_York"
               model-type="yyyy-MM-dd"
               :enable-time-picker="false"
@@ -375,7 +375,7 @@
             <v-btn
               color="blue darken-1"
               text
-              @click="callSnoozeChore(localchore.id, snooze_date)"
+              @click="callSnoozeChore(localchore.id, localchore.nextDue)"
             >
               Save
             </v-btn>
@@ -432,51 +432,20 @@ const emit = defineEmits([
 const props = defineProps({
   chore: Array,
 });
-const localchore = ref({
-  id: 0,
-  chore_name: null,
-  area_id: 0,
-  area: {
-    id: 2,
-    area_name: "Kitchen",
-    area_icon: "mdi-stove",
-    group_id: 1,
-    group: {
-      id: 1,
-      group_name: "No Group",
-      group_order: 1,
-      group_color: "primary",
-    },
-    dirtiness: 0,
-    dueCount: 1,
-    totalCount: 1,
-    total_dirtiness: 0,
-  },
-  active: true,
-  nextDue: "2024-05-20",
-  lastCompleted: "2024-05-20",
-  intervalNumber: 1,
-  unit: "week(s)",
-  active_months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-  assignee_id: null,
-  assignee: null,
-  effort: 1,
-  vacationPause: 0,
-  expand: false,
-  dirtiness: 0,
-  duedays: 0,
-});
-const snooze_date = ref(props.chore.nextDue);
+const localchore = ref({ ...props.chore });
+
+function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
 watch(
   () => props.chore,
   updatedChore => {
-    localchore.value = updatedChore;
-    snooze_date.value = updatedChore.nextDue;
+    localchore.value = deepCopy(updatedChore);
   },
 );
 
 onMounted(() => {
-  localchore.value = props.chore;
+  localchore.value = deepCopy(props.chore);
 });
 
 const callResetChore = async () => {
