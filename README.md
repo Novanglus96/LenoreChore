@@ -1,4 +1,4 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+<!-- Improved compatibility of back to top link: See: https://gitea.danielleandjohn.love/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
@@ -30,7 +30,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/Gamunda/LenoreChore">
+  <a href="https://gitea.danielleandjohn.love/Gamunda/LenoreChore">
     <img src="frontend/public/logov2.png" alt="Logo" height="40">
   </a>
 
@@ -39,14 +39,14 @@
   <p align="center">
     A simple chores app.
     <br />
-    <a href="https://github.com/Gamunda/LenoreChore"><strong>Explore the docs »</strong></a>
+    <a href="https://gitea.danielleandjohn.love/Gamunda/LenoreChore"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/Gamunda/LenoreChore">View Demo</a>
+    <a href="https://gitea.danielleandjohn.love/Gamunda/LenoreChore">View Demo</a>
     ·
-    <a href="https://github.com/Gamunda/LenoreChore/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://gitea.danielleandjohn.love/Gamunda/LenoreChore/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
-    <a href="https://github.com/Gamunda/LenoreChore/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://gitea.danielleandjohn.love/Gamunda/LenoreChore/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
@@ -119,7 +119,7 @@ This is an example of how to list things you need to use the software and how to
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
    ```sh
-   git clone https://github.com/Gamunda/LenoreChore.git
+   git clone https://gitea.danielleandjohn.love/Gamunda/LenoreChore.git
    ```
 3. Install NPM packages
    ```sh
@@ -153,7 +153,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [ ] Feature 3
     - [ ] Nested Feature
 
-See the [open issues](https://github.com/Gamunda/LenoreChore/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://gitea.danielleandjohn.love/Gamunda/LenoreChore/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -200,7 +200,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
 
-Project Link: [https://github.com/Gamunda/LenoreChore](https://github.com/Gamunda/LenoreChore)
+Project Link: [https://gitea.danielleandjohn.love/Gamunda/LenoreChore](https://gitea.danielleandjohn.love/Gamunda/LenoreChore)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -220,15 +220,15 @@ Project Link: [https://github.com/Gamunda/LenoreChore](https://github.com/Gamund
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/Gamunda/LenoreChore.svg?style=for-the-badge
-[contributors-url]: https://github.com/Gamunda/LenoreChore/graphs/contributors
+[contributors-url]: https://gitea.danielleandjohn.love/Gamunda/LenoreChore/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/Gamunda/LenoreChore.svg?style=for-the-badge
-[forks-url]: https://github.com/Gamunda/LenoreChore/network/members
+[forks-url]: https://gitea.danielleandjohn.love/Gamunda/LenoreChore/network/members
 [stars-shield]: https://img.shields.io/github/stars/Gamunda/LenoreChore.svg?style=for-the-badge
-[stars-url]: https://github.com/Gamunda/LenoreChore/stargazers
+[stars-url]: https://gitea.danielleandjohn.love/Gamunda/LenoreChore/stargazers
 [issues-shield]: https://img.shields.io/github/issues/Gamunda/LenoreChore.svg?style=for-the-badge
-[issues-url]: https://github.com/Gamunda/LenoreChore/issues
+[issues-url]: https://gitea.danielleandjohn.love/Gamunda/LenoreChore/issues
 [license-shield]: https://img.shields.io/github/license/Gamunda/LenoreChore.svg?style=for-the-badge
-[license-url]: https://github.com/Gamunda/LenoreChore/blob/master/LICENSE.txt
+[license-url]: https://gitea.danielleandjohn.love/Gamunda/LenoreChore/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
