@@ -85,6 +85,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
+A bit about this project.
 Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `Gamunda`, `LenoreChore`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `LenoreChore`, `project_description`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
