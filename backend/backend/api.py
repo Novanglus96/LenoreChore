@@ -547,6 +547,7 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
         chore.nextDue = payload.lastCompleted + relativedelta(
             years=chore.intervalNumber
         )
+    chore.assignee = None
     chore.save()
     HistoryItem.objects.create(
         completed_date=payload.lastCompleted,
