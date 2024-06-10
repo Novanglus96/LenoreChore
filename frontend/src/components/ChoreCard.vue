@@ -21,7 +21,7 @@
         <v-col class="text-h9" cols="6">
           <v-progress-linear
             v-model="localchore.dirtiness"
-            :color="getDirtyColor(localchore.dirtiness)"
+            :color="computedColor"
             height="25"
             striped
           >
@@ -414,7 +414,9 @@ import { useChoreStore } from "@/stores/chores";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useUserStore } from "@/stores/user";
+import { useOptions } from "@/composables/optionsComposable";
 
+const { options } = useOptions();
 const expand = ref(false);
 const snooze = ref(false);
 const saveEnabled = ref(false);
@@ -516,20 +518,6 @@ const units = computed(() => {
 const intervals = computed(() => {
   return chorestore.intervals;
 });
-const getDirtyColor = dirtiness => {
-  let color = "success";
-  if (dirtiness <= chorestore.med_thresh) {
-    color = "success";
-  } else if (
-    dirtiness > chorestore.med_thresh &&
-    dirtiness <= chorestore.high_thresh
-  ) {
-    color = "warning";
-  } else if (dirtiness > chorestore.high_thresh) {
-    color = "error";
-  }
-  return color;
-};
 const callSnoozeChore = async (chore_id, next_due) => {
   emit("snoozeChore", chore_id, next_due);
   snooze.value = !snooze.value;
@@ -558,6 +546,22 @@ const callClaimChore = async (chore_id, user_id) => {
 const callToggleChore = async (chore_id, active) => {
   emit("toggleActivation", chore_id, active);
 };
+const computedColor = computed(() => {
+  if (!options.value || !localchore.value) {
+    return "white";
+  }
+  if (localchore.value.dirtiness <= options.value.med_thresh) {
+    return "success";
+  } else if (
+    localchore.value.dirtiness > options.value.med_thresh &&
+    localchore.value.dirtiness <= options.value.high_thresh
+  ) {
+    return "warning";
+  } else if (localchore.value.dirtiness > options.value.high_thresh) {
+    return "error";
+  }
+  return "white";
+});
 const computedAssignee = computed(() => {
   if (!localchore.value) {
     return "";

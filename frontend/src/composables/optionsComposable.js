@@ -64,7 +64,7 @@ async function deleteOptionFunction(deletedOption) {
 
 async function getOptionsFunction() {
   try {
-    const response = await apiClient.get("/options/1/");
+    const response = await apiClient.get("/options/1");
     return response.data;
   } catch (error) {
     handleApiError(error, "Options not fetched: ");

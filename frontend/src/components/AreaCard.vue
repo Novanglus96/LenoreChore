@@ -10,7 +10,7 @@
         <v-col class="text-h9" cols="6">
           <v-progress-linear
             v-model="dirtiness"
-            :color="getDirtyColor(dirtiness)"
+            :color="computedColor"
             height="25"
             striped
           >
@@ -163,11 +163,13 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, computed } from "vue";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
 import { useChoreStore } from "@/stores/chores";
 import { useRouter } from "vue-router";
+import { useOptions } from "@/composables/optionsComposable";
 
+const { options } = useOptions();
 const router = useRouter();
 const expandcard = ref(false);
 const editcard = ref(false);
@@ -200,20 +202,20 @@ const callEditArea = async editArea => {
   editcard.value = false;
   emit("editArea", editArea);
 };
-const getDirtyColor = dirtiness => {
-  const chorestore = useChoreStore();
-  let dirtycolor = "error";
-  if (dirtiness <= chorestore.med_thresh) {
-    dirtycolor = "success";
-  } else if (
-    dirtiness > chorestore.med_thresh &&
-    dirtiness <= chorestore.high_thresh
-  ) {
-    dirtycolor = "warning";
-  } else if (dirtiness > chorestore.high_thresh) {
-    dirtycolor = "error";
+const computedColor = computed(() => {
+  if (!options.value || !props) {
+    return "white";
   }
-
-  return dirtycolor;
-};
+  if (props.area.dirtiness <= options.value.med_thresh) {
+    return "success";
+  } else if (
+    props.area.dirtiness > options.value.med_thresh &&
+    props.area.dirtiness <= options.value.high_thresh
+  ) {
+    return "warning";
+  } else if (props.area.dirtiness > options.value.high_thresh) {
+    return "error";
+  }
+  return "white";
+});
 </script>
