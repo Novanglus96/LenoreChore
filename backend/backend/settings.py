@@ -204,8 +204,6 @@ JAZZMIN_SETTINGS = {
     # Copyright on the footer
     "copyright": "John Adams",
     # List of model admins to search from the search bar, search bar omitted if excluded
-    # If you want to use a single search field you dont need to use a list, you can use a simple string
-    "search_model": ["api.CustomUser", "auth.Group"],
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     "user_avatar": "profile_picture",
 }
