@@ -182,7 +182,7 @@ LOGGING = {
     },
 }
 JAZZMIN_SETTINGS = {
-    "show_ui_builder": True,
+    "show_ui_builder": False,
     # title of the window (Will default to current_admin_site.site_title if absent or None)
     "site_title": "Admin",
     # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
