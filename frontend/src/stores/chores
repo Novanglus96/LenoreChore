@@ -61,8 +61,8 @@ export const useChoreStore = defineStore("chore", {
       "mdi-tumble-dryer",
       "mdi-washing-machine",
     ],
-    med_thresh: 0,
-    high_thresh: 10,
+    med_thresh: 49,
+    high_thresh: 74,
     vacation_mode: false,
     filters: {
       inactive: false,
