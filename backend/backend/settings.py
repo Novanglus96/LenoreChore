@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "django_filters",
     "dbbackup",
     "ninja",
+    "django_q",
 ]
 
 MIDDLEWARE = [
@@ -182,6 +183,20 @@ LOGGING = {
         "handlers": ["console"],
     },
 }
+
+Q_CLUSTER = {
+    "name": "DjangORM",
+    "workers": 4,
+    "timeout": None,
+    "retry": 600,
+    "queue_limit": 50,
+    "bulk": 10,
+    "orm": "default",
+    "max_attempts": 1,
+    "label": "Tasks",
+    "catch_up": False,
+}
+
 JAZZMIN_SETTINGS = {
     "show_ui_builder": False,
     # title of the window (Will default to current_admin_site.site_title if absent or None)

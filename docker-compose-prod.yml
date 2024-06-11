@@ -29,6 +29,22 @@ services:
       - ./.env
     image: chores_backend:production
     container_name: chores_backend
+  worker:
+    build:
+      context: ./backend
+    command: /home/app/web/start_worker.sh
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    depends_on:
+      - db
+      - backend
+    networks:
+      - default
+    env_file:
+      - ./.env
+    image: chores_worker:production
+    container_name: chores_worker
   db:
     image: postgres:15
     volumes:

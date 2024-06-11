@@ -16,5 +16,5 @@ python manage.py loaddata groups
 python manage.py loaddata options
 python manage.py loaddata month
 python manage.py loaddata usergroups
-
+python manage.py scheduletasks
 gunicorn backend.wsgi:application --bind 0.0.0.0:8000

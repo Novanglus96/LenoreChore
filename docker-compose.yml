@@ -37,6 +37,25 @@ services:
       - ./.env.dev
     image: chores_backend:development
     container_name: chores_backend_dev
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    command: /usr/src/app/start_worker.sh
+    volumes:
+      - ./backend:/usr/src/app
+    environment:
+      - DEBUG=1
+      - TZ=America/New_York
+    depends_on:
+      - db
+      - backend
+    networks:
+      - default
+    env_file:
+      - ./.env.dev
+    image: chores_worker:development
+    container_name: chores_worker_dev
   db:
     image: postgres:15
     volumes:
