@@ -131,7 +131,11 @@ class Chore(models.Model):
     unit = models.CharField(max_length=10, default="day(s)")
     active_months = models.ManyToManyField(Month)
     assignee = models.ForeignKey(
-        CustomUser, null=True, on_delete=models.SET_NULL
+        CustomUser,
+        null=True,
+        on_delete=models.SET_NULL,
+        blank=True,
+        default=None,
     )
     effort = models.IntegerField(default=0)
     vacationPause = models.IntegerField(default=0)
