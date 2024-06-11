@@ -56,36 +56,11 @@
 <script setup>
 import { ref } from "vue";
 import { useUserStore } from "@/stores/user";
-import { useChoreStore } from "@/stores/chores";
 import AddAreaForm from "@/components/AddAreaForm.vue";
 import AddChoreForm from "@/components/AddChoreForm.vue";
 import AddAreaGroupForm from "@/components/AddAreaGroupForm.vue";
 
 const store = useUserStore();
-const chorestore = useChoreStore();
-
-const callSaveOptions = async (med_thresh, high_thresh) => {
-  try {
-    const store = useChoreStore();
-    await store.saveOptions(med_thresh, high_thresh);
-    menu.value = false;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const toggleVacationMode = async enable => {
-  try {
-    const store = useChoreStore();
-    if (enable) {
-      await store.enableVacationMode();
-    } else {
-      await store.disableVacationMode();
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 const menus = [
   { title: "Dashboard", url: "/", icon: "mdi-home" },
