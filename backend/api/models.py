@@ -4,10 +4,23 @@ from django.conf import settings
 from datetime import date
 from django.utils import dateformat
 from colorfield.fields import ColorField
-
+from django.core.exceptions import ValidationError
 from .managers import CustomUserManager
 
 import os
+
+
+class SingletonModel(models.Model):
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk and self.__class__.objects.exists():
+            raise ValidationError("There is already one instance of this model")
+        return super(SingletonModel, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("You cannot delete this object")
 
 
 def user_profile_picture_upload(instance, filename):
@@ -21,22 +34,10 @@ def user_profile_picture_upload(instance, filename):
 
 class CustomUser(AbstractUser):
     COLOR_PALETTE = [
-        (
-            "#E91E63",
-            "Color1"
-        ),
-        (
-            "#3F51B5",
-            "Color2"
-        ),
-        (
-            "#009688",
-            "Color3"
-        ),
-        (
-            "#CDDC39",
-            "Color4"
-        ),
+        ("#E91E63", "Color1"),
+        ("#3F51B5", "Color2"),
+        ("#009688", "Color3"),
+        ("#CDDC39", "Color4"),
     ]
     username = None
     email = models.EmailField("email address", unique=True)
@@ -165,10 +166,14 @@ class HistoryItem(models.Model):
     chore = models.ForeignKey(Chore, on_delete=models.CASCADE)
 
 
-class Option(models.Model):
+class Option(SingletonModel):
     vacation_mode = models.BooleanField(default=False)
     med_thresh = models.IntegerField(default=50)
     high_thresh = models.IntegerField(default=50)
 
     def __str__(self):
         return "Options"
+
+    @classmethod
+    def load(cls):
+        return cls.objects.first()

@@ -79,7 +79,7 @@ class AreaAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     ]
 
     ordering = ["group", "area_order", "area_name"]
-    
+
     list_filter = ["group"]
 
 
@@ -90,6 +90,26 @@ class AreaGroupAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 
 
 class OptionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    def has_add_permission(self, request, obj=None):
+        # Only allow adding if no instances exist
+        return not Option.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        # Disable delete permission
+        return False
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        # Redirect to the singleton instance change page
+        singleton = Option.load()
+        if singleton:
+            return super(OptionAdmin, self).change_view(
+                request, str(singleton.pk), form_url, extra_context
+            )
+        else:
+            return super(OptionAdmin, self).change_view(
+                request, object_id, form_url, extra_context
+            )
+
     list_display = ["vacation_mode", "med_thresh", "high_thresh"]
 
 
