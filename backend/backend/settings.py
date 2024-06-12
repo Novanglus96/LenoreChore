@@ -222,6 +222,18 @@ JAZZMIN_SETTINGS = {
     # List of model admins to search from the search bar, search bar omitted if excluded
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     "user_avatar": "profile_picture",
+    ############
+    # Top Menu #
+    ############
+    # Links to put along the top menu
+    "topmenu_links": [
+        # external url that opens in a new window (Permissions can be added)
+        {
+            "name": "Back to Site",
+            "url": "/",
+            "new_window": False,
+        },
+    ],
 }
 
 JAZZMIN_UI_TWEAKS = {
