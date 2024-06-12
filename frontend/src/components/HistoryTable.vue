@@ -48,7 +48,7 @@ const pageChanged = data => {
 </script>
 <style>
 .alt-pagination .bh-pagination .bh-page-item {
-  background-color: #06966a;
+  background-color: #2196f3;
   color: white;
 }
 </style>
