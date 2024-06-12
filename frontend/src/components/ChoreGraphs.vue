@@ -2,18 +2,18 @@
   <div style="height: 400px" v-if="!isLoading">
     <v-container fluid
       ><v-row
-        ><v-col cols="5" class="text-right"
+        ><v-col cols="3" class="text-right"
           ><v-btn
             icon="mdi-arrow-left"
             size="sm"
             color="primary"
             @click="increaseWeek"
           ></v-btn></v-col
-        ><v-col cols="2" class="text-center font-weight-bold text-h6"
+        ><v-col cols="6" class="text-center font-weight-bold text-h6"
           ><v-btn @click="historystore.graph.week = 0">{{
             weeklyTotals.title
           }}</v-btn></v-col
-        ><v-col cols="5" class="text-left"
+        ><v-col cols="3" class="text-left"
           ><v-btn
             icon="mdi-arrow-right"
             size="sm"
