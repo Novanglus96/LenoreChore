@@ -1,48 +1,54 @@
 <template>
-  <v-table v-if="!isLoading">
-    <thead>
-      <tr class="bg-secondary">
-        <th class="text-center text-accent font-weight-bold">Date</th>
-        <th class="text-center text-accent font-weight-bold">Area</th>
-        <th class="text-center text-accent font-weight-bold">Chore</th>
-        <th class="text-center text-accent font-weight-bold">Completed By</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="(item, index) in historyItems"
-        :key="item.chore.chore_name"
-        :class="index % 2 === 0 ? 'even-row' : 'odd-row'"
-        dense
-      >
-        <td class="text-center">{{ item.completed_date }}</td>
-        <td class="text-center">
-          <v-icon :icon="item.chore.area.area_icon"></v-icon
-          >{{ item.chore.area.area_name }}
-        </td>
-        <td class="text-center">{{ item.chore.chore_name }}</td>
-        <td class="text-center">
-          {{
-            item.completed_by.fullname == " "
-              ? item.completed_by.email
-              : item.completed_by.fullname
-          }}
-        </td>
-      </tr>
-    </tbody>
-  </v-table>
+  <vue3-datatable
+    :rows="historyItems ? historyItems.items : []"
+    :columns="columns"
+    :loading="isLoading"
+    :totalRows="historyItems ? historyItems.total_records : 0"
+    :isServerMode="true"
+    :pageSize="historystore.pageinfo.page_size"
+    :stickyHeader="true"
+    noDataContent="No history"
+    search=""
+    ref="history_table"
+    height="600px"
+    skin="bh-table-striped bh-table-compact"
+    :pageSizeOptions="[5]"
+    :showPageSize="false"
+    paginationInfo="Showing {0} to {1} of {2} items"
+    class="alt-pagination"
+    @change="pageChanged"
+  >
+    <template #completed_by.email="row">
+      <span>{{
+        row.value.completed_by.fullname == " "
+          ? row.value.completed_by.email
+          : row.value.completed_by.fullname
+      }}</span>
+    </template>
+  </vue3-datatable>
 </template>
 <script setup>
 import { useHistoryItems } from "@/composables/historyItemsComposable";
+import Vue3Datatable from "@bhplugin/vue3-datatable";
+import "@bhplugin/vue3-datatable/dist/style.css";
+import { ref } from "vue";
+import { useHistoryItemsStore } from "@/stores/historyitems";
 
+const historystore = useHistoryItemsStore();
 const { historyItems, isLoading } = useHistoryItems();
+const columns = ref([
+  { field: "id", title: "ID", isUnique: true, hide: true },
+  { field: "completed_date", title: "Date", type: "date", width: "120px" },
+  { field: "chore.chore_name", title: "Chore", width: "100px" },
+  { field: "completed_by.email", title: "Completed By", width: "100px" },
+]);
+const pageChanged = data => {
+  historystore.pageinfo.page = data.current_page;
+};
 </script>
-<style scoped>
-.even-row {
-  background-color: #f2f2f2; /* Define the background color for even rows */
-}
-
-.odd-row {
-  background-color: #ffffff; /* Define the background color for odd rows */
+<style>
+.alt-pagination .bh-pagination .bh-page-item {
+  background-color: #06966a;
+  color: white;
 }
 </style>

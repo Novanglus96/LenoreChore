@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import axios from "axios";
 import { useChoreStore } from "@/stores/chores";
+import { useHistoryItemsStore } from "@/stores/historyitems";
 
 const apiClient = axios.create({
   baseURL: "/api/v2",
@@ -37,9 +38,10 @@ async function createHistoryItemFunction(newHistoryItem) {
   }
 }
 
-async function getHistoryItemsFunction() {
+async function getHistoryItemsFunction(pageinfo) {
   try {
-    const response = await apiClient.get("/historyitems");
+    let params = "?page=" + pageinfo.page + "&page_size=" + pageinfo.page_size;
+    const response = await apiClient.get("/historyitems" + params);
     return response.data;
   } catch (error) {
     handleApiError(error, "History Items not fetched: ");
@@ -57,9 +59,10 @@ async function getWeeklyTotalsFunction() {
 
 export function useHistoryItems() {
   const queryClient = useQueryClient();
+  const historystore = useHistoryItemsStore();
   const { data: historyItems, isLoading } = useQuery({
-    queryKey: ["historyitems"],
-    queryFn: getHistoryItemsFunction,
+    queryKey: ["historyitems", historystore.pageinfo],
+    queryFn: () => getHistoryItemsFunction(historystore.pageinfo),
     select: response => response,
     client: queryClient,
   });

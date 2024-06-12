@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.tokens import default_token_generator
-from ninja import NinjaAPI, Schema, Router
+from ninja import NinjaAPI, Schema, Router, Query
 from api.models import (
     CustomUser,
     AreaGroup,
@@ -19,6 +19,7 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Count
 from django.utils import timezone
 from django.db.models.functions import TruncDate
+from django.core.paginator import Paginator
 
 api = NinjaAPI()
 router = Router()
@@ -192,6 +193,13 @@ class HistoryItemOut(Schema):
     completed_date: date
     completed_by: CustomUserSchema
     chore: ChoreOutFull
+
+
+class PaginatedHistoryItems(Schema):
+    items: List[HistoryItemOut]
+    current_page: int
+    total_pages: int
+    total_records: int
 
 
 class OptionIn(Schema):
@@ -448,10 +456,26 @@ def calculate_duedays(next_due):
     return delta.days
 
 
-@api.get("/historyitems", response=List[HistoryItemOut])
-def list_historyitems(request):
+@api.get("/historyitems", response=PaginatedHistoryItems)
+def list_historyitems(
+    request,
+    page: Optional[int] = Query(1),
+    page_size: Optional[int] = Query(60),
+):
     qs = HistoryItem.objects.all().order_by("-completed_date", "-id")
-    return qs
+    total_pages = 0
+    paginator = Paginator(qs, page_size)
+    page_obj = paginator.page(page)
+    item_list = list(page_obj.object_list)
+    total_pages = paginator.num_pages
+    total_records = len(qs)
+    paginated_items = PaginatedHistoryItems(
+        items=item_list,
+        current_page=page,
+        total_pages=total_pages,
+        total_records=total_records,
+    )
+    return paginated_items
 
 
 @api.get("/options", response=List[OptionOut])
