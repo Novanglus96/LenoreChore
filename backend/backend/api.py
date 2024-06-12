@@ -464,10 +464,12 @@ def list_historyitems(
 ):
     qs = HistoryItem.objects.all().order_by("-completed_date", "-id")
     total_pages = 0
-    paginator = Paginator(qs, page_size)
-    page_obj = paginator.page(page)
-    item_list = list(page_obj.object_list)
-    total_pages = paginator.num_pages
+    item_list = []
+    if len(qs) > 0:
+        paginator = Paginator(qs, page_size)
+        page_obj = paginator.page(page)
+        item_list = list(page_obj.object_list)
+        total_pages = paginator.num_pages
     total_records = len(qs)
     paginated_items = PaginatedHistoryItems(
         items=item_list,
