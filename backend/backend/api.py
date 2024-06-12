@@ -12,7 +12,7 @@ from api.models import (
 )
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from ninja.errors import HttpError
 from ninja.security import HttpBearer
 from dateutil.relativedelta import relativedelta
@@ -226,25 +226,29 @@ class DatasetObject(Schema):
 class GraphData(Schema):
     labels: List[str]
     datasets: List[DatasetObject]
+    title: str
 
 
 @api.get("/weeklytotals", response=GraphData)
-def get_weeklytotals(request):
+def get_weeklytotals(request, week: Optional[int] = 0):
     """
-    The function `get_weeklytotals` retrieves the weekly totals
+    The function `get_weeklytotals` retrieves the weekly totals.
 
     Args:
         request (HttpRequest): The HTTP request object.
+        lastweek (bool): Flag to indicate if the totals for last week should be retrieved. Defaults to False.
 
     Returns:
-        GraphData: the graph data
-
-    Raises:
-
+        GraphData: The graph data with labels and datasets.
     """
     labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     today = timezone.now().date()
-    start_of_week = today - timedelta(days=today.weekday())
+    days = week * 7
+    start_of_week = (
+        today - timedelta(days=today.weekday()) - timedelta(days=days)
+    )
+    end_of_week = start_of_week + timedelta(days=6)
+
     datasets = []
     users = CustomUser.objects.all()
     for user in users:
@@ -267,28 +271,36 @@ def get_weeklytotals(request):
                     user_name = user.email[:14] + "*"
             else:
                 user_name = user.email
+        # Get records for this week or last week
         records_this_week = HistoryItem.objects.filter(
             completed_by=user,
             completed_date__gte=start_of_week,
             completed_date__lt=start_of_week + timedelta(days=7),
         )
-        daily_counts = (
-            records_this_week.values("completed_date")
-            .annotate(count=Count("id"))
-            .order_by("completed_date")
+
+        # Aggregate counts by date
+        daily_counts = records_this_week.values("completed_date").annotate(
+            count=Count("id")
         )
+
+        # Initialize weekly counts with 0s
         weekly_counts = [0] * 7
-        i = 0
+
+        # Map counts to the correct day of the week
         for record in daily_counts:
-            weekly_counts[i] = record["count"]
-            i += 1
+            day_index = (record["completed_date"] - start_of_week).days
+            weekly_counts[day_index] = record["count"]
+
         dataset_obj = DatasetObject(
             backgroundColor=user.user_color,
             data=weekly_counts,
             label=user_name,
         )
         datasets.append(dataset_obj)
-    graph = GraphData(labels=labels, datasets=datasets)
+    title = (
+        start_of_week.strftime("%m/%d") + " to " + end_of_week.strftime("%m/%d")
+    )
+    graph = GraphData(labels=labels, datasets=datasets, title=title)
     return graph
 
 

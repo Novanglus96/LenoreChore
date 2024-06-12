@@ -6,6 +6,9 @@ export const useHistoryItemsStore = defineStore("historyitems", {
             page: 1,
             page_size: 15
         },
+        graph: {
+            week: 0,
+        }
     }),
     getters: {
     },
