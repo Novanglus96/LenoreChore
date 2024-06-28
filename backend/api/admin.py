@@ -123,7 +123,7 @@ class ChoreAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = [
         "chore_name",
         "area",
-        "active",
+        "status",
         "nextDue",
         "lastCompleted",
         "assignee",
@@ -134,7 +134,7 @@ class ChoreAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     ]
 
     ordering = [
-        "-active",
+        "status",
         "nextDue",
         "lastCompleted",
         "effort",

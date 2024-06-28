@@ -113,14 +113,14 @@ class ChoreIn(Schema):
     unit: Optional[str]
     active_months: Optional[List[int]]
     effort: Optional[int]
-    active: Optional[bool]
     nextDue: Optional[date]
     lastCompleted: Optional[date]
     assignee_id: Optional[int]
+    status: Optional[int]
 
 
 class TogglActive(Schema):
-    active: bool
+    status: int
 
 
 class CompleteChore(Schema):
@@ -146,7 +146,6 @@ class ChoreOut(Schema):
     chore_name: str
     area_id: int
     area: AreaOut
-    active: bool
     nextDue: date
     lastCompleted: date
     intervalNumber: int
@@ -160,6 +159,7 @@ class ChoreOut(Schema):
     dirtiness: int
     duedays: int
     last_three_history_items: List[LastHistoryItem]
+    status: int
 
 
 class ChoreOutFull(Schema):
@@ -167,7 +167,6 @@ class ChoreOutFull(Schema):
     chore_name: str
     area_id: int
     area: AreaOut
-    active: bool
     nextDue: date
     lastCompleted: date
     intervalNumber: int
@@ -180,6 +179,7 @@ class ChoreOutFull(Schema):
     expand: bool
     dirtiness: int
     duedays: int
+    status: int
 
 
 class HistoryItemIn(Schema):
@@ -404,10 +404,10 @@ def list_chores(
     area_id: int = None,
 ):
     qs = Chore.objects.all().order_by(
-        "-active", "nextDue", "lastCompleted", "effort", "chore_name", "id"
+        "status", "nextDue", "lastCompleted", "effort", "chore_name", "id"
     )
     if not inactive:
-        qs = qs.filter(active=True)
+        qs = qs.filter(status=0)
     if timeframe is not None:
         today = timezone.now().date()
         target_date = today
@@ -443,7 +443,6 @@ def list_chores(
             chore_name=chore.chore_name,
             area_id=chore.area_id,
             area=chore.area,  # Assuming AreaOut is a valid representation
-            active=chore.active,
             nextDue=chore.nextDue,
             lastCompleted=chore.lastCompleted,
             intervalNumber=chore.intervalNumber,
@@ -457,6 +456,7 @@ def list_chores(
             dirtiness=chore.dirtiness,
             duedays=chore.duedays,
             last_three_history_items=last_three,
+            status=chore.status,
         )
         chore_list.append(chore_data)
 
@@ -529,7 +529,7 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.chore_name = payload.chore_name
     chore.area_id = payload.area_id
-    chore.active = payload.active
+    chore.status = payload.status
     chore.nextDue = payload.nextDue
     chore.lastCompleted = payload.lastCompleted
     chore.intervalNumber = payload.intervalNumber
@@ -544,7 +544,7 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
 @api.patch("/chores/togglechore/{chore_id}")
 def toggle_chore(request, chore_id: int, payload: TogglActive):
     chore = get_object_or_404(Chore, id=chore_id)
-    chore.active = payload.active
+    chore.status = payload.status
     chore.save()
     return {"success": True}
 

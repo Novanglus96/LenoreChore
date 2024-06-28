@@ -144,9 +144,19 @@ const resetFilter = async () => {
   chorestore.filters.assignee_id = null;
 };
 const toggleChore = async (chore_id, active) => {
+  let newStatus = 0;
+  if (active == 0) {
+    newStatus = 1;
+  }
+  if (active == 1) {
+    newStatus = 0;
+  }
+  if (active == 2) {
+    newStatus = 0;
+  }
   let data = {
     id: chore_id,
-    active: active,
+    status: newStatus,
   };
   await toggle(data);
 };

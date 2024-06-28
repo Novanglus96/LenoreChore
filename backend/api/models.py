@@ -84,7 +84,7 @@ class Area(models.Model):
     @property
     def dirtiness(self):
         total_dirtiness = self.total_dirtiness()
-        total_chores = self.chore_set.filter(active=True).count()
+        total_chores = self.chore_set.filter(status=0).count()
 
         if total_chores > 0:
             # Calculate the percentage if there are chores
@@ -99,17 +99,17 @@ class Area(models.Model):
     @property
     def dueCount(self):
         today = date.today().isoformat()
-        count = self.chore_set.filter(active=True, nextDue__lte=today).count()
+        count = self.chore_set.filter(status=0, nextDue__lte=today).count()
         return count
 
     @property
     def totalCount(self):
-        count = self.chore_set.filter(active=True).count()
+        count = self.chore_set.filter(status=0).count()
         return count
 
     def total_dirtiness(self):
         total = sum(
-            chore.dirtiness for chore in self.chore_set.filter(active=True)
+            chore.dirtiness for chore in self.chore_set.filter(status=0)
         )
         return total
 
@@ -124,7 +124,6 @@ class Month(models.Model):
 class Chore(models.Model):
     chore_name = models.CharField(max_length=254)
     area = models.ForeignKey(Area, null=True, on_delete=models.CASCADE)
-    active = models.BooleanField(default=True)
     nextDue = models.DateField(default=date.today)
     lastCompleted = models.DateField(default=date.today)
     intervalNumber = models.IntegerField(default=1)
@@ -140,6 +139,7 @@ class Chore(models.Model):
     effort = models.IntegerField(default=0)
     vacationPause = models.IntegerField(default=0)
     expand = models.BooleanField(default=False)
+    status = models.IntegerField(default=0)
 
     def __str__(self):
         return self.chore_name

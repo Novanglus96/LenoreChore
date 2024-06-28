@@ -1,6 +1,6 @@
 <template>
   <v-card
-    :color="localchore.active ? localchore.area.group.group_color : 'grey'"
+    :color="localchore.status == 0 ? localchore.area.group.group_color : 'grey'"
     border
     elevation="3"
   >
@@ -17,7 +17,7 @@
     </v-card-item>
 
     <v-card-text class="py-0">
-      <v-row align="center" no-gutters v-if="localchore.active">
+      <v-row align="center" no-gutters v-if="localchore.status == 0">
         <v-col class="text-h9" cols="6">
           <v-progress-linear
             v-model="localchore.dirtiness"
@@ -31,7 +31,7 @@
           </v-progress-linear>
         </v-col>
 
-        <v-col cols="6" class="text-right" v-if="localchore.active">
+        <v-col cols="6" class="text-right" v-if="localchore.status == 0">
           <span :class="localchore.isOverdue ? 'text-red' : ''"
             >Due in
             <strong class="text-accent">{{ localchore.duedays }}</strong>
@@ -344,14 +344,14 @@
       <v-btn
         @click="callCompleteChore(localchore.id, getID)"
         icon="mdi-check"
-        :disabled="!localchore.active || expand"
+        :disabled="localchore.status > 0 || expand"
       ></v-btn>
       <v-dialog v-model="snooze" scrollable max-width="300px">
         <template v-slot:activator="{ props }">
           <v-btn
             v-bind="props"
             icon="mdi-alarm-snooze"
-            :disabled="!localchore.active || expand"
+            :disabled="localchore.status > 0 || expand"
           ></v-btn>
         </template>
         <v-card>
@@ -385,13 +385,13 @@
       <v-btn
         @click="callClaimChore(localchore.id, localchore.assignee_id)"
         icon="mdi-clipboard-account-outline"
-        :disabled="!localchore.active || expand"
+        :disabled="localchore.status > 0 || expand"
         :color="localchore.isAssigned ? 'red' : 'white'"
       ></v-btn>
       <v-btn
-        @click="callToggleChore(localchore.id, !localchore.active)"
+        @click="callToggleChore(localchore.id, localchore.status)"
         icon="mdi-circle-off-outline"
-        :color="localchore.active ? 'red' : 'white'"
+        :color="localchore.status == 0 ? 'red' : 'white'"
         :disabled="expand"
       ></v-btn>
       <v-btn

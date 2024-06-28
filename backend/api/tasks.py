@@ -29,17 +29,17 @@ def process_seasonal():
 
     """
     current_month = datetime.now().strftime("%b")
-    active_chores = Chore.objects.filter(active=True).exclude(
+    active_chores = Chore.objects.filter(status=0).exclude(
         active_months__name=current_month
     )
     inactive_chores = Chore.objects.filter(
-        active=False, active_months__name=current_month
+        status=2, active_months__name=current_month
     )
     for chore in active_chores:
-        chore.active = False
+        chore.status = 2
         chore.save()
     for chore in inactive_chores:
-        chore.active = True
+        chore.status = 0
         chore.nextDue = date.today()
         chore.save()
     return "Complete"
