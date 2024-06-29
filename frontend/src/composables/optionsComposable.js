@@ -51,6 +51,17 @@ async function updateOptionFunction(updatedOption) {
   }
 }
 
+async function toggleVacationFunction() {
+  const chorestore = useChoreStore();
+  try {
+    const response = await apiClient.post("/toggle_vacation");
+    chorestore.showSnackbar("Vacation mode toggled successfully!", "success");
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "Vacation mode not toggled: ");
+  }
+}
+
 async function deleteOptionFunction(deletedOption) {
   const chorestore = useChoreStore();
   try {
@@ -104,6 +115,15 @@ export function useOptions() {
     },
   });
 
+  const toggleVacationMutation = useMutation({
+    mutationFn: toggleVacationFunction,
+    onSuccess: () => {
+      console.log("Success toggling vacation mode");
+      queryClient.invalidateQueries({ queryKey: ["options"] });
+      queryClient.invalidateQueries({ queryKey: ["chores"] });
+      queryClient.invalidateQueries({ queryKey: ["areas"] });
+    },
+  });
   async function addOption(newOption) {
     createOptionMutation.mutate(newOption);
   }
@@ -116,11 +136,16 @@ export function useOptions() {
     deleteOptionMutation.mutate(deletedOption);
   }
 
+  async function toggleVacation() {
+    toggleVacationMutation.mutate();
+  }
+
   return {
     options,
     isLoading,
     addOption,
     editOption,
     removeOption,
+    toggleVacation,
   };
 }

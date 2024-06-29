@@ -39,6 +39,13 @@
           >
         </v-col>
       </v-row>
+      <v-row align="center" no-gutters v-if="localchore.status == 3">
+        <v-col class="text-h9" cols="6"
+          ><span class="text-error text-body-1 font-weight-bold"
+            ><v-icon icon="mdi-island"></v-icon> Vacation Mode Active</span
+          ></v-col
+        ></v-row
+      >
     </v-card-text>
 
     <div class="d-flex py-3 justify-space-between">
@@ -392,17 +399,17 @@
         @click="callToggleChore(localchore.id, localchore.status)"
         icon="mdi-circle-off-outline"
         :color="localchore.status == 0 ? 'red' : 'white'"
-        :disabled="expand"
+        :disabled="localchore.status == 3"
       ></v-btn>
       <v-btn
         @click="expand = !expand"
         :icon="expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        :disabled="saveEnabled"
+        :disabled="saveEnabled || localchore.status == 3"
       ></v-btn>
       <v-btn
         @click="localchore.history = !localchore.history"
         icon="mdi-clipboard-text-clock-outline"
-        :color="!localchore.history ? 'white' : 'grey'"
+        :color="!localchore.history ? 'white' : 'warning'"
         :disabled="expand"
       ></v-btn>
     </v-card-actions>

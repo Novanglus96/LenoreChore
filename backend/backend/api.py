@@ -16,7 +16,7 @@ from datetime import date, timedelta, datetime
 from ninja.errors import HttpError
 from ninja.security import HttpBearer
 from dateutil.relativedelta import relativedelta
-from django.db.models import Count
+from django.db.models import Count, F
 from django.utils import timezone
 from django.db.models.functions import TruncDate
 from django.core.paginator import Paginator
@@ -307,6 +307,31 @@ def get_weeklytotals(request, week: Optional[int] = 0):
 @api.get("/me", response=CustomUserSchema)
 def me(request):
     return request.user
+
+
+@api.post("/toggle_vacation")
+def toggle_vacation(request):
+    enabling = False
+    option = get_object_or_404(Option, id=1)
+    if option.vacation_mode:
+        enabling = False
+    else:
+        enabling = True
+    option.vacation_mode = not option.vacation_mode
+    option.save()
+    if enabling:
+        chores = Chore.objects.filter(status=0)
+        for chore in chores:
+            chore.status = 3
+            chore.vacationPause = chore.duedays
+            chore.save()
+    else:
+        chores = Chore.objects.filter(status=3)
+        for chore in chores:
+            chore.status = 0
+            chore.nextDue = date.today() + timedelta(days=chore.vacationPause)
+            chore.save()
+    return {"success": True}
 
 
 @api.post("/areagroups")

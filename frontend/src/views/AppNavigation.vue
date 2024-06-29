@@ -45,6 +45,17 @@
         >
           <v-list-item-title>Admin</v-list-item-title>
         </v-list-item>
+        <v-list-item prepend-icon="mdi-island" @click="showVacationForm = true">
+          <v-list-item-title>{{
+            options.vacation_mode == false
+              ? "Enable Vacation"
+              : "Disable Vacation"
+          }}</v-list-item-title>
+        </v-list-item>
+        <VacationForm
+          v-model="showVacationForm"
+          @update-dialog="updateVacationDialog"
+        />
         <v-list-item to="/logout" prepend-icon="mdi-logout">
           <v-list-item-title>Logout</v-list-item-title>
         </v-list-item>
@@ -59,7 +70,11 @@ import { useUserStore } from "@/stores/user";
 import AddAreaForm from "@/components/AddAreaForm.vue";
 import AddChoreForm from "@/components/AddChoreForm.vue";
 import AddAreaGroupForm from "@/components/AddAreaGroupForm.vue";
+import { useOptions } from "@/composables/optionsComposable";
+import VacationForm from "@/components/VacationForm.vue";
 
+const { options, isLoading } = useOptions();
+const showVacationForm = ref(false);
 const store = useUserStore();
 
 const menus = [
@@ -70,6 +85,9 @@ const menus = [
 ];
 
 const menu = ref(false);
+const updateVacationDialog = () => {
+  showVacationForm.value = false;
+};
 </script>
 
 <style scoped></style>

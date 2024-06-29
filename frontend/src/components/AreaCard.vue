@@ -13,11 +13,17 @@
             :color="computedColor"
             height="25"
             striped
+            v-if="!options.vacation_mode"
           >
             <template v-slot:default="{ value }">
               <strong>{{ Math.ceil(value) }}%</strong>
             </template>
           </v-progress-linear>
+          <span
+            v-if="options.vacation_mode"
+            class="text-error font-weight-bold text-h5"
+            ><v-icon icon="mdi-island"></v-icon> Vacation Mode Active</span
+          >
         </v-col>
         <v-col class="text-h9 text-center" cols="6">
           <strong class="text-accent">{{ props.area.dueCount }}</strong> of
