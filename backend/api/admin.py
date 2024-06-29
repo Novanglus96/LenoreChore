@@ -110,6 +110,12 @@ class OptionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
                 request, object_id, form_url, extra_context
             )
 
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # Editing an existing object
+            return ["vacation_mode"]  # Make 'status' field read-only
+        else:
+            return []  # No fields are read-only for new objects
+
     list_display = ["vacation_mode", "med_thresh", "high_thresh"]
 
 
