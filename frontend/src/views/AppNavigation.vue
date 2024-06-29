@@ -73,7 +73,7 @@ import AddAreaGroupForm from "@/components/AddAreaGroupForm.vue";
 import { useOptions } from "@/composables/optionsComposable";
 import VacationForm from "@/components/VacationForm.vue";
 
-const { options, isLoading } = useOptions();
+const { options } = useOptions();
 const showVacationForm = ref(false);
 const store = useUserStore();
 
