@@ -25,7 +25,7 @@
       </v-list>
     </v-menu>
     <v-img :width="208" aspect-ratio="1/1" src="logov2.png" inline></v-img>
-    <span class="text-subtitle-2 font-italic text-grey-darken-1">v1.1.9</span
+    <span class="text-subtitle-2 font-italic text-grey-darken-1">v1.2.0</span
     ><v-spacer></v-spacer>
     <v-menu
       v-model="menu"
