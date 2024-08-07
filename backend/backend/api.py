@@ -725,7 +725,7 @@ def list_version(request):
         qs = get_object_or_404(Version, id=1)
         return qs
     except Exception as e:
-        raise HttpError(500, "Record retrieval error")
+        raise HttpError(500, f"Record retrieval error: {str(e)}")
 
 
 api.add_router("/auth", router)
