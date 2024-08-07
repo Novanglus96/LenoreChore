@@ -181,3 +181,17 @@ class Option(SingletonModel):
     @classmethod
     def load(cls):
         return cls.objects.first()
+
+
+class Version(SingletonModel):
+    """
+    Model representing app version.
+
+    Fields:
+    - version_number (CharField): The current version of the app.
+    """
+
+    version_number = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.version_number

@@ -8,6 +8,7 @@ from .models import (
     CustomUser,
     AreaGroup,
     Month,
+    Version,
 )
 from import_export.admin import ImportExportModelAdmin
 
@@ -151,6 +152,26 @@ class ChoreAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_filter = ["area"]
 
 
+class VersionAdmin(admin.ModelAdmin):
+    list_display = ["version_number"]
+
+    list_display_links = ["version_number"]
+
+    ordering = ["version_number"]
+
+    def has_add_permission(self, request):
+        # Return False to disable adding
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        # Return False to disable deleting
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        # Return False to disable editing
+        return False
+
+
 # Register your models here.
 
 admin.site.register(Area, AreaAdmin)
@@ -160,3 +181,4 @@ admin.site.register(HistoryItem, HistoryItemAdmin)
 admin.site.register(Option, OptionAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Month, MonthAdmin)
+admin.site.register(Version, VersionAdmin)

@@ -9,6 +9,7 @@ from api.models import (
     Chore,
     HistoryItem,
     Option,
+    Version,
 )
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
@@ -24,8 +25,13 @@ from django.core.paginator import Paginator
 api = NinjaAPI()
 router = Router()
 api.title = "LenoreChore API"
-api.version = "1.2.1"
+api.version = "1.2.2"
 api.description = "API documentation for LenoreChore"
+
+
+class VersionOut(Schema):
+    id: int
+    version_number: str
 
 
 class TokenAuth(HttpBearer):
@@ -700,6 +706,26 @@ def logout_user(request):
     # Log the user out
     logout(request)
     return {"detail": "Logout successful"}
+
+
+@api.get("/version/list", response=VersionOut)
+def list_version(request):
+    """
+    The function `list_version` retrieves the app version number
+    from the backend.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        VersionOut: a version object
+    """
+
+    try:
+        qs = get_object_or_404(Version, id=1)
+        return qs
+    except Exception as e:
+        raise HttpError(500, "Record retrieval error")
 
 
 api.add_router("/auth", router)

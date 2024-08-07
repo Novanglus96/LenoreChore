@@ -16,5 +16,6 @@ python manage.py loaddata groups
 python manage.py loaddata options
 python manage.py loaddata month
 python manage.py loaddata usergroups
+python manage.py loaddata version
 python manage.py scheduletasks
 python manage.py runserver 0.0.0.0:8001
