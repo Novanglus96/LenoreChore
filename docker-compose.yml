@@ -10,8 +10,8 @@ services:
     restart: unless-stopped
     ports:
       - 8081:8080
-    image: chores_frontend:development
-    container_name: chores_frontend_dev
+    image: lenorechore_frontend:development
+    container_name: lenorechore_frontend_dev
     volumes:
       - ./frontend:/app
     environment:
@@ -35,8 +35,8 @@ services:
       - default
     env_file:
       - ./.env.dev
-    image: chores_backend:development
-    container_name: chores_backend_dev
+    image: lenorechore_backend:development
+    container_name: lenorechore_backend_dev
   worker:
     build:
       context: ./backend
@@ -54,8 +54,8 @@ services:
       - default
     env_file:
       - ./.env.dev
-    image: chores_worker:development
-    container_name: chores_worker_dev
+    image: lenorechore_worker:development
+    container_name: lenorechore_worker_dev
   db:
     image: postgres:15
     volumes:
@@ -64,7 +64,7 @@ services:
       - ./.env.dev.db
     networks:
       - default
-    container_name: chores_db_dev
+    container_name: lenorechore_db_dev
     environment:
       - TZ=America/New_York
 

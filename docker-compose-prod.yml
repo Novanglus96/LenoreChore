@@ -10,8 +10,8 @@ services:
       - 80
     env_file:
       - ./.env.fe
-    image: chores_frontend:production
-    container_name: chores_frontend
+    image: lenorechore_frontend:production
+    container_name: lenorechore_frontend
   backend:
     build:
       context: ./backend
@@ -27,8 +27,8 @@ services:
       - default
     env_file:
       - ./.env
-    image: chores_backend:production
-    container_name: chores_backend
+    image: lenorechore_backend:production
+    container_name: lenorechore_backend
   worker:
     build:
       context: ./backend
@@ -43,8 +43,8 @@ services:
       - default
     env_file:
       - ./.env
-    image: chores_worker:production
-    container_name: chores_worker
+    image: lenorechore_worker:production
+    container_name: lenorechore_worker
   db:
     image: postgres:15
     volumes:
@@ -54,9 +54,9 @@ services:
       - ./.env.db
     networks:
       - default
-    container_name: chores_db
+    container_name: lenorechore_db
   nginx:
-    image: registry.danielleandjohn.love/django_vue_proxy:latest
+    image: novanglus96/lenoreapps_proxy:latest
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
@@ -67,7 +67,7 @@ services:
       - default
     ports:
       - 7000:80
-    container_name: chores_proxy
+    container_name: lenorechore_proxy
 
 volumes:
   postgres_data:
