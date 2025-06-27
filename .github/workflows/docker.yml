@@ -69,7 +69,7 @@ jobs:
           # Push new images
           docker push $DOCKER_HUB_REPO/$BACKEND_NAME:${VERSION}
           docker push $DOCKER_HUB_REPO/$FRONTEND_NAME:${VERSION}
-          docker push $DOCKER_HUB_REPO/$WORKDER_NAME:${VERSION}
+          docker push $DOCKER_HUB_REPO/$WORKER_NAME:${VERSION}
           docker push $DOCKER_HUB_REPO/$BACKEND_NAME:latest
           docker push $DOCKER_HUB_REPO/$FRONTEND_NAME:latest
           docker push $DOCKER_HUB_REPO/$WORKER_NAME:latest
