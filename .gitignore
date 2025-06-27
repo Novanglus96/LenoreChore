@@ -1,5 +1,3 @@
-ver_change.sh
-publish.sh
 migrations/
 *.DS_Store
 static
@@ -7,6 +5,9 @@ staticfiles
 media
 mediafiles
 *.code-workspace
+.vite/
+myenv/
+site/
 
 # ---> Python
 # Byte-compiled / optimized / DLL files

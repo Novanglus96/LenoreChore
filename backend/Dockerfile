@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.11.4-slim-buster AS builder
+FROM python:3.11.4-slim-bookworm AS builder
 
 # set work directory
 WORKDIR /usr/src/app
@@ -30,7 +30,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 #########
 
 # pull official base image
-FROM python:3.11.4-slim-buster
+FROM python:3.11.4-slim-bookworm
 
 LABEL maintainer="John Adams"
 LABEL version="1.2.2"
@@ -50,7 +50,7 @@ RUN mkdir $APP_HOME/mediafiles
 WORKDIR $APP_HOME
 
 # install dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends netcat
+RUN apt-get update && apt-get install -y --no-install-recommends netcat-openbsd postgresql-client
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
 RUN pip install --upgrade pip
