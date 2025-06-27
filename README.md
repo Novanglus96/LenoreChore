@@ -34,8 +34,6 @@
     <img src="frontend/public/logov2.png" alt="Logo" height="40">
   </a>
 
-<h3 align="center">LenoreChore</h3>
-
   <p align="center">
     A simple chores app.
     <br />
