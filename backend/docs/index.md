@@ -35,7 +35,7 @@
   </a>
 
   <p align="center">
-    A simple chores app.
+    A simple chore app.
     <br />
     <a href="https://github.com/Novanglus96/LenoreChore"><strong>Explore the docs »</strong></a>
     <br />
