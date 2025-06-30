@@ -14,6 +14,8 @@ services:
     container_name: lenorechore_frontend_dev
     volumes:
       - ./frontend:/app
+    env_file:
+      - ./.env.dev
     environment:
       - NODE_ENV=development
       - TZ=America/New_York
@@ -62,11 +64,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.dev.db
+      - ./.env.dev
     networks:
       - default
     container_name: lenorechore_db_dev
     environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
       - TZ=America/New_York
 
 volumes:

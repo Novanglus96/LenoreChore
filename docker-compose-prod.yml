@@ -9,7 +9,9 @@ services:
     expose:
       - 80
     env_file:
-      - ./.env.fe
+      - ./.env
+    environment:
+      - NODE_ENV=production
     image: lenorechore_frontend:production
     container_name: lenorechore_frontend
   backend:
@@ -29,6 +31,8 @@ services:
       - ./.env
     image: lenorechore_backend:production
     container_name: lenorechore_backend
+    environment:
+      - DEBUG=0
   worker:
     build:
       context: ./backend
@@ -45,16 +49,22 @@ services:
       - ./.env
     image: lenorechore_worker:production
     container_name: lenorechore_worker
+    environment:
+      - DEBUG=0
   db:
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
       - ./backup:/backup
     env_file:
-      - ./.env.db
+      - ./.env
     networks:
       - default
     container_name: lenorechore_db
+    environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
   nginx:
     image: novanglus96/lenoreapps_proxy:latest
     volumes:
