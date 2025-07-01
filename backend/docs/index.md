@@ -136,19 +136,7 @@ TIMEZONE=America/New_York
 
 Adjust these values according to your environment and application requirements.
 
-### Step 2: Create a `.env.db` File
-
-Create a `.env.db` file in the root directory of the project. This file will store environment variables required to run the application. Below is an example of the variables you need to define:
-
-```env
-POSTGRES_USER=LenoreChoreuser
-POSTGRES_PASSWORD=somepassword
-POSTGRES_DB=LenoreChore
-```
-
-Make sure these match the settings in .env file!
-
-### Step 3: Create a `docker-compose.yml` File
+### Step 2: Create a `docker-compose.yml` File
 
 Create a `docker-compose.yml` file in the root directory of the project. Below is an example configuration:
 
@@ -185,9 +173,13 @@ services:
     volumes:
       - LenoreChore_postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.db
+      - ./.env
     networks:
       - LenoreChore
+    environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
   nginx:
     image: novanglus96/lenoreapps_proxy:latest
     container_name: LenoreChore_nginx
@@ -214,7 +206,7 @@ volumes:
     external: true
 ```
 
-### Step 4: Run the Application
+### Step 3: Run the Application
 
 1. Start the services:
 
@@ -305,6 +297,7 @@ A heartfelt thanks to our Patrons for their generous support! Your contributions
 
 ![Red Supporter Badge](https://img.shields.io/badge/Eleanor-E41B17?style=for-the-badge&logo=patreon&logoColor=gray)
 ![Red Supporter Badge](https://img.shields.io/badge/Danielle-E41B17?style=for-the-badge&logo=patreon&logoColor=gray)
+![BuyMeACoffee Supporter Badge](https://img.shields.io/badge/SuperDev-white?style=for-the-badge&logo=buymeacoffee&logoColor=black)
 <!--![Gold Supporter Badge](https://img.shields.io/badge/Eleanor-gold?style=for-the-badge&logo=patreon&logoColor=gray)-->
 <!--![Silver Supporter Badge](https://img.shields.io/badge/Jane_Smith-silver?style=for-the-badge&logo=patreon&logoColor=gray)-->
 <!--![BuyMeACoffee Supporter Badge](https://img.shields.io/badge/Jane_Smith-white?style=for-the-badge&logo=buymeacoffee&logoColor=black)-->
