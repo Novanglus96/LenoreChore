@@ -332,27 +332,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-2-create-a-envdb-file" class="md-nav__link">
+  <a href="#step-2-create-a-docker-composeyml-file" class="md-nav__link">
     <span class="md-ellipsis">
-      Step 2: Create a .env.db File
+      Step 2: Create a docker-compose.yml File
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-3-create-a-docker-composeyml-file" class="md-nav__link">
+  <a href="#step-3-run-the-application" class="md-nav__link">
     <span class="md-ellipsis">
-      Step 3: Create a docker-compose.yml File
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-4-run-the-application" class="md-nav__link">
-    <span class="md-ellipsis">
-      Step 4: Run the Application
+      Step 3: Run the Application
     </span>
   </a>
   
@@ -626,27 +617,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-2-create-a-envdb-file" class="md-nav__link">
+  <a href="#step-2-create-a-docker-composeyml-file" class="md-nav__link">
     <span class="md-ellipsis">
-      Step 2: Create a .env.db File
+      Step 2: Create a docker-compose.yml File
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-3-create-a-docker-composeyml-file" class="md-nav__link">
+  <a href="#step-3-run-the-application" class="md-nav__link">
     <span class="md-ellipsis">
-      Step 3: Create a docker-compose.yml File
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-4-run-the-application" class="md-nav__link">
-    <span class="md-ellipsis">
-      Step 4: Run the Application
+      Step 3: Run the Application
     </span>
   </a>
   
@@ -877,14 +859,7 @@ VITE_API_KEY=someapikey
 TIMEZONE=America/New_York
 </code></pre>
 <p>Adjust these values according to your environment and application requirements.</p>
-<h3 id="step-2-create-a-envdb-file">Step 2: Create a <code>.env.db</code> File</h3>
-<p>Create a <code>.env.db</code> file in the root directory of the project. This file will store environment variables required to run the application. Below is an example of the variables you need to define:</p>
-<pre><code class="language-env">POSTGRES_USER=LenoreChoreuser
-POSTGRES_PASSWORD=somepassword
-POSTGRES_DB=LenoreChore
-</code></pre>
-<p>Make sure these match the settings in .env file!</p>
-<h3 id="step-3-create-a-docker-composeyml-file">Step 3: Create a <code>docker-compose.yml</code> File</h3>
+<h3 id="step-2-create-a-docker-composeyml-file">Step 2: Create a <code>docker-compose.yml</code> File</h3>
 <p>Create a <code>docker-compose.yml</code> file in the root directory of the project. Below is an example configuration:</p>
 <pre><code class="language-yaml">services:
   frontend:
@@ -918,9 +893,13 @@ POSTGRES_DB=LenoreChore
     volumes:
       - LenoreChore_postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.db
+      - ./.env
     networks:
       - LenoreChore
+    environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
   nginx:
     image: novanglus96/lenoreapps_proxy:latest
     container_name: LenoreChore_nginx
@@ -946,7 +925,7 @@ volumes:
   LenoreChore_media_volume:
     external: true
 </code></pre>
-<h3 id="step-4-run-the-application">Step 4: Run the Application</h3>
+<h3 id="step-3-run-the-application">Step 3: Run the Application</h3>
 <ol>
 <li>Start the services:</li>
 </ol>
@@ -1009,7 +988,8 @@ Don't forget to give the project a star! Thanks again!</p>
 <p>A heartfelt thanks to our Patrons for their generous support! Your contributions help us maintain and improve this project.</p>
 <h3 id="thank-you-to-our-supporters">⭐ Thank You to Our Supporters:</h3>
 <p><img alt="Red Supporter Badge" src="https://img.shields.io/badge/Eleanor-E41B17?style=for-the-badge&amp;logo=patreon&amp;logoColor=gray" />
-<img alt="Red Supporter Badge" src="https://img.shields.io/badge/Danielle-E41B17?style=for-the-badge&amp;logo=patreon&amp;logoColor=gray" /></p>
+<img alt="Red Supporter Badge" src="https://img.shields.io/badge/Danielle-E41B17?style=for-the-badge&amp;logo=patreon&amp;logoColor=gray" />
+<img alt="BuyMeACoffee Supporter Badge" src="https://img.shields.io/badge/SuperDev-white?style=for-the-badge&amp;logo=buymeacoffee&amp;logoColor=black" /></p>
 <!--![Gold Supporter Badge](https://img.shields.io/badge/Eleanor-gold?style=for-the-badge&logo=patreon&logoColor=gray)-->
 <!--![Silver Supporter Badge](https://img.shields.io/badge/Jane_Smith-silver?style=for-the-badge&logo=patreon&logoColor=gray)-->
 <!--![BuyMeACoffee Supporter Badge](https://img.shields.io/badge/Jane_Smith-white?style=for-the-badge&logo=buymeacoffee&logoColor=black)-->
