@@ -25,8 +25,8 @@
       </v-list>
     </v-menu>
     <v-img :width="208" aspect-ratio="1/1" src="logov2.png" inline></v-img>
-    <span class="text-subtitle-2 font-italic text-grey-darken-1">v1.2.2</span
-    ><v-spacer></v-spacer>
+    <span class="text-subtitle-2 font-italic text-grey-darken-1">v1.2.2</span>
+    <v-spacer></v-spacer>
     <v-menu
       v-model="menu"
       :close-on-content-click="false"
@@ -46,11 +46,13 @@
           <v-list-item-title>Admin</v-list-item-title>
         </v-list-item>
         <v-list-item prepend-icon="mdi-island" @click="showVacationForm = true">
-          <v-list-item-title>{{
-            options.vacation_mode == false
-              ? "Enable Vacation"
-              : "Disable Vacation"
-          }}</v-list-item-title>
+          <v-list-item-title>
+            {{
+              options.vacation_mode == false
+                ? "Enable Vacation"
+                : "Disable Vacation"
+            }}
+          </v-list-item-title>
         </v-list-item>
         <VacationForm
           v-model="showVacationForm"
@@ -65,29 +67,29 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useUserStore } from "@/stores/user";
-import AddAreaForm from "@/components/AddAreaForm.vue";
-import AddChoreForm from "@/components/AddChoreForm.vue";
-import AddAreaGroupForm from "@/components/AddAreaGroupForm.vue";
-import { useOptions } from "@/composables/optionsComposable";
-import VacationForm from "@/components/VacationForm.vue";
+  import { ref } from "vue";
+  import { useUserStore } from "@/stores/user";
+  import AddAreaForm from "@/components/AddAreaForm.vue";
+  import AddChoreForm from "@/components/AddChoreForm.vue";
+  import AddAreaGroupForm from "@/components/AddAreaGroupForm.vue";
+  import { useOptions } from "@/composables/optionsComposable";
+  import VacationForm from "@/components/VacationForm.vue";
 
-const { options } = useOptions();
-const showVacationForm = ref(false);
-const store = useUserStore();
+  const { options } = useOptions();
+  const showVacationForm = ref(false);
+  const store = useUserStore();
 
-const menus = [
-  { title: "Dashboard", url: "/", icon: "mdi-home" },
-  { title: "List", url: "/list", icon: "mdi-view-list" },
-  { title: "Graphs", url: "/graphs", icon: "mdi-chart-bar" },
-  { title: "History", url: "/history", icon: "mdi-clipboard-clock-outline" },
-];
+  const menus = [
+    { title: "Dashboard", url: "/", icon: "mdi-home" },
+    { title: "List", url: "/list", icon: "mdi-view-list" },
+    { title: "Graphs", url: "/graphs", icon: "mdi-chart-bar" },
+    { title: "History", url: "/history", icon: "mdi-clipboard-clock-outline" },
+  ];
 
-const menu = ref(false);
-const updateVacationDialog = () => {
-  showVacationForm.value = false;
-};
+  const menu = ref(false);
+  const updateVacationDialog = () => {
+    showVacationForm.value = false;
+  };
 </script>
 
 <style scoped></style>
