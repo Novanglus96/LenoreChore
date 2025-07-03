@@ -1,0 +1,141 @@
+[
+    {
+        "model": "api.AreaGroup",
+        "pk": 2,
+        "fields": {
+          "group_name": "Basement",
+          "group_order": 1,
+          "group_color": "area1"
+        }
+    },
+    {
+        "model": "api.AreaGroup",
+        "pk": 3,
+        "fields": {
+          "group_name": "1st Floor",
+          "group_order": 2,
+          "group_color": "area2"
+        }
+    },
+    {
+        "model": "api.AreaGroup",
+        "pk": 4,
+        "fields": {
+          "group_name": "2nd Floor",
+          "group_order": 3,
+          "group_color": "area3"
+        }
+    },
+    {
+      "model": "api.Area",
+      "pk": 1,
+      "fields": {
+        "area_name": "Kitchen",
+        "area_icon": "mdi-fridge",
+        "group": 3,
+        "area_order": 1
+      }
+    },
+    {
+        "model": "api.Area",
+        "pk": 2,
+        "fields": {
+          "area_name": "Living Room",
+          "area_icon": "mdi-sofa",
+          "group": 3,
+          "area_order": 2
+        }
+    },
+    {
+        "model": "api.Area",
+        "pk": 3,
+        "fields": {
+          "area_name": "Laundry Room",
+          "area_icon": "mdi-washing-machine",
+          "group": 2,
+          "area_order": 1
+        }
+    },
+    {
+        "model": "api.Area",
+        "pk": 4,
+        "fields": {
+          "area_name": "Bedroom",
+          "area_icon": "mdi-bed",
+          "group": 4,
+          "area_order": 1
+        }
+    },
+    {
+        "model": "api.Chore",
+        "pk": 1,
+        "fields": {
+          "chore_name": "Dust",
+          "area": 4,
+          "nextDue": "2025-08-01",
+          "lastCompleted": "2025-07-01",
+          "intervalNumber": 1,
+          "unit": "month(s)",
+          "active_months": [1,2,3,4,5,6,7,8,9,10,11,12],
+          "assignee": null,
+          "effort": 1,
+          "vacationPause": 0,
+          "expand": false,
+          "status": 0
+        }
+    },
+    {
+        "model": "api.Chore",
+        "pk": 2,
+        "fields": {
+          "chore_name": "Sweep floor",
+          "area": 3,
+          "nextDue": "2025-07-01",
+          "lastCompleted": "2025-06-01",
+          "intervalNumber": 1,
+          "unit": "month(s)",
+          "active_months": [1,2,3,4,5,6,7,8,9,10,11,12],
+          "assignee": null,
+          "effort": 1,
+          "vacationPause": 0,
+          "expand": false,
+          "status": 0
+        }
+    },
+    {
+        "model": "api.Chore",
+        "pk": 3,
+        "fields": {
+          "chore_name": "Vacuum rug",
+          "area": 2,
+          "nextDue": "2025-06-28",
+          "lastCompleted": "2025-06-21",
+          "intervalNumber": 1,
+          "unit": "week(s)",
+          "active_months": [1,2,3,4,5,6,7,8,9,10,11,12],
+          "assignee": null,
+          "effort": 1,
+          "vacationPause": 0,
+          "expand": false,
+          "status": 0
+        }
+    },
+    {
+        "model": "api.Chore",
+        "pk": 4,
+        "fields": {
+          "chore_name": "Empty trash",
+          "area": 1,
+          "nextDue": "2025-07-05",
+          "lastCompleted": "2025-07-02",
+          "intervalNumber": 3,
+          "unit": "day(s)",
+          "active_months": [1,2,3,4,5,6,7,8,9,10,11,12],
+          "assignee": null,
+          "effort": 1,
+          "vacationPause": 0,
+          "expand": false,
+          "status": 0
+        }
+    }
+]
