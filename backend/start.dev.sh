@@ -18,5 +18,6 @@ python manage.py loaddata month
 python manage.py loaddata usergroups
 python manage.py loaddata version
 python manage.py scheduletasks
+python manage.py loaddemodata
 mkdocs serve --config-file mkdocs.yml --dev-addr=0.0.0.0:8002 &
 python manage.py runserver 0.0.0.0:8001
