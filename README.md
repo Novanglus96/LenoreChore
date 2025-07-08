@@ -37,7 +37,7 @@
   <p align="center">
     A simple chores app.
     <br />
-    <a href="https://github.com/Novanglus96/LenoreChore"><strong>Explore the docs »</strong></a>
+    <a href="https://novanglus96.github.io/LenoreChore"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/Novanglus96/LenoreChore/issues/new?template=bug_report.md">Report Bug</a>
@@ -82,7 +82,23 @@
 Screenshots - COMING SOON
 <!--[![Product Name Screen Shot][product-screenshot]]-->
 
-This project started as simple chores app for my family to track chores.
+**LenoreChore** is a smart, customizable chore management app. Designed for households or small groups, LenoreChore helps you keep track of tasks, assign chores efficiently, and maintain a consistent routine—even when life gets busy.
+
+I originally built LenoreChore for my wife and me to simplify our weekly chore routine. After our daughter was born, I expanded the app to include parent/child user roles so we could introduce responsibility in a fun and manageable way.
+
+### Key Features
+
+- ✅ **Custom Areas** – Define and organize chores by specific locations (like rooms or zones) in your home.
+- 🗂️ **Area Grouping** – Group multiple areas for batch management and easier scheduling.
+- 👪 **Child/Parent Users** – Support for family-style roles with tailored visibility and controls.
+- 👤 **Chore Assignment** – Assign tasks to specific users with clear accountability.
+- 📈 **Chore History Graph** – Visualize completed chores over time to track progress and consistency.
+- 🛫 **Vacation Mode** – Pause chore assignments when you're away, then resume with your schedule intact.
+
+LenoreChore is built for **self-hosting** and is fully responsive—**mobile- and desktop-friendly** out of the box.
+
+Whether you're managing your own chores or teaching kids how to contribute around the house, LenoreChore helps bring structure, fairness, and visibility to your daily routines.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -229,6 +245,7 @@ Enjoy using LenoreChore!
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+See the full <a href="https://novanglus96.github.io/LenoreChore"><strong>documentation</strong></a>.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
