@@ -253,6 +253,9 @@ See the full <a href="https://novanglus96.github.io/LenoreChore"><strong>documen
 <!-- ROADMAP -->
 ## Roadmap
 
+- [ ] v1.3 Release
+    - [ ] Demo Data
+  
 See the [open issues](https://github.com/Novanglus96/LenoreChore/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
