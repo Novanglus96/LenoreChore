@@ -7,9 +7,6 @@ on:
     types:
       - completed
 
-permissions:
-  contents: write
-
 jobs:
   versioning:
     runs-on: [self-hosted]
