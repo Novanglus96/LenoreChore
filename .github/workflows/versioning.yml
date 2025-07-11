@@ -13,10 +13,13 @@ jobs:
     outputs:
       skip: ${{ steps.check_commit.outputs.skip }}
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
       - name: Get commit message
         id: check_commit
         run: |
-          msg="$(git log -1 --pretty=%B)"
+          msg="$(git log -1 --pretty=%s)"
           echo "Commit message: $msg"
 
           if [[ -z "$msg" ]]; then
