@@ -26,7 +26,7 @@ def main():
         user_agent="LenoreAppsBot/1.0 by u/LenoreReleaseBot",
     )
 
-    title = f"[{tag.capitalize()} Release] v{version}"
+    title = f"LenoreChore v{version} Released!"
     body_template = Path("scripts/reddit_post_template.md").read_text()
     body = body_template.format(version=version, changelog=changelog)
 
