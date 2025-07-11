@@ -36,7 +36,7 @@ jobs:
             return release.data.body || "No changelog available.";
 
       - name: Post to Reddit
-        if: steps.tag.outputs.TAG != ''
+        #if: steps.tag.outputs.TAG != ''
         env:
           #COMMIT_TAG: ${{ steps.tag.outputs.TAG }}
           COMMIT_TAG: ${{ github.event.inputs.tag }}
