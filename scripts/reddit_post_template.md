@@ -14,5 +14,5 @@ For anyone new to it: **LenoreChore** is a smart, customizable chore management 
 {changelog}
 
 #### Links:
-GitHub: [https://github.com/Novanglus96/LenoreChore](https://github.com/Novanglus96/LenoreChore)
-Support LenoreApps: [https://buymeacoffee.com/novanglus](https://buymeacoffee.com/novanglus), [https://www.patreon.com/c/Novanglus](https://www.patreon.com/c/Novanglus)
+- **GitHub:** [https://github.com/Novanglus96/LenoreChore](https://github.com/Novanglus96/LenoreChore)
+- **Support LenoreApps:** [https://buymeacoffee.com/novanglus](https://buymeacoffee.com/novanglus), [https://www.patreon.com/c/Novanglus](https://www.patreon.com/c/Novanglus)
