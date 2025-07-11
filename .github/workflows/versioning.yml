@@ -16,7 +16,7 @@ jobs:
       - name: Get commit message
         id: check_commit
         run: |
-          msg="${{ github.event.head_commit.message }}"
+          msg="$(git log -1 --pretty=%B)"
           echo "Commit message: $msg"
 
           if [[ -z "$msg" ]]; then
