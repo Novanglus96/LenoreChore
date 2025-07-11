@@ -23,7 +23,7 @@ def main():
         client_secret=os.environ["REDDIT_CLIENT_SECRET"],
         username=os.environ["REDDIT_USERNAME"],
         password=os.environ["REDDIT_PASSWORD"],
-        user_agent=os.environ["REDDIT_USER_AGENT"],
+        user_agent="LenoreAppsBot/1.0 by u/LenoreReleaseBot",
     )
 
     title = f"[{tag.capitalize()} Release] v{version}"
