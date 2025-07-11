@@ -25,7 +25,7 @@ from django.core.paginator import Paginator
 api = NinjaAPI()
 router = Router()
 api.title = "LenoreChore API"
-api.version = "1.2.21"
+api.version = "1.2.22"
 api.description = "API documentation for LenoreChore"
 
 
