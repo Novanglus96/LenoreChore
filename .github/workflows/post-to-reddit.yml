@@ -1,0 +1,49 @@
+name: Post to Reddit
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (major/minor)"
+        required: true
+        default: "minor"
+
+jobs:
+  reddit:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      #- name: Extract commit tag
+      #  id: tag
+      #  run: |
+      #    msg="${{ github.event.head_commit.message }}"
+      #    tag=""
+      #    [[ "$msg" =~ \[?[Mm]ajor\]? ]] && tag="major"
+      #    [[ "$msg" =~ \[?[Mm]inor\]? ]] && tag="minor"
+      #    echo "TAG=$tag" >> $GITHUB_OUTPUT
+
+      - name: Get latest release body
+        id: release
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            const release = await github.rest.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            return release.data.body || "No changelog available.";
+
+      - name: Post to Reddit
+        if: steps.tag.outputs.TAG != ''
+        env:
+          #COMMIT_TAG: ${{ steps.tag.outputs.TAG }}
+          COMMIT_TAG: ${{ github.event.inputs.tag }}
+          RELEASE_NOTES: ${{ steps.release.outputs.result }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
+        run: python scripts/post_to_reddit.py
