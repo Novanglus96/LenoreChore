@@ -39,14 +39,19 @@
 <script setup>
 import AppNavigationVue from "./views/AppNavigation.vue";
 import { useChoreStore } from "@/stores/chores";
+import { useUserStore } from "@/stores/user";
 import { onMounted, computed, ref, watch, onUnmounted } from "vue";
 import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
 import { useVersion } from "@/composables/versionComposable";
+import { useRouter } from "vue-router";
+import axios from "axios";
 
 const reloadPage = () => {
   window.location.reload();
 };
 const chorestore = useChoreStore();
+const userstore = useUserStore();
+const router = useRouter();
 const { prefetchVersion, version } = useVersion();
 const showBanner = ref(false);
 
@@ -58,7 +63,21 @@ const updateBanner = () => {
   showBanner.value = checkVersion.value;
 };
 
-onMounted(() => {
+const checkSession = async () => {
+  if (!localStorage.getItem("authToken")) return;
+  try {
+    await axios.get("/api/v2/me");
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("authToken");
+      userstore.logoutUser();
+      router.push("/login");
+    }
+  }
+};
+
+onMounted(async () => {
+  await checkSession();
   prefetchVersion();
 
   // Check version initially
@@ -66,6 +85,7 @@ onMounted(() => {
 
   const handleVisibilityChange = () => {
     if (!document.hidden) {
+      checkSession();
       prefetchVersion().then(() => {
         updateBanner();
       });

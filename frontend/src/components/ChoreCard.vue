@@ -268,7 +268,7 @@
               ></v-btn>
               <v-dialog
                 v-model="deleteDialog"
-                persistent(localchore)
+                persistent
                 width="auto"
               >
                 <template v-slot:activator="{ props }">
