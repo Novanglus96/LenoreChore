@@ -606,6 +606,8 @@ def me(request):
     Returns:
         (CustomUserSchema): The CustomUser object of the logged in user.
     """
+    if not request.user.is_authenticated:
+        raise HttpError(401, "Not authenticated")
     return request.user
 
 
