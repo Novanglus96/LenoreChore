@@ -1,3 +1,10 @@
+# [1.3.0-rc.4](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.3...v1.3.0-rc.4) (2026-04-09)
+
+
+### Bug Fixes
+
+* dynamically read frontend version from package.json ([#15](https://github.com/Novanglus96/LenoreChore/issues/15)) ([b337e96](https://github.com/Novanglus96/LenoreChore/commit/b337e96a74f4764d580714578be38edcf6d292ac))
+
 # [1.3.0-rc.3](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.2...v1.3.0-rc.3) (2026-04-09)
 
 
