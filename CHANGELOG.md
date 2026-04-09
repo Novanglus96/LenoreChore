@@ -1,3 +1,10 @@
+# [1.3.0-rc.7](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.6...v1.3.0-rc.7) (2026-04-09)
+
+
+### Bug Fixes
+
+* add missing blank line after invalidate_pattern (E305) ([#21](https://github.com/Novanglus96/LenoreChore/issues/21)) ([d06183a](https://github.com/Novanglus96/LenoreChore/commit/d06183a7ab82f5d28d27de3740cd2a11adb97caa))
+
 # [1.3.0-rc.6](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.5...v1.3.0-rc.6) (2026-04-09)
 
 
