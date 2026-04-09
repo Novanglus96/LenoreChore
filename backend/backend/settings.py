@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     "api",
     "corsheaders",
     "rest_framework",
@@ -49,6 +50,9 @@ INSTALLED_APPS = [
     "dbbackup",
     "ninja",
     "django_q",
+    "allauth",
+    "allauth.account",
+    "allauth.headless",
 ]
 
 MIDDLEWARE = [
@@ -57,6 +61,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -196,6 +201,20 @@ Q_CLUSTER = {
     "label": "Tasks",
     "catch_up": False,
 }
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+ACCOUNT_LOGIN_BY_CODE_ENABLED = False
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+HEADLESS_ONLY = True
+HEADLESS_FRONTEND_URLS = {}
 
 JAZZMIN_SETTINGS = {
     "show_ui_builder": False,

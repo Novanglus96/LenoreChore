@@ -1,18 +1,13 @@
+import { computed } from "vue";
+import { useUserStore } from "@/stores/user";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
-import axios from "axios";
+import apiClient from "@/api/client";
 import { useChoreStore } from "@/stores/chores";
 import { useHistoryItemsStore } from "@/stores/historyitems";
 
-const apiClient = axios.create({
-  baseURL: "/api/v2",
-  withCredentials: false,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
 
 function handleApiError(error, message) {
+  if (error.response?.status === 401) throw error;
   const chorestore = useChoreStore();
   if (error.response) {
     console.error("Response error:", error.response.data);
@@ -59,12 +54,14 @@ async function getWeeklyTotalsFunction(graph) {
 
 export function useHistoryItems() {
   const queryClient = useQueryClient();
+  const userStore = useUserStore();
+  const isAuthenticated = computed(() => userStore.isLoggedIn);
   const historystore = useHistoryItemsStore();
   const { data: historyItems, isLoading } = useQuery({
     queryKey: ["historyitems", historystore.pageinfo],
     queryFn: () => getHistoryItemsFunction(historystore.pageinfo),
     select: response => response,
-    client: queryClient,
+    enabled: isAuthenticated,
   });
 
   const createHistoryItemMutation = useMutation({
@@ -87,13 +84,14 @@ export function useHistoryItems() {
 }
 
 export function useWeeklyTotals() {
-  const queryClient = useQueryClient();
+  const userStore = useUserStore();
+  const isAuthenticated = computed(() => userStore.isLoggedIn);
   const historystore = useHistoryItemsStore();
   const { data: weeklyTotals, isLoading } = useQuery({
     queryKey: ["weeklytotals", historystore.graph],
     queryFn: () => getWeeklyTotalsFunction(historystore.graph),
     select: response => response,
-    client: queryClient,
+    enabled: isAuthenticated,
   });
 
   return {

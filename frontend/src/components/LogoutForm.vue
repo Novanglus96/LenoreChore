@@ -17,16 +17,15 @@
 <script>
 import { mapActions } from "pinia";
 import { useUserStore } from "../stores/user";
+import { logoutUser } from "@/composables/usersComposable";
 
 export default {
   methods: {
     ...mapActions(useUserStore, ["logoutUser"]),
 
-    logout() {
-      // Clear the token from local storage or Vuex
-      localStorage.removeItem("authToken");
+    async logout() {
+      await logoutUser();
       this.logoutUser();
-      // Redirect to the login page or another desired page
       this.$router.push("/login");
     },
   },
