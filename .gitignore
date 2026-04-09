@@ -156,6 +156,7 @@ backup/
 # sandbox / local infrastructure (not for repo)
 docker-compose-sandbox.yml
 scripts/sync-live-to-sandbox.sh
+nginx/sandbox.conf
 
 # mypy
 .mypy_cache/
