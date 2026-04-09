@@ -67,11 +67,10 @@ const updateBanner = () => {
 };
 
 const checkSession = async () => {
-  if (!userstore.isLoggedIn) return;
   try {
     await axios.get("/_allauth/browser/v1/auth/session");
   } catch (error) {
-    if (error.response && error.response.status === 401) {
+    if (error.response && error.response.status === 401 && userstore.isLoggedIn) {
       userstore.logoutUser();
       router.push("/login");
     }
