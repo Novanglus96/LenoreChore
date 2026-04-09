@@ -25,6 +25,10 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ""),
       },
+      "/_allauth": {
+        target: "https://back-dev.danielleandjohn.love",
+        changeOrigin: true,
+      },
     },
   },
   define: {

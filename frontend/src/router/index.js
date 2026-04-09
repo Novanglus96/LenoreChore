@@ -8,6 +8,7 @@ import SettingsView from "../views/SettingsView.vue";
 import LogoutView from "../views/LogoutView.vue";
 import LoginView from "../views/LoginView.vue";
 import FourView from "../views/FourView.vue";
+import { useUserStore } from "@/stores/user";
 
 const routes = [
   {
@@ -72,18 +73,13 @@ const router = createRouter({
 // Global navigation guard
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    // Check if the user is authenticated (e.g., by checking the presence of a token)
-    const isAuthenticated = localStorage.getItem("authToken");
-
-    if (!isAuthenticated) {
-      // Redirect to the login page if not authenticated
+    const userstore = useUserStore();
+    if (!userstore.isLoggedIn) {
       next("/login");
     } else {
-      // Continue to the requested route if authenticated
       next();
     }
   } else {
-    // No authentication required, continue to the requested route
     next();
   }
 });

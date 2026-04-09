@@ -43,6 +43,7 @@ import { useUserStore } from "@/stores/user";
 import { onMounted, computed, ref, watch, onUnmounted } from "vue";
 import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
 import { useVersion } from "@/composables/versionComposable";
+import { useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
@@ -52,6 +53,7 @@ const reloadPage = () => {
 const chorestore = useChoreStore();
 const userstore = useUserStore();
 const router = useRouter();
+const queryClient = useQueryClient();
 const { prefetchVersion, version } = useVersion();
 const showBanner = ref(false);
 
@@ -64,12 +66,11 @@ const updateBanner = () => {
 };
 
 const checkSession = async () => {
-  if (!localStorage.getItem("authToken")) return;
+  if (!userstore.isLoggedIn) return;
   try {
-    await axios.get("/api/v2/me");
+    await axios.get("/_allauth/browser/v1/auth/session");
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem("authToken");
       userstore.logoutUser();
       router.push("/login");
     }
@@ -77,12 +78,6 @@ const checkSession = async () => {
 };
 
 onMounted(async () => {
-  await checkSession();
-  prefetchVersion();
-
-  // Check version initially
-  updateBanner();
-
   const handleVisibilityChange = () => {
     if (!document.hidden) {
       checkSession();
@@ -94,16 +89,30 @@ onMounted(async () => {
 
   document.addEventListener("visibilitychange", handleVisibilityChange);
 
-  // Clean up the event listener when the component is unmounted
+  const sessionPoll = setInterval(checkSession, 5 * 60 * 1000);
+
   onUnmounted(() => {
     document.removeEventListener("visibilitychange", handleVisibilityChange);
+    clearInterval(sessionPoll);
   });
+
+  await checkSession();
+  prefetchVersion();
+  updateBanner();
 });
 
-// Watch for changes in the computed property
 watch(checkVersion, newValue => {
   showBanner.value = newValue;
 });
+
+watch(
+  () => userstore.isLoggedIn,
+  isLoggedIn => {
+    if (!isLoggedIn) {
+      queryClient.clear();
+    }
+  }
+);
 </script>
 
 <style></style>

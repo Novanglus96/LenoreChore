@@ -2,14 +2,7 @@
 ### Views
 #### ::: backend.api.list_users
 #### ::: backend.api.me
-#### ::: backend.api.TokenAuth
-         options:
-            members:
-                - authenticate
-#### ::: backend.api.login_user
-#### ::: backend.api.logout_user
 ### Schemas
-#### ::: backend.api.LoginSchema
 #### ::: backend.api.LoginUserSchema
 #### ::: backend.api.CustomUserSchema
 

@@ -1,17 +1,12 @@
+import { computed } from "vue";
+import { useUserStore } from "@/stores/user";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
-import axios from "axios";
+import apiClient from "@/api/client";
 import { useChoreStore } from "@/stores/chores";
 
-const apiClient = axios.create({
-  baseURL: "/api/v2",
-  withCredentials: false,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
 
 function handleApiError(error, message) {
+  if (error.response?.status === 401) throw error;
   const chorestore = useChoreStore();
   if (error.response) {
     console.error("Response error:", error.response.data);
@@ -73,11 +68,13 @@ async function getAreasFunction() {
 
 export function useAreas() {
   const queryClient = useQueryClient();
+  const userStore = useUserStore();
+  const isAuthenticated = computed(() => userStore.isLoggedIn);
   const { data: areas, isLoading } = useQuery({
     queryKey: ["areas"],
     queryFn: getAreasFunction,
     select: response => response,
-    client: queryClient,
+    enabled: isAuthenticated,
   });
 
   const createAreaMutation = useMutation({

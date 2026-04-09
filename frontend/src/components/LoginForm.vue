@@ -9,7 +9,7 @@
       <div class="text-subtitle-1 text-medium-emphasis">Account</div>
       <v-form @submit.prevent="login">
         <v-text-field
-          v-model="credentials.username"
+          v-model="credentials.email"
           density="compact"
           placeholder="Email address"
           prepend-inner-icon="mdi-email-outline"
@@ -60,8 +60,10 @@ import { defineEmits, ref } from "vue";
 
 const emit = defineEmits(["loginUser"]);
 
+const visible = ref(false);
+
 const credentials = ref({
-  username: "",
+  email: "",
   password: "",
 });
 

@@ -1,6 +1,5 @@
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.tokens import default_token_generator
 from ninja import NinjaAPI, Schema, Router, Query
+from ninja.security import django_auth
 from api.models import (
     CustomUser,
     AreaGroup,
@@ -15,14 +14,13 @@ from typing import List, Optional
 from django.shortcuts import get_object_or_404
 from datetime import date, timedelta, datetime
 from ninja.errors import HttpError
-from ninja.security import HttpBearer
 from dateutil.relativedelta import relativedelta
 from django.db.models import Count, F
 from django.utils import timezone
 from django.db.models.functions import TruncDate
 from django.core.paginator import Paginator
 
-api = NinjaAPI()
+api = NinjaAPI(auth=django_auth, csrf=True, urls_namespace="api_v2")
 router = Router()
 api.title = "LenoreChore API"
 api.version = "1.2.24"
@@ -41,38 +39,6 @@ class VersionOut(Schema):
     id: int
     version_number: str
 
-
-class TokenAuth(HttpBearer):
-    def authenticate(self, request, token):
-        """
-        The function `authenticate` authenticates a user.
-
-        Args:
-            self ():
-            request ():
-            token ():
-
-        Returns:
-            user (token): Returns a user token.
-        """
-        try:
-            user = default_token_generator.get_user(token)
-        except Exception as e:
-            raise HttpError(401, f"Invalid token: {str(e)}")
-        return user
-
-
-class LoginSchema(Schema):
-    """
-    Schema to represent a LoginSchema.
-
-    Attributes:
-        username (str): Username string.
-        password (str): Password string.
-    """
-
-    username: str
-    password: str
 
 
 class LoginUserSchema(Schema):
@@ -135,6 +101,11 @@ class CustomUserSchema(Schema):
     is_superuser: bool
     is_staff: bool
     is_active: bool
+    groups: List[int]
+
+    @staticmethod
+    def resolve_groups(obj):
+        return [group.id for group in obj.groups.all()]
 
 
 class AreaGroupIn(Schema):
@@ -1393,68 +1364,8 @@ def delete_historyitem(request, historyitem_id: int):
     return {"success": True}
 
 
-@router.post("/login")
-def login_user(request, payload: LoginSchema):
-    """
-    The function `login_user` logs in a user.
 
-    Endpoint:
-        - **Path**: `/api/v2/login`
-        - **Method**: `POST`
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-        payload (LoginSchema): A username and password.
-
-    Returns:
-        (object): Returns a user object with token.
-    """
-    username = payload.username
-    password = payload.password
-
-    user = authenticate(request, username=username, password=password)
-    if user:
-        login(request, user)
-
-        # Retrieve or create a token for the authenticated user
-        token = default_token_generator.make_token(user)
-
-        return {
-            "token": token,
-            "firstname": user.first_name,
-            "lastname": user.last_name,
-            "email": user.email,
-            "isAdmin": user.is_superuser,
-            "male": user.male,
-            "id": user.id,
-            "user_color": user.user_color,
-            "groups": [group.id for group in user.groups.all()],
-        }
-    else:
-        raise HttpError(401, "Invalid credentials")
-
-
-@router.post("/logout")
-def logout_user(request):
-    """
-    The function `logout_user` logs out.
-
-    Endpoint:
-        - **Path**: `/api/v2/logout`
-        - **Method**: `POST`
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-
-    Returns:
-        (str): Returns `detail: Logout successful` if successful.
-    """
-    # Log the user out
-    logout(request)
-    return {"detail": "Logout successful"}
-
-
-@api.get("/version/list", response=VersionOut)
+@api.get("/version/list", response=VersionOut, auth=None)
 def list_version(request):
     """
     The function `list_version` retrieves the app version number
