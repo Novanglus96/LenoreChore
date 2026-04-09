@@ -32,6 +32,7 @@ services:
       - 8002:8002
     depends_on:
       - db
+      - redis
     networks:
       - default
     env_file:
@@ -51,12 +52,20 @@ services:
     depends_on:
       - db
       - backend
+      - redis
     networks:
       - default
     env_file:
       - ./.env.dev
     image: lenorechore_worker:development
     container_name: lenorechore_worker_dev
+  redis:
+    image: redis:7-alpine
+    networks:
+      - default
+    container_name: lenorechore_redis_dev
+    restart: unless-stopped
+
   db:
     image: postgres:15
     volumes:
