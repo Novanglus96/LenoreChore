@@ -1,3 +1,10 @@
+# [1.3.0-rc.6](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.5...v1.3.0-rc.6) (2026-04-09)
+
+
+### Features
+
+* add redis caching with write-through invalidation ([#20](https://github.com/Novanglus96/LenoreChore/issues/20)) ([1bac528](https://github.com/Novanglus96/LenoreChore/commit/1bac5282ec47fd52d13f1036031c692eec03add7))
+
 # [1.3.0-rc.5](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.4...v1.3.0-rc.5) (2026-04-09)
 
 
