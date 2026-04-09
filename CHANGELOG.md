@@ -1,3 +1,10 @@
+# [1.3.0-rc.3](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.2...v1.3.0-rc.3) (2026-04-09)
+
+
+### Bug Fixes
+
+* remove excess blank lines in api.py (E303) ([#14](https://github.com/Novanglus96/LenoreChore/issues/14)) ([f546c0d](https://github.com/Novanglus96/LenoreChore/commit/f546c0d69ddf6737c140b40ee330ec98c92429b0))
+
 # [1.3.0-rc.2](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.1...v1.3.0-rc.2) (2026-04-09)
 
 

@@ -23,7 +23,7 @@ from django.core.paginator import Paginator
 api = NinjaAPI(auth=django_auth, csrf=True, urls_namespace="api_v2")
 router = Router()
 api.title = "LenoreChore API"
-api.version = "1.3.0-rc.2"
+api.version = "1.3.0-rc.3"
 api.description = "API documentation for LenoreChore"
 
 
