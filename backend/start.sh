@@ -18,4 +18,5 @@ python manage.py loaddata month
 python manage.py loaddata usergroups
 python manage.py loaddata version
 python manage.py scheduletasks
+python manage.py loaddemodata
 gunicorn backend.wsgi:application --bind 0.0.0.0:8000
