@@ -1,3 +1,10 @@
+# [1.3.0-rc.5](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.4...v1.3.0-rc.5) (2026-04-09)
+
+
+### Bug Fixes
+
+* always fetch allauth session on mount to initialize CSRF cookie ([#19](https://github.com/Novanglus96/LenoreChore/issues/19)) ([5c2851d](https://github.com/Novanglus96/LenoreChore/commit/5c2851d1340efc751fccce783186b056c9be1c00))
+
 # [1.3.0-rc.4](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.3...v1.3.0-rc.4) (2026-04-09)
 
 
