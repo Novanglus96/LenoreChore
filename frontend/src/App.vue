@@ -46,6 +46,7 @@ import { useVersion } from "@/composables/versionComposable";
 import { useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import { version as appVersion } from "../package.json";
 
 const reloadPage = () => {
   window.location.reload();
@@ -58,7 +59,7 @@ const { prefetchVersion, version } = useVersion();
 const showBanner = ref(false);
 
 const checkVersion = computed(() => {
-  return version.value && version.value.version_number !== "1.3.0-rc.1";
+  return version.value && version.value.version_number !== appVersion;
 });
 
 const updateBanner = () => {

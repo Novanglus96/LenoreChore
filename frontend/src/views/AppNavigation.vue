@@ -25,7 +25,7 @@
       </v-list>
     </v-menu>
     <v-img :width="208" aspect-ratio="1/1" src="logov2.png" inline></v-img>
-    <span class="text-subtitle-2 font-italic text-grey-darken-1">v1.3.0-rc.1</span>
+    <span class="text-subtitle-2 font-italic text-grey-darken-1">v{{ appVersion }}</span>
     <v-spacer></v-spacer>
     <v-menu
       v-model="menu"
@@ -74,6 +74,7 @@
   import AddAreaGroupForm from "@/components/AddAreaGroupForm.vue";
   import { useOptions } from "@/composables/optionsComposable";
   import VacationForm from "@/components/VacationForm.vue";
+  import { version as appVersion } from "../../package.json";
 
   const { options } = useOptions();
   const showVacationForm = ref(false);
