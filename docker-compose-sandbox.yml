@@ -1,0 +1,84 @@
+version: "3.8"
+
+services:
+  frontend:
+    image: novanglus96/lenorechore_frontend:rc
+    networks:
+      - default
+    restart: unless-stopped
+    expose:
+      - 80
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=production
+    container_name: lenorechore_frontend
+
+  backend:
+    image: novanglus96/lenorechore_backend:rc
+    command: /home/app/web/start.sh
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    expose:
+      - 8000
+    depends_on:
+      - db
+    networks:
+      - default
+    env_file:
+      - ./.env
+    container_name: lenorechore_backend
+    environment:
+      - DEBUG=0
+
+  worker:
+    image: novanglus96/lenorechore_worker:rc
+    command: /home/app/web/start_worker.sh
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    depends_on:
+      - db
+      - backend
+    networks:
+      - default
+    env_file:
+      - ./.env
+    container_name: lenorechore_worker
+    environment:
+      - DEBUG=0
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./backup:/backup
+    env_file:
+      - ./.env
+    networks:
+      - default
+    container_name: lenorechore_db
+    environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
+
+  nginx:
+    image: novanglus96/lenoreapps_proxy:latest
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - default
+    ports:
+      - 7000:80
+    container_name: lenorechore_proxy
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
