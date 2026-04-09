@@ -34,6 +34,7 @@ def invalidate_pattern(*patterns):
     for pattern in patterns:
         cache.delete_pattern(pattern)
 
+
 api = NinjaAPI(auth=django_auth, csrf=True, urls_namespace="api_v2")
 router = Router()
 api.title = "LenoreChore API"
