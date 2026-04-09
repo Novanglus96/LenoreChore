@@ -153,6 +153,10 @@ venv.bak/
 # db backups
 backup/
 
+# sandbox / local infrastructure (not for repo)
+docker-compose-sandbox.yml
+scripts/sync-live-to-sandbox.sh
+
 # mypy
 .mypy_cache/
 .dmypy.json
