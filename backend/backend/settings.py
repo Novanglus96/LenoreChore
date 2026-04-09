@@ -150,6 +150,17 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.environ.get("REDIS_URL", "redis://redis:6379/0"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "KEY_PREFIX": "lc",
+    }
+}
+
 CORS_ORIGIN_WHITELIST = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 
 CORS_ALLOW_ALL_ORIGINS = True
