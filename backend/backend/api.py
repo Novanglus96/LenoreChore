@@ -40,7 +40,6 @@ class VersionOut(Schema):
     version_number: str
 
 
-
 class LoginUserSchema(Schema):
     """
     Schema to represent a LoginUserSchema.
@@ -1362,7 +1361,6 @@ def delete_historyitem(request, historyitem_id: int):
     historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
     historyitem.delete()
     return {"success": True}
-
 
 
 @api.get("/version/list", response=VersionOut, auth=None)
