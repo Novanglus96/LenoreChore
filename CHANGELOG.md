@@ -1,3 +1,10 @@
+# [1.3.0-rc.10](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.9...v1.3.0-rc.10) (2026-04-10)
+
+
+### Features
+
+* mobile UI improvements ([#24](https://github.com/Novanglus96/LenoreChore/issues/24)) ([f7dfc2f](https://github.com/Novanglus96/LenoreChore/commit/f7dfc2fdfe9f0b236edf4fac791fc9423871c30e))
+
 # [1.3.0-rc.9](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.8...v1.3.0-rc.9) (2026-04-10)
 
 
