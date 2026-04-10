@@ -1,3 +1,10 @@
+# [1.3.0-rc.9](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.8...v1.3.0-rc.9) (2026-04-10)
+
+
+### Features
+
+* add dark/light theme toggle to app bar ([#23](https://github.com/Novanglus96/LenoreChore/issues/23)) ([c69f348](https://github.com/Novanglus96/LenoreChore/commit/c69f34870fe1e6cd5cf436ac49accc43ddebca75))
+
 # [1.3.0-rc.8](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.7...v1.3.0-rc.8) (2026-04-10)
 
 
