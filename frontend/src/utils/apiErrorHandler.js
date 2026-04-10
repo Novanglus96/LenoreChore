@@ -2,7 +2,7 @@ import { useChoreStore } from "@/stores/chores";
 
 export function handleApiError(error, message) {
   if (error.response?.status === 401) throw error;
-  if (error.queued) return; // Action was queued for offline sync — no UI error needed
+  if (error.queued) throw error; // Propagate to onError so optimistic UI update is kept until sync
 
   const chorestore = useChoreStore();
   if (error.response) {

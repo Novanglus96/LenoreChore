@@ -149,6 +149,21 @@ export function useChores() {
 
   const completeChoreMutation = useMutation({
     mutationFn: completeChoreFunction,
+    onMutate: async (completedChore) => {
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      queryClient.setQueriesData({ queryKey: ["chores"] }, (old) =>
+        Array.isArray(old) ? old.filter((c) => c.id !== completedChore.id) : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      if (!error.queued) {
+        context?.snapshots?.forEach(([key, data]) =>
+          queryClient.setQueryData(key, data)
+        );
+      }
+    },
     onSuccess: () => {
       console.log("Success completing chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
@@ -160,6 +175,25 @@ export function useChores() {
 
   const snoozeChoreMutation = useMutation({
     mutationFn: snoozeChoreFunction,
+    onMutate: async (snoozedChore) => {
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      queryClient.setQueriesData({ queryKey: ["chores"] }, (old) =>
+        Array.isArray(old)
+          ? old.map((c) =>
+              c.id === snoozedChore.id ? { ...c, nextDue: snoozedChore.nextDue } : c
+            )
+          : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      if (!error.queued) {
+        context?.snapshots?.forEach(([key, data]) =>
+          queryClient.setQueryData(key, data)
+        );
+      }
+    },
     onSuccess: () => {
       console.log("Success snoozing chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
@@ -169,6 +203,35 @@ export function useChores() {
 
   const claimChoreMutation = useMutation({
     mutationFn: claimChoreFunction,
+    onMutate: async (claimedChore) => {
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      const users = queryClient.getQueryData(["users"]);
+      const newAssignee =
+        users?.find((u) => u.id === claimedChore.assignee_id) ?? null;
+      queryClient.setQueriesData({ queryKey: ["chores"] }, (old) =>
+        Array.isArray(old)
+          ? old.map((c) =>
+              c.id === claimedChore.id
+                ? {
+                    ...c,
+                    assignee_id: claimedChore.assignee_id,
+                    assignee: newAssignee,
+                    isAssigned: !!claimedChore.assignee_id,
+                  }
+                : c
+            )
+          : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      if (!error.queued) {
+        context?.snapshots?.forEach(([key, data]) =>
+          queryClient.setQueryData(key, data)
+        );
+      }
+    },
     onSuccess: () => {
       console.log("Success claiming chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
@@ -178,6 +241,25 @@ export function useChores() {
 
   const toggleChoreMutation = useMutation({
     mutationFn: toggleChoreFunction,
+    onMutate: async (toggledChore) => {
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      queryClient.setQueriesData({ queryKey: ["chores"] }, (old) =>
+        Array.isArray(old)
+          ? old.map((c) =>
+              c.id === toggledChore.id ? { ...c, status: toggledChore.status } : c
+            )
+          : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      if (!error.queued) {
+        context?.snapshots?.forEach(([key, data]) =>
+          queryClient.setQueryData(key, data)
+        );
+      }
+    },
     onSuccess: () => {
       console.log("Success toggling chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
