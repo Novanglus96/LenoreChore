@@ -37,23 +37,6 @@
         </template>
       </v-snackbar>
 
-      <!-- Offline indicator -->
-      <v-snackbar
-        v-model="offlineStore.isOnline"
-        color="warning"
-        location="top"
-        timeout="-1"
-        :model-value="!offlineStore.isOnline"
-      >
-        <v-icon start>mdi-wifi-off</v-icon>
-        You are offline.
-        <span v-if="offlineStore.mutationQueue.length > 0">
-          {{ offlineStore.mutationQueue.length }} change{{
-            offlineStore.mutationQueue.length !== 1 ? "s" : ""
-          }}
-          pending sync.
-        </span>
-      </v-snackbar>
 
       <!-- PWA install prompt (Android/Chrome) -->
       <v-snackbar

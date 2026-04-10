@@ -158,7 +158,12 @@ export function useChores() {
       return { snapshots };
     },
     onError: (error, _vars, context) => {
-      if (!error.queued) {
+      if (error.queued) {
+        chorestore.showSnackbar(
+          "Chore marked complete — will sync when reconnected",
+          "warning"
+        );
+      } else {
         context?.snapshots?.forEach(([key, data]) =>
           queryClient.setQueryData(key, data)
         );
@@ -188,7 +193,12 @@ export function useChores() {
       return { snapshots };
     },
     onError: (error, _vars, context) => {
-      if (!error.queued) {
+      if (error.queued) {
+        chorestore.showSnackbar(
+          "Chore snoozed — will sync when reconnected",
+          "warning"
+        );
+      } else {
         context?.snapshots?.forEach(([key, data]) =>
           queryClient.setQueryData(key, data)
         );
@@ -226,7 +236,12 @@ export function useChores() {
       return { snapshots };
     },
     onError: (error, _vars, context) => {
-      if (!error.queued) {
+      if (error.queued) {
+        chorestore.showSnackbar(
+          "Chore assignment updated — will sync when reconnected",
+          "warning"
+        );
+      } else {
         context?.snapshots?.forEach(([key, data]) =>
           queryClient.setQueryData(key, data)
         );
@@ -254,7 +269,12 @@ export function useChores() {
       return { snapshots };
     },
     onError: (error, _vars, context) => {
-      if (!error.queued) {
+      if (error.queued) {
+        chorestore.showSnackbar(
+          "Chore toggled — will sync when reconnected",
+          "warning"
+        );
+      } else {
         context?.snapshots?.forEach(([key, data]) =>
           queryClient.setQueryData(key, data)
         );

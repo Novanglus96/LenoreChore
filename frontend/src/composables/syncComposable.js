@@ -15,8 +15,6 @@ export function useSync() {
     let succeeded = 0;
     let failed = 0;
 
-    chorestore.showSnackbar("Syncing offline changes...", "info");
-
     for (const mutation of queue) {
       try {
         await apiClient.request({
@@ -31,7 +29,7 @@ export function useSync() {
           // Still offline — stop replaying
           break;
         }
-        // Server error: count retries, discard after max
+        // Server error: count retries, discard after max attempts
         offlineStore.incrementRetries(mutation.id);
         if (mutation.retries + 1 >= 3) {
           offlineStore.dequeue(mutation.id);
@@ -42,14 +40,10 @@ export function useSync() {
 
     if (succeeded > 0) {
       queryClient.invalidateQueries();
-      chorestore.showSnackbar(
-        `Synced ${succeeded} offline change${succeeded !== 1 ? "s" : ""}`,
-        "success"
-      );
     }
     if (failed > 0) {
       chorestore.showSnackbar(
-        `${failed} change${failed !== 1 ? "s" : ""} could not be synced and were discarded`,
+        `${failed} offline change${failed !== 1 ? "s" : ""} could not be applied and were discarded`,
         "error"
       );
     }
