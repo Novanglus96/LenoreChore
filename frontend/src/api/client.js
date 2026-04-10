@@ -14,9 +14,12 @@ const apiClient = axios.create({
 
 let redirectingToLogin = false;
 
+const MUTATION_METHODS = ["post", "put", "patch", "delete"];
+
 apiClient.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  async (error) => {
+    // 401: clear session and redirect to login
     if (error.response?.status === 401 && !redirectingToLogin) {
       redirectingToLogin = true;
       import("@/stores/user").then(({ useUserStore }) => {
@@ -26,6 +29,38 @@ apiClient.interceptors.response.use(
         redirectingToLogin = false;
       });
     }
+
+    // Network error on a mutation: queue for offline sync rather than surfacing an error
+    const isNetworkError =
+      !error.response &&
+      (error.code === "ERR_NETWORK" ||
+        error.code === "ECONNABORTED" ||
+        !navigator.onLine);
+    const isMutation = MUTATION_METHODS.includes(
+      error.config?.method?.toLowerCase()
+    );
+
+    if (isNetworkError && isMutation) {
+      const { useOfflineStore } = await import("@/stores/offline");
+      const { useChoreStore } = await import("@/stores/chores");
+      const offlineStore = useOfflineStore();
+      const chorestore = useChoreStore();
+
+      offlineStore.enqueue({
+        method: error.config.method,
+        url: error.config.url,
+        data: error.config.data ? JSON.parse(error.config.data) : null,
+      });
+      chorestore.showSnackbar(
+        "You are offline. This action will sync when you reconnect.",
+        "warning"
+      );
+
+      const queuedError = new Error("Queued for offline sync");
+      queuedError.queued = true;
+      return Promise.reject(queuedError);
+    }
+
     return Promise.reject(error);
   }
 );

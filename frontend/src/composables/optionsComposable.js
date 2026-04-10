@@ -3,23 +3,7 @@ import { useUserStore } from "@/stores/user";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import apiClient from "@/api/client";
 import { useChoreStore } from "@/stores/chores";
-
-
-function handleApiError(error, message) {
-  if (error.response?.status === 401) throw error;
-  const chorestore = useChoreStore();
-  if (error.response) {
-    console.error("Response error:", error.response.data);
-    console.error("Status code:", error.response.status);
-    console.error("Headers", error.response.headers);
-  } else if (error.request) {
-    console.error("No response received:", error.request);
-  } else {
-    console.error("Error during request setup:", error.message);
-  }
-  chorestore.showSnackbar(message + "Error #" + error.response.status, "error");
-  throw error;
-}
+import { handleApiError } from "@/utils/apiErrorHandler";
 
 async function createOptionFunction(newOption) {
   const chorestore = useChoreStore();
