@@ -1062,12 +1062,14 @@ REDIS_URL=redis://redis:6379/0
     ports:
       - &quot;8080:80&quot;
     volumes:
+      - LenoreChore_data_volume:/home/app/web/data
       - LenoreChore_media_volume:/home/app/web/mediafiles
     env_file:
       - ./.env
     restart: unless-stopped
 
 volumes:
+  LenoreChore_data_volume:
   LenoreChore_media_volume:
 </code></pre>
 <p><strong>Full setup</strong> (PostgreSQL + Redis):</p>
