@@ -1,3 +1,10 @@
+# [1.3.0-rc.17](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.16...v1.3.0-rc.17) (2026-04-10)
+
+
+### Bug Fixes
+
+* resolve PWA manifest warnings ([#33](https://github.com/Novanglus96/LenoreChore/issues/33)) ([81c2800](https://github.com/Novanglus96/LenoreChore/commit/81c2800e7bd647ae7f2ffc99b3bbc2af41d6f001))
+
 # [1.3.0-rc.16](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.15...v1.3.0-rc.16) (2026-04-10)
 
 
