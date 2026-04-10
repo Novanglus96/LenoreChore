@@ -1,3 +1,10 @@
+# [1.3.0-rc.19](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.18...v1.3.0-rc.19) (2026-04-10)
+
+
+### Bug Fixes
+
+* improve PWA offline UX ([#35](https://github.com/Novanglus96/LenoreChore/issues/35)) ([bded893](https://github.com/Novanglus96/LenoreChore/commit/bded893ef4a4957d0aca8777873a29815f7233d0))
+
 # [1.3.0-rc.18](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.17...v1.3.0-rc.18) (2026-04-10)
 
 
