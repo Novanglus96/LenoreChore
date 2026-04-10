@@ -33,6 +33,9 @@
 
 ## Option
 ### ::: api.models.Option
+        options:
+            members:
+                - load
 
 ## Version
 ### ::: api.models.Version
