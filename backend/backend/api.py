@@ -30,9 +30,16 @@ def invalidate(*keys):
 
 
 def invalidate_pattern(*patterns):
-    """Delete all cache keys matching the given patterns (requires django-redis)."""
+    """Delete all cache keys matching the given patterns.
+
+    Uses django-redis ``delete_pattern`` when available. Falls back to
+    ``cache.clear()`` for non-Redis backends (e.g. LocMemCache).
+    """
     for pattern in patterns:
-        cache.delete_pattern(pattern)
+        if hasattr(cache, "delete_pattern"):
+            cache.delete_pattern(pattern)
+        else:
+            cache.clear()
 
 
 api = NinjaAPI(auth=django_auth, csrf=True, urls_namespace="api_v2")
