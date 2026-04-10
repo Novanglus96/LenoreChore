@@ -40,11 +40,13 @@
 import AppNavigationVue from "./views/AppNavigation.vue";
 import { useChoreStore } from "@/stores/chores";
 import { useUserStore } from "@/stores/user";
+import { useThemeStore } from "@/stores/theme";
 import { onMounted, computed, ref, watch, onUnmounted } from "vue";
 import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
 import { useVersion } from "@/composables/versionComposable";
 import { useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
+import { useTheme } from "vuetify";
 import axios from "axios";
 import { version as appVersion } from "../package.json";
 
@@ -53,6 +55,8 @@ const reloadPage = () => {
 };
 const chorestore = useChoreStore();
 const userstore = useUserStore();
+const themeStore = useThemeStore();
+const vuetifyTheme = useTheme();
 const router = useRouter();
 const queryClient = useQueryClient();
 const { prefetchVersion, version } = useVersion();
@@ -76,6 +80,20 @@ const checkSession = async () => {
     }
   }
 };
+
+// Apply persisted theme on load
+vuetifyTheme.global.name.value = themeStore.isDark
+  ? "myCustomDarkTheme"
+  : "myCustomLightTheme";
+
+watch(
+  () => themeStore.isDark,
+  isDark => {
+    vuetifyTheme.global.name.value = isDark
+      ? "myCustomDarkTheme"
+      : "myCustomLightTheme";
+  }
+);
 
 onMounted(async () => {
   const handleVisibilityChange = () => {
