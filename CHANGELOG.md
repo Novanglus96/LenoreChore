@@ -1,3 +1,10 @@
+# [1.3.0-rc.13](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.12...v1.3.0-rc.13) (2026-04-10)
+
+
+### Features
+
+* consolidate to single container using supervisord ([#28](https://github.com/Novanglus96/LenoreChore/issues/28)) ([014f09e](https://github.com/Novanglus96/LenoreChore/commit/014f09ea12ac02f511790736f76adb85b1d19eab))
+
 # [1.3.0-rc.12](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.11...v1.3.0-rc.12) (2026-04-10)
 
 
