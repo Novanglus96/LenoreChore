@@ -3,7 +3,7 @@
     <VueQueryDevtools />
     <AppNavigationVue />
     <v-main>
-      <v-container fluid class="pa-2">
+      <v-container fluid :class="$vuetify.display.smAndDown ? 'pa-0' : 'pa-2'">
         <router-view />
       </v-container>
       <v-snackbar

@@ -37,7 +37,7 @@
         <v-container>
           <v-row dense>
             <v-col>
-              <v-dialog v-model="editcard" persistent width="1024">
+              <v-dialog v-model="editcard" persistent :fullscreen="$vuetify.display.smAndDown" width="1024">
                 <template v-slot:activator="{ props }">
                   <v-btn icon="mdi-note-edit-outline" v-bind="props"></v-btn>
                 </template>

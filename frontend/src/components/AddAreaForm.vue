@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent width="1024">
+  <v-dialog v-model="dialog" persistent :fullscreen="$vuetify.display.smAndDown" width="1024">
     <template v-slot:activator="{ props }">
       <v-list-item key="1" v-bind="props" @click="menu = false">
         <template v-slot:prepend>
