@@ -42,19 +42,13 @@ apiClient.interceptors.response.use(
 
     if (isNetworkError && isMutation) {
       const { useOfflineStore } = await import("@/stores/offline");
-      const { useChoreStore } = await import("@/stores/chores");
       const offlineStore = useOfflineStore();
-      const chorestore = useChoreStore();
 
       offlineStore.enqueue({
         method: error.config.method,
         url: error.config.url,
         data: error.config.data ? JSON.parse(error.config.data) : null,
       });
-      chorestore.showSnackbar(
-        "You are offline. This action will sync when you reconnect.",
-        "warning"
-      );
 
       const queuedError = new Error("Queued for offline sync");
       queuedError.queued = true;
