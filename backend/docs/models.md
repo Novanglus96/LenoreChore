@@ -5,6 +5,9 @@
                 - save
                 - delete
 ### ::: api.models.CustomUser
+        options:
+            members:
+                - fullname
 
 ## Area Group
 ### ::: api.models.AreaGroup
