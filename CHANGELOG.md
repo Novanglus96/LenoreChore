@@ -1,3 +1,10 @@
+# [1.3.0-rc.12](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.11...v1.3.0-rc.12) (2026-04-10)
+
+
+### Bug Fixes
+
+* remove rounded corners on cards for mobile edge-to-edge layout ([#26](https://github.com/Novanglus96/LenoreChore/issues/26)) ([775d8ba](https://github.com/Novanglus96/LenoreChore/commit/775d8bacad807d64e781a946817d67f825e74552))
+
 # [1.3.0-rc.11](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.10...v1.3.0-rc.11) (2026-04-10)
 
 
