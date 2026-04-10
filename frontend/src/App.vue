@@ -102,6 +102,7 @@ import { onMounted, computed, ref, watch, onUnmounted } from "vue";
 import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
 import { useVersion } from "@/composables/versionComposable";
 import { useSync } from "@/composables/syncComposable";
+import { usePrefetch } from "@/composables/prefetchComposable";
 import { useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
 import { useTheme } from "vuetify";
@@ -121,6 +122,7 @@ const router = useRouter();
 const queryClient = useQueryClient();
 const { prefetchVersion, version } = useVersion();
 const { replayQueue } = useSync();
+const { prefetchCriticalData } = usePrefetch();
 
 const showBanner = ref(false);
 const showInstallPrompt = ref(false);
@@ -184,13 +186,16 @@ const installApp = async () => {
 
 // ── Lifecycle ───────────────────────────────────────────────────────────────
 onMounted(async () => {
-  // Visibility / version polling
+  // Visibility / version polling + data prefetch
   const handleVisibilityChange = () => {
     if (!document.hidden) {
       checkSession();
       prefetchVersion().then(() => {
         updateBanner();
       });
+      if (userstore.isLoggedIn) {
+        prefetchCriticalData();
+      }
     }
   };
   document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -238,6 +243,11 @@ onMounted(async () => {
   prefetchVersion();
   updateBanner();
 
+  // Pre-warm critical API data in TanStack Query + Workbox cache
+  if (userstore.isLoggedIn) {
+    prefetchCriticalData();
+  }
+
   // Replay any mutations that were queued in a previous offline session
   if (offlineStore.isOnline && offlineStore.mutationQueue.length > 0) {
     replayQueue();
@@ -253,6 +263,8 @@ watch(
   (isLoggedIn) => {
     if (!isLoggedIn) {
       queryClient.clear();
+    } else {
+      prefetchCriticalData();
     }
   }
 );
