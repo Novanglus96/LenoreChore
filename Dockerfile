@@ -50,7 +50,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # App directory
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
-RUN mkdir -p $APP_HOME/staticfiles $APP_HOME/mediafiles
+RUN mkdir -p $APP_HOME/staticfiles $APP_HOME/mediafiles $APP_HOME/data
 WORKDIR $APP_HOME
 
 # Python dependencies
