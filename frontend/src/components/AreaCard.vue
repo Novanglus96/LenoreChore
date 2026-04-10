@@ -1,5 +1,5 @@
 <template>
-  <v-card :color="props.area.group.group_color" border elevation="3">
+  <v-card :color="props.area.group.group_color" border elevation="3" :rounded="$vuetify.display.smAndDown ? 0 : undefined">
     <v-card-title class="text-h5">
       <v-icon :icon="props.area.area_icon" size="25" class="me-1 pb-1"></v-icon
       >{{ props.area.area_name }}

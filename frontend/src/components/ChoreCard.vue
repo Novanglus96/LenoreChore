@@ -3,6 +3,7 @@
     :color="localchore.status == 0 ? localchore.area.group.group_color : 'grey'"
     border
     elevation="3"
+    :rounded="$vuetify.display.smAndDown ? 0 : undefined"
   >
     <v-card-item :title="localchore.chore_name">
       <template v-slot:subtitle>
