@@ -23,9 +23,16 @@
         <AddChoreForm />
         <AddAreaGroupForm />
       </v-list>
+      <v-divider></v-divider>
+      <v-list>
+        <v-list-item>
+          <v-list-item-title class="text-body-2 font-italic text-secondary text-center">
+            version {{ appVersion }}
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
     </v-menu>
     <v-img :width="208" aspect-ratio="1/1" src="logov2.png" inline></v-img>
-    <span class="text-subtitle-2 font-italic text-grey-darken-1">v{{ appVersion }}</span>
     <v-spacer></v-spacer>
     <v-btn
       :icon="themeStore.isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"

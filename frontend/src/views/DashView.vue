@@ -1,6 +1,6 @@
 <template>
   <div class="areas">
-    <v-container>
+    <v-container :class="$vuetify.display.smAndDown ? 'pa-0' : ''">
       <v-row dense v-if="!isLoading">
         <v-col cols="12">
           <AreaCard
