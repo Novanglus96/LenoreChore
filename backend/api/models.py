@@ -12,9 +12,10 @@ import os
 
 class SingletonModel(models.Model):
     """
-    Model representing a singleton model.
+    Abstract base model that enforces a single instance.
 
-    Attributes:
+    Subclasses may only have one row in the database. Attempting to create
+    a second instance raises a ValidationError, and deletion is also blocked.
     """
 
     class Meta:
@@ -36,6 +37,16 @@ class SingletonModel(models.Model):
 
 
 def user_profile_picture_upload(instance, filename):
+    """
+    Generate an upload path for a user's profile picture.
+
+    Args:
+        instance (CustomUser): The user instance being saved.
+        filename (str): The original filename of the uploaded image.
+
+    Returns:
+        str: Upload path in the form ``profile_pictures/<email><ext>``.
+    """
     _, file_extension = os.path.splitext(filename)
 
     return f"profile_pictures/{instance.email}{file_extension}"
@@ -85,6 +96,12 @@ class CustomUser(AbstractUser):
 
     @property
     def fullname(self):
+        """
+        Returns the user's full name as a single string.
+
+        Returns:
+            str: First name and last name joined by a space.
+        """
         fullname = self.first_name + " " + self.last_name
         return fullname
 
@@ -211,7 +228,7 @@ class Month(models.Model):
 
 class Chore(models.Model):
     """
-    Model representing a month.
+    Model representing a chore.
 
     Attributes:
         chore_name (CharField): The name of the chore. Max=254
@@ -324,6 +341,12 @@ class Option(SingletonModel):
 
     @classmethod
     def load(cls):
+        """
+        Load the singleton Option instance.
+
+        Returns:
+            Option: The first (and only) Option object, or None if not yet created.
+        """
         return cls.objects.first()
 
 

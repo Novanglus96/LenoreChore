@@ -119,6 +119,15 @@ class CustomUserSchema(Schema):
 
     @staticmethod
     def resolve_groups(obj):
+        """
+        Resolve the groups field to a list of group IDs.
+
+        Args:
+            obj (CustomUser): The user instance being serialized.
+
+        Returns:
+            List[int]: List of group IDs the user belongs to.
+        """
         return [group.id for group in obj.groups.all()]
 
 

@@ -47,4 +47,5 @@ jobs:
 
           if [[ "${{ github.event.release.prerelease }}" != "true" ]]; then
             mike alias "$MAJOR_MINOR" latest --push --config-file backend/mkdocs.yml
+            mike set-default latest --push --config-file backend/mkdocs.yml
           fi

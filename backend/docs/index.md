@@ -113,11 +113,12 @@ SQL_PASSWORD=somepassword
 SQL_HOST=db
 SQL_PORT=5432
 DATABASE=postgres
-DJANGO_SUPERUSER_PASSWORD=suepervisorpassword
+DJANGO_SUPERUSER_PASSWORD=supervisorpassword
 DJANGO_SUPERUSER_EMAIL=someone@somewhere.com
 DJANGO_SUPERUSER_USERNAME=supervisor
 VITE_API_KEY=someapikey
 TIMEZONE=America/New_York
+REDIS_URL=redis://redis:6379/0
 ```
 
 Adjust these values according to your environment and application requirements.
@@ -129,7 +130,7 @@ Create a `docker-compose.yml` file in the root directory of the project. Below i
 ```yaml
 services:
   frontend:
-    image: novanglus96/LenoreChore_frontend:latest
+    image: novanglus96/lenorechore_frontend:latest
     container_name: LenoreChore_frontend
     networks:
       - LenoreChore
@@ -139,7 +140,7 @@ services:
     env_file:
       - ./.env
   backend:
-    image: novanglus96/LenoreChore_backend:latest
+    image: novanglus96/lenorechore_backend:latest
     container_name: LenoreChore_backend
     command: /home/app/web/start.sh
     volumes:
@@ -149,6 +150,21 @@ services:
       - 8000
     depends_on:
       - db
+      - redis
+    networks:
+      - LenoreChore
+    env_file:
+      - ./.env
+  worker:
+    image: novanglus96/lenorechore_backend:latest
+    container_name: LenoreChore_worker
+    command: /home/app/web/start.worker.sh
+    volumes:
+      - LenoreChore_static_volume:/home/app/web/staticfiles
+      - LenoreChore_media_volume:/home/app/web/mediafiles
+    depends_on:
+      - db
+      - redis
     networks:
       - LenoreChore
     env_file:
@@ -166,6 +182,12 @@ services:
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
       - POSTGRES_DB=${SQL_DATABASE}
+  redis:
+    image: redis:7-alpine
+    container_name: LenoreChore_redis
+    networks:
+      - LenoreChore
+    restart: unless-stopped
   nginx:
     image: novanglus96/lenoreapps_proxy:latest
     container_name: LenoreChore_nginx
@@ -216,7 +238,11 @@ Enjoy using LenoreChore!
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] v1.3 Release
+- [x] v1.3 Release
+    - [x] Redis caching with write-through invalidation
+    - [x] Form validation (vee-validate + yup)
+    - [x] Dark/light theme toggle (persisted per browser)
+    - [x] Mobile UI improvements (edge-to-edge cards, fullscreen forms)
     - [ ] Demo Data
 
 See the [open issues](https://github.com/Novanglus96/LenoreChore/issues) for a full list of proposed features (and known issues).
