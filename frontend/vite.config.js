@@ -62,6 +62,13 @@ export default defineConfig({
             form_factor: "wide",
             label: "LenoreChore dashboard",
           },
+          {
+            src: "screenshots/mobile.png",
+            sizes: "1082x2402",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "LenoreChore on mobile",
+          },
         ],
       },
       workbox: {
