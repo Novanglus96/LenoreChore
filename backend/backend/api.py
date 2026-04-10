@@ -45,7 +45,7 @@ def invalidate_pattern(*patterns):
 api = NinjaAPI(auth=django_auth, csrf=True, urls_namespace="api_v2")
 router = Router()
 api.title = "LenoreChore API"
-api.version = "1.3.0-rc.17"
+api.version = "1.3.0-rc.18"
 api.description = "API documentation for LenoreChore"
 
 

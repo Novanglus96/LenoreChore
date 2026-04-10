@@ -1,3 +1,10 @@
+# [1.3.0-rc.18](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.17...v1.3.0-rc.18) (2026-04-10)
+
+
+### Features
+
+* offline data pre-caching and optimistic UI updates ([#34](https://github.com/Novanglus96/LenoreChore/issues/34)) ([0074806](https://github.com/Novanglus96/LenoreChore/commit/0074806fd200685a695a76df85943042c88e4987))
+
 # [1.3.0-rc.17](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.16...v1.3.0-rc.17) (2026-04-10)
 
 
