@@ -1,3 +1,10 @@
+# [1.3.0-rc.8](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.7...v1.3.0-rc.8) (2026-04-10)
+
+
+### Features
+
+* add vee-validate form validation to all forms ([#22](https://github.com/Novanglus96/LenoreChore/issues/22)) ([6d6595d](https://github.com/Novanglus96/LenoreChore/commit/6d6595da77e657573b28286e8351911d693e0db9))
+
 # [1.3.0-rc.7](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.6...v1.3.0-rc.7) (2026-04-09)
 
 
