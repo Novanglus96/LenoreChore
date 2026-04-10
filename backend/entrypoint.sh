@@ -1,7 +1,6 @@
 #!/bin/sh
 
-if [ "$DATABASE" = "postgres" ]
-then
+if [ "$DATABASE" = "postgres" ] || echo "${SQL_ENGINE}" | grep -q "postgresql"; then
     echo "Waiting for postgres..."
 
     while ! nc -z $SQL_HOST $SQL_PORT; do

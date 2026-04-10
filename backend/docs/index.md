@@ -99,7 +99,22 @@ Make sure you have the following installed on your system:
 <!-- INSTALLATION -->
 ### Step 1: Create a `.env` File
 
-Create a `.env` file in the root directory of the project. This file will store environment variables required to run the application. Below is an example of the variables you need to define:
+Create a `.env` file in the root directory of the project. PostgreSQL and Redis are both **optional** — if omitted, LenoreChore will use SQLite and an in-memory cache automatically.
+
+**Minimal setup** (SQLite + in-memory cache):
+
+```env
+DEBUG=0
+SECRET_KEY=mysupersecretkey
+DJANGO_ALLOWED_HOSTS=localhost
+CSRF_TRUSTED_ORIGINS=http://localhost
+DJANGO_SUPERUSER_PASSWORD=supervisorpassword
+DJANGO_SUPERUSER_EMAIL=someone@somewhere.com
+DJANGO_SUPERUSER_USERNAME=supervisor
+TIMEZONE=America/New_York
+```
+
+**Full setup** (PostgreSQL + Redis):
 
 ```env
 DEBUG=0
@@ -112,11 +127,9 @@ SQL_USER=LenoreChoreuser
 SQL_PASSWORD=somepassword
 SQL_HOST=db
 SQL_PORT=5432
-DATABASE=postgres
 DJANGO_SUPERUSER_PASSWORD=supervisorpassword
 DJANGO_SUPERUSER_EMAIL=someone@somewhere.com
 DJANGO_SUPERUSER_USERNAME=supervisor
-VITE_API_KEY=someapikey
 TIMEZONE=America/New_York
 REDIS_URL=redis://redis:6379/0
 ```
@@ -125,50 +138,43 @@ Adjust these values according to your environment and application requirements.
 
 ### Step 2: Create a `docker-compose.yml` File
 
-Create a `docker-compose.yml` file in the root directory of the project. Below is an example configuration:
+**Minimal setup** (single container, SQLite, no Redis):
 
 ```yaml
 services:
-  frontend:
-    image: novanglus96/lenorechore_frontend:latest
-    container_name: LenoreChore_frontend
-    networks:
-      - LenoreChore
+  app:
+    image: novanglus96/lenorechore:latest
+    container_name: LenoreChore
+    ports:
+      - "8080:80"
+    volumes:
+      - LenoreChore_media_volume:/home/app/web/mediafiles
+    env_file:
+      - ./.env
     restart: unless-stopped
-    expose:
-      - 80
-    env_file:
-      - ./.env
-  backend:
-    image: novanglus96/lenorechore_backend:latest
-    container_name: LenoreChore_backend
-    command: /home/app/web/start.sh
-    volumes:
-      - LenoreChore_static_volume:/home/app/web/staticfiles
-      - LenoreChore_media_volume:/home/app/web/mediafiles
-    expose:
-      - 8000
-    depends_on:
-      - db
-      - redis
-    networks:
-      - LenoreChore
-    env_file:
-      - ./.env
-  worker:
-    image: novanglus96/lenorechore_backend:latest
-    container_name: LenoreChore_worker
-    command: /home/app/web/start.worker.sh
+
+volumes:
+  LenoreChore_media_volume:
+```
+
+**Full setup** (PostgreSQL + Redis):
+
+```yaml
+services:
+  app:
+    image: novanglus96/lenorechore:latest
+    container_name: LenoreChore
+    ports:
+      - "8080:80"
     volumes:
       - LenoreChore_static_volume:/home/app/web/staticfiles
       - LenoreChore_media_volume:/home/app/web/mediafiles
     depends_on:
       - db
       - redis
-    networks:
-      - LenoreChore
     env_file:
       - ./.env
+    restart: unless-stopped
   db:
     image: postgres:15
     container_name: LenoreChore_db
@@ -176,8 +182,6 @@ services:
       - LenoreChore_postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
-    networks:
-      - LenoreChore
     environment:
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
@@ -185,33 +189,12 @@ services:
   redis:
     image: redis:7-alpine
     container_name: LenoreChore_redis
-    networks:
-      - LenoreChore
     restart: unless-stopped
-  nginx:
-    image: novanglus96/lenoreapps_proxy:latest
-    container_name: LenoreChore_nginx
-    ports:
-      - "8080:80"
-    volumes:
-      - LenoreChore_static_volume:/home/app/web/staticfiles
-      - LenoreChore_media_volume:/home/app/web/mediafiles
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - LenoreChore
-
-networks:
-  LenoreChore:
 
 volumes:
   LenoreChore_postgres_data:
-    external: true
   LenoreChore_static_volume:
-    external: true
   LenoreChore_media_volume:
-    external: true
 ```
 
 ### Step 3: Run the Application
@@ -230,6 +213,46 @@ volumes:
 * If you encounter any issues, ensure your `.env` file has the correct values and your Docker and Docker Compose installations are up to date.
 
 Enjoy using LenoreChore!
+
+---
+
+## Upgrading to v1.3
+
+v1.3 consolidates the separate `frontend`, `backend`, `worker`, and `nginx` containers into a **single `app` container**. PostgreSQL and Redis are now optional.
+
+### What changed
+
+| Before (≤ v1.2) | After (v1.3+) |
+|---|---|
+| `novanglus96/lenorechore_frontend` | _(removed)_ |
+| `novanglus96/lenorechore_backend` | _(removed)_ |
+| `novanglus96/lenorechore_worker` | _(removed)_ |
+| `novanglus96/lenoreapps_proxy` (nginx) | _(removed)_ |
+| — | `novanglus96/lenorechore` ✅ |
+
+### Steps
+
+1. **Stop your existing stack:**
+
+   ```bash
+   docker compose down
+   ```
+
+2. **Replace your `docker-compose.yml`** — remove the `frontend`, `backend`, `worker`, and `nginx` services and add the single `app` service. See the [Getting Started](#getting-started) examples above.
+
+3. **Update your `.env`** — remove the `DATABASE=postgres` line if present (no longer required). All other variables remain the same.
+
+4. **Start the new stack:**
+
+   ```bash
+   docker compose up -d
+   ```
+
+### Will my data be safe?
+
+**Yes.** PostgreSQL data is stored in a named Docker volume (`LenoreChore_postgres_data`) that exists independently of the containers. As long as your `docker-compose.yml` references the same volume name and your `SQL_*` env vars are unchanged, all data is preserved through the upgrade.
+
+> **Note:** If you choose to drop the `db` service and switch to SQLite, your existing PostgreSQL data will **not** be migrated automatically. Export your data first if needed.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
