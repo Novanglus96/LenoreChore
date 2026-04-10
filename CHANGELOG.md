@@ -1,3 +1,10 @@
+# [1.3.0-rc.16](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.15...v1.3.0-rc.16) (2026-04-10)
+
+
+### Features
+
+* add PWA support with offline queuing and background sync ([#32](https://github.com/Novanglus96/LenoreChore/issues/32)) ([a1d2f27](https://github.com/Novanglus96/LenoreChore/commit/a1d2f27addc00af8fa62854c6b817be605ad9fe2))
+
 # [1.3.0-rc.15](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.14...v1.3.0-rc.15) (2026-04-10)
 
 
