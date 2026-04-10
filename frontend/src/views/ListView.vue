@@ -1,6 +1,6 @@
 <template>
   <div class="chores">
-    <v-container :class="$vuetify.display.smAndDown ? 'pa-0' : ''">
+    <v-container :class="$vuetify.display.smAndDown ? 'px-0 pt-2' : ''">
       <v-row dense>
         <v-col cols="12">
           <v-row dense>
