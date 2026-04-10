@@ -87,6 +87,10 @@
       
     </div>
     
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
     
       
 
@@ -391,6 +395,56 @@
     <span class="md-ellipsis">
       
         Notes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upgrading-to-v13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrading to v1.3
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrading to v1.3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#will-my-data-be-safe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Will my data be safe?
       
     </span>
   </a>
@@ -739,6 +793,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#upgrading-to-v13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrading to v1.3
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrading to v1.3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#will-my-data-be-safe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Will my data be safe?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#roadmap" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -920,7 +1024,18 @@
 </ul>
 <!-- INSTALLATION -->
 <h3 id="step-1-create-a-env-file">Step 1: Create a <code>.env</code> File</h3>
-<p>Create a <code>.env</code> file in the root directory of the project. This file will store environment variables required to run the application. Below is an example of the variables you need to define:</p>
+<p>Create a <code>.env</code> file in the root directory of the project. PostgreSQL and Redis are both <strong>optional</strong> — if omitted, LenoreChore will use SQLite and an in-memory cache automatically.</p>
+<p><strong>Minimal setup</strong> (SQLite + in-memory cache):</p>
+<pre><code class="language-env">DEBUG=0
+SECRET_KEY=mysupersecretkey
+DJANGO_ALLOWED_HOSTS=localhost
+CSRF_TRUSTED_ORIGINS=http://localhost
+DJANGO_SUPERUSER_PASSWORD=supervisorpassword
+DJANGO_SUPERUSER_EMAIL=someone@somewhere.com
+DJANGO_SUPERUSER_USERNAME=supervisor
+TIMEZONE=America/New_York
+</code></pre>
+<p><strong>Full setup</strong> (PostgreSQL + Redis):</p>
 <pre><code class="language-env">DEBUG=0
 SECRET_KEY=mysupersecretkey
 DJANGO_ALLOWED_HOSTS=localhost
@@ -931,42 +1046,46 @@ SQL_USER=LenoreChoreuser
 SQL_PASSWORD=somepassword
 SQL_HOST=db
 SQL_PORT=5432
-DATABASE=postgres
-DJANGO_SUPERUSER_PASSWORD=suepervisorpassword
+DJANGO_SUPERUSER_PASSWORD=supervisorpassword
 DJANGO_SUPERUSER_EMAIL=someone@somewhere.com
 DJANGO_SUPERUSER_USERNAME=supervisor
-VITE_API_KEY=someapikey
 TIMEZONE=America/New_York
+REDIS_URL=redis://redis:6379/0
 </code></pre>
 <p>Adjust these values according to your environment and application requirements.</p>
 <h3 id="step-2-create-a-docker-composeyml-file">Step 2: Create a <code>docker-compose.yml</code> File</h3>
-<p>Create a <code>docker-compose.yml</code> file in the root directory of the project. Below is an example configuration:</p>
+<p><strong>Minimal setup</strong> (single container, SQLite, no Redis):</p>
 <pre><code class="language-yaml">services:
-  frontend:
-    image: novanglus96/LenoreChore_frontend:latest
-    container_name: LenoreChore_frontend
-    networks:
-      - LenoreChore
-    restart: unless-stopped
-    expose:
-      - 80
+  app:
+    image: novanglus96/lenorechore:latest
+    container_name: LenoreChore
+    ports:
+      - &quot;8080:80&quot;
+    volumes:
+      - LenoreChore_media_volume:/home/app/web/mediafiles
     env_file:
       - ./.env
-  backend:
-    image: novanglus96/LenoreChore_backend:latest
-    container_name: LenoreChore_backend
-    command: /home/app/web/start.sh
+    restart: unless-stopped
+
+volumes:
+  LenoreChore_media_volume:
+</code></pre>
+<p><strong>Full setup</strong> (PostgreSQL + Redis):</p>
+<pre><code class="language-yaml">services:
+  app:
+    image: novanglus96/lenorechore:latest
+    container_name: LenoreChore
+    ports:
+      - &quot;8080:80&quot;
     volumes:
       - LenoreChore_static_volume:/home/app/web/staticfiles
       - LenoreChore_media_volume:/home/app/web/mediafiles
-    expose:
-      - 8000
     depends_on:
       - db
-    networks:
-      - LenoreChore
+      - redis
     env_file:
       - ./.env
+    restart: unless-stopped
   db:
     image: postgres:15
     container_name: LenoreChore_db
@@ -974,36 +1093,19 @@ TIMEZONE=America/New_York
       - LenoreChore_postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
-    networks:
-      - LenoreChore
     environment:
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
       - POSTGRES_DB=${SQL_DATABASE}
-  nginx:
-    image: novanglus96/lenoreapps_proxy:latest
-    container_name: LenoreChore_nginx
-    ports:
-      - &quot;8080:80&quot;
-    volumes:
-      - LenoreChore_static_volume:/home/app/web/staticfiles
-      - LenoreChore_media_volume:/home/app/web/mediafiles
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - LenoreChore
-
-networks:
-  LenoreChore:
+  redis:
+    image: redis:7-alpine
+    container_name: LenoreChore_redis
+    restart: unless-stopped
 
 volumes:
   LenoreChore_postgres_data:
-    external: true
   LenoreChore_static_volume:
-    external: true
   LenoreChore_media_volume:
-    external: true
 </code></pre>
 <h3 id="step-3-run-the-application">Step 3: Run the Application</h3>
 <ol>
@@ -1020,12 +1122,74 @@ volumes:
 <li>If you encounter any issues, ensure your <code>.env</code> file has the correct values and your Docker and Docker Compose installations are up to date.</li>
 </ul>
 <p>Enjoy using LenoreChore!</p>
+<hr />
+<h2 id="upgrading-to-v13">Upgrading to v1.3</h2>
+<p>v1.3 consolidates the separate <code>frontend</code>, <code>backend</code>, <code>worker</code>, and <code>nginx</code> containers into a <strong>single <code>app</code> container</strong>. PostgreSQL and Redis are now optional.</p>
+<h3 id="what-changed">What changed</h3>
+<table>
+<thead>
+<tr>
+<th>Before (≤ v1.2)</th>
+<th>After (v1.3+)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>novanglus96/lenorechore_frontend</code></td>
+<td><em>(removed)</em></td>
+</tr>
+<tr>
+<td><code>novanglus96/lenorechore_backend</code></td>
+<td><em>(removed)</em></td>
+</tr>
+<tr>
+<td><code>novanglus96/lenorechore_worker</code></td>
+<td><em>(removed)</em></td>
+</tr>
+<tr>
+<td><code>novanglus96/lenoreapps_proxy</code> (nginx)</td>
+<td><em>(removed)</em></td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>novanglus96/lenorechore</code> ✅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="steps">Steps</h3>
+<ol>
+<li><strong>Stop your existing stack:</strong></li>
+</ol>
+<p><code>bash
+   docker compose down</code></p>
+<ol>
+<li>
+<p><strong>Replace your <code>docker-compose.yml</code></strong> — remove the <code>frontend</code>, <code>backend</code>, <code>worker</code>, and <code>nginx</code> services and add the single <code>app</code> service. See the <a href="#getting-started">Getting Started</a> examples above.</p>
+</li>
+<li>
+<p><strong>Update your <code>.env</code></strong> — remove the <code>DATABASE=postgres</code> line if present (no longer required). All other variables remain the same.</p>
+</li>
+<li>
+<p><strong>Start the new stack:</strong></p>
+</li>
+</ol>
+<p><code>bash
+   docker compose up -d</code></p>
+<h3 id="will-my-data-be-safe">Will my data be safe?</h3>
+<p><strong>Yes.</strong> PostgreSQL data is stored in a named Docker volume (<code>LenoreChore_postgres_data</code>) that exists independently of the containers. As long as your <code>docker-compose.yml</code> references the same volume name and your <code>SQL_*</code> env vars are unchanged, all data is preserved through the upgrade.</p>
+<blockquote>
+<p><strong>Note:</strong> If you choose to drop the <code>db</code> service and switch to SQLite, your existing PostgreSQL data will <strong>not</strong> be migrated automatically. Export your data first if needed.</p>
+</blockquote>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 <h2 id="roadmap">Roadmap</h2>
 <ul>
-<li>[ ] v1.3 Release<ul>
+<li>[x] v1.3 Release<ul>
+<li>[x] Redis caching with write-through invalidation</li>
+<li>[x] Form validation (vee-validate + yup)</li>
+<li>[x] Dark/light theme toggle (persisted per browser)</li>
+<li>[x] Mobile UI improvements (edge-to-edge cards, fullscreen forms)</li>
 <li>[ ] Demo Data</li>
 </ul>
 </li>
@@ -1134,7 +1298,7 @@ Don't forget to give the project a star! Thanks again!</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": [], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": [], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
