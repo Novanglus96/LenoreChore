@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 
