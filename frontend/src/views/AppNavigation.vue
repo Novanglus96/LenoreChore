@@ -27,6 +27,11 @@
     <v-img :width="208" aspect-ratio="1/1" src="logov2.png" inline></v-img>
     <span class="text-subtitle-2 font-italic text-grey-darken-1">v{{ appVersion }}</span>
     <v-spacer></v-spacer>
+    <v-btn
+      :icon="themeStore.isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+      @click="themeStore.toggle()"
+      variant="text"
+    ></v-btn>
     <v-menu
       v-model="menu"
       :close-on-content-click="false"
@@ -69,12 +74,15 @@
 <script setup>
   import { ref } from "vue";
   import { useUserStore } from "@/stores/user";
+  import { useThemeStore } from "@/stores/theme";
   import AddAreaForm from "@/components/AddAreaForm.vue";
   import AddChoreForm from "@/components/AddChoreForm.vue";
   import AddAreaGroupForm from "@/components/AddAreaGroupForm.vue";
   import { useOptions } from "@/composables/optionsComposable";
   import VacationForm from "@/components/VacationForm.vue";
   import { version as appVersion } from "../../package.json";
+
+  const themeStore = useThemeStore();
 
   const { options } = useOptions();
   const showVacationForm = ref(false);
