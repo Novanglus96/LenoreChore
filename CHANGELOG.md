@@ -1,3 +1,10 @@
+# [1.3.0-rc.15](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.14...v1.3.0-rc.15) (2026-04-10)
+
+
+### Bug Fixes
+
+* persist SQLite data across container restarts ([#31](https://github.com/Novanglus96/LenoreChore/issues/31)) ([f0d9cd5](https://github.com/Novanglus96/LenoreChore/commit/f0d9cd5dfd11df7bc6e2a17063993fab4b8a1a74))
+
 # [1.3.0-rc.14](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.13...v1.3.0-rc.14) (2026-04-10)
 
 
