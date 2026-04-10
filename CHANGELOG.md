@@ -1,3 +1,10 @@
+# [1.3.0-rc.11](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.10...v1.3.0-rc.11) (2026-04-10)
+
+
+### Bug Fixes
+
+* increase version_number max_length from 10 to 20 ([#25](https://github.com/Novanglus96/LenoreChore/issues/25)) ([1a24d68](https://github.com/Novanglus96/LenoreChore/commit/1a24d68f454077da48a45895dd170d82e491279f))
+
 # [1.3.0-rc.10](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.9...v1.3.0-rc.10) (2026-04-10)
 
 
