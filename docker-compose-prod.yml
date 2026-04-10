@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
     command: /home/app/web/start.app.sh
     volumes:
+      - data_volume:/home/app/web/data
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
     ports:
@@ -45,5 +46,6 @@ services:
 
 volumes:
   postgres_data:
+  data_volume:
   static_volume:
   media_volume:

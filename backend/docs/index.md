@@ -148,12 +148,14 @@ services:
     ports:
       - "8080:80"
     volumes:
+      - LenoreChore_data_volume:/home/app/web/data
       - LenoreChore_media_volume:/home/app/web/mediafiles
     env_file:
       - ./.env
     restart: unless-stopped
 
 volumes:
+  LenoreChore_data_volume:
   LenoreChore_media_volume:
 ```
 
