@@ -1,3 +1,10 @@
+# [1.3.0-rc.14](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.13...v1.3.0-rc.14) (2026-04-10)
+
+
+### Bug Fixes
+
+* use DummyCache instead of LocMemCache when Redis is unavailable ([#30](https://github.com/Novanglus96/LenoreChore/issues/30)) ([a0c051e](https://github.com/Novanglus96/LenoreChore/commit/a0c051e398c56a52581291d390561cea695f8744))
+
 # [1.3.0-rc.13](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.12...v1.3.0-rc.13) (2026-04-10)
 
 
