@@ -26,8 +26,8 @@
       <v-divider></v-divider>
       <v-list>
         <v-list-item>
-          <v-list-item-title class="text-caption font-italic text-medium-emphasis">
-            v{{ appVersion }}
+          <v-list-item-title class="text-body-2 font-italic text-secondary text-center">
+            version {{ appVersion }}
           </v-list-item-title>
         </v-list-item>
       </v-list>
