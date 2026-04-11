@@ -1,3 +1,10 @@
+# [1.3.0-rc.21](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.20...v1.3.0-rc.21) (2026-04-11)
+
+
+### Bug Fixes
+
+* trust X-Forwarded-Proto header from reverse proxy ([#37](https://github.com/Novanglus96/LenoreChore/issues/37)) ([f547972](https://github.com/Novanglus96/LenoreChore/commit/f5479729a930c1b8b632851d3c5d03b0b51fd9f9))
+
 # [1.3.0-rc.20](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.19...v1.3.0-rc.20) (2026-04-11)
 
 
