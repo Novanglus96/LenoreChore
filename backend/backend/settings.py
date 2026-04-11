@@ -158,6 +158,11 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 
+# Trust the X-Forwarded-Proto header from reverse proxies (e.g. Traefik)
+# so Django generates https:// URLs for media files and other absolute URLs
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+
 if os.environ.get("REDIS_URL"):
     CACHES = {
         "default": {
