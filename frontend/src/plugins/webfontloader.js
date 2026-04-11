@@ -1,17 +1,15 @@
 /**
  * plugins/webfontloader.js
  *
- * webfontloader documentation: https://github.com/typekit/webfontloader
+ * Self-hosted via @fontsource/roboto — no external HTTP requests,
+ * works offline and avoids mixed-content issues on HTTPS origins.
  */
 
 export async function loadFonts() {
-  const webFontLoader = await import(
-    /* webpackChunkName: "webfontloader" */ "webfontloader"
-  );
-
-  webFontLoader.load({
-    google: {
-      families: ["Roboto:100,300,400,500,700,900&display=swap"],
-    },
-  });
+  await import("@fontsource/roboto/100.css");
+  await import("@fontsource/roboto/300.css");
+  await import("@fontsource/roboto/400.css");
+  await import("@fontsource/roboto/500.css");
+  await import("@fontsource/roboto/700.css");
+  await import("@fontsource/roboto/900.css");
 }
