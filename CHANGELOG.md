@@ -1,3 +1,10 @@
+# [1.3.0-rc.22](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.21...v1.3.0-rc.22) (2026-04-11)
+
+
+### Bug Fixes
+
+* forward X-Forwarded-Proto through nginx to resolve mixed content ([#38](https://github.com/Novanglus96/LenoreChore/issues/38)) ([d25b963](https://github.com/Novanglus96/LenoreChore/commit/d25b9634062f02e39d11ea330404bf5c9ca954bb))
+
 # [1.3.0-rc.21](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.20...v1.3.0-rc.21) (2026-04-11)
 
 
