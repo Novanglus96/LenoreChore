@@ -1,3 +1,10 @@
+# [1.3.0-rc.20](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.19...v1.3.0-rc.20) (2026-04-11)
+
+
+### Bug Fixes
+
+* self-host Roboto font to eliminate mixed content on HTTPS ([#36](https://github.com/Novanglus96/LenoreChore/issues/36)) ([4cc30ef](https://github.com/Novanglus96/LenoreChore/commit/4cc30ef63741729e89a0d64eb53b5c66d9d27569))
+
 # [1.3.0-rc.19](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.18...v1.3.0-rc.19) (2026-04-10)
 
 
