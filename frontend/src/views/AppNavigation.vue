@@ -76,7 +76,7 @@
       <v-list>
         <v-list-item
           as="a"
-          href="/admin"
+          href="/admin/"
           v-if="store.isAdmin"
           prepend-icon="mdi-security"
         >
