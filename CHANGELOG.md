@@ -1,3 +1,11 @@
+## [1.3.1](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0...v1.3.1) (2026-04-13)
+
+
+### Bug Fixes
+
+* exclude /admin from SW navigateFallback without trailing slash ([436757e](https://github.com/Novanglus96/LenoreChore/commit/436757e14d87a0138dd98736c3f377de7cafe8cb))
+* exclude /admin from SW navigateFallback without trailing slash ([b673563](https://github.com/Novanglus96/LenoreChore/commit/b6735631f064819d98df9aaac9f3b69a3ef1b1e9))
+
 # [1.3.0](https://github.com/Novanglus96/LenoreChore/compare/v1.2.24...v1.3.0) (2026-04-13)
 
 
