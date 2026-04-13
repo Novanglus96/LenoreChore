@@ -1,3 +1,10 @@
+# [1.3.0-rc.23](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.22...v1.3.0-rc.23) (2026-04-13)
+
+
+### Bug Fixes
+
+* expand header inspection endpoint with additional proxy diagnostics ([#40](https://github.com/Novanglus96/LenoreChore/issues/40)) ([3a0b2ba](https://github.com/Novanglus96/LenoreChore/commit/3a0b2ba3fea5586feafb8d2811a3616f2c59caa5))
+
 # [1.3.0-rc.22](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.21...v1.3.0-rc.22) (2026-04-11)
 
 
