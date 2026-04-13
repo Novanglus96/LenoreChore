@@ -1,3 +1,10 @@
+# [1.3.0-rc.25](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.24...v1.3.0-rc.25) (2026-04-13)
+
+
+### Bug Fixes
+
+* repair PWA install prompt and add dismissal suppression ([#42](https://github.com/Novanglus96/LenoreChore/issues/42)) ([a6bb039](https://github.com/Novanglus96/LenoreChore/commit/a6bb039abdd997566959b088ab5565567f10b58e))
+
 # [1.3.0-rc.24](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.23...v1.3.0-rc.24) (2026-04-13)
 
 
