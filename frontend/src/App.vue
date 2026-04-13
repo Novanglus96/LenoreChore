@@ -48,9 +48,7 @@
       >
         Install LenoreChore for a better experience!
         <template v-slot:actions>
-          <v-btn variant="text" @click="showInstallPrompt = false">
-            Not now
-          </v-btn>
+          <v-btn variant="text" @click="dismissInstall"> Not now </v-btn>
           <v-btn variant="text" @click="installApp"> Install </v-btn>
         </template>
       </v-snackbar>
@@ -157,11 +155,42 @@ const isInStandaloneMode =
   window.matchMedia("(display-mode: standalone)").matches ||
   navigator.standalone;
 
+const INSTALL_DISMISSED_KEY = "pwa-install-dismissed";
+const INSTALL_DISMISSED_DAYS = 7;
+
+function installDismissed() {
+  return !!localStorage.getItem(INSTALL_DISMISSED_KEY);
+}
+
+function setInstallDismissed() {
+  const expires = Date.now() + INSTALL_DISMISSED_DAYS * 24 * 60 * 60 * 1000;
+  localStorage.setItem(INSTALL_DISMISSED_KEY, String(expires));
+}
+
+function clearExpiredDismissal() {
+  const val = localStorage.getItem(INSTALL_DISMISSED_KEY);
+  if (val && Date.now() > Number(val)) {
+    localStorage.removeItem(INSTALL_DISMISSED_KEY);
+  }
+}
+
+const dismissInstall = () => {
+  showInstallPrompt.value = false;
+  setInstallDismissed();
+};
+
 const installApp = async () => {
   if (!deferredInstallPrompt) return;
-  deferredInstallPrompt.prompt();
-  const { outcome } = await deferredInstallPrompt.userChoice;
-  if (outcome === "accepted") {
+  try {
+    await deferredInstallPrompt.prompt();
+    const { outcome } = await deferredInstallPrompt.userChoice;
+    if (outcome === "dismissed") {
+      setInstallDismissed();
+    }
+  } catch (err) {
+    console.error("PWA install prompt failed:", err);
+    chorestore.showSnackbar("Install unavailable — try using the browser menu", "warning");
+  } finally {
     deferredInstallPrompt = null;
     showInstallPrompt.value = false;
   }
@@ -196,14 +225,21 @@ onMounted(async () => {
   window.addEventListener("offline", handleOffline);
 
   // Android/Chrome install prompt
+  clearExpiredDismissal();
   const handleInstallPrompt = (e) => {
     e.preventDefault();
     deferredInstallPrompt = e;
-    if (!isInStandaloneMode) {
+    if (!isInStandaloneMode && !installDismissed()) {
       showInstallPrompt.value = true;
     }
   };
   window.addEventListener("beforeinstallprompt", handleInstallPrompt);
+
+  const handleAppInstalled = () => {
+    deferredInstallPrompt = null;
+    showInstallPrompt.value = false;
+  };
+  window.addEventListener("appinstalled", handleAppInstalled);
 
   // iOS: show instructions once if not already installed
   if (isIOS && !isInStandaloneMode) {
@@ -220,6 +256,7 @@ onMounted(async () => {
     window.removeEventListener("online", handleOnline);
     window.removeEventListener("offline", handleOffline);
     window.removeEventListener("beforeinstallprompt", handleInstallPrompt);
+    window.removeEventListener("appinstalled", handleAppInstalled);
   });
 
   await checkSession();

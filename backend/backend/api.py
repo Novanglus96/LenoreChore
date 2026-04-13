@@ -48,22 +48,6 @@ api.version = "1.3.0-rc.24"
 api.description = "API documentation for LenoreChore"
 
 
-@api.get("/debug/headers", auth=None, include_in_schema=False)
-def debug_headers(request):
-    """Return all incoming HTTP headers and key proxy indicators. Remove before production."""
-    headers = {k: v for k, v in request.META.items() if k.startswith("HTTP_")}
-    return {
-        "headers": headers,
-        "is_secure": request.is_secure(),
-        "scheme": request.scheme,
-        "x_forwarded_proto": request.META.get("HTTP_X_FORWARDED_PROTO", "(not set)"),
-        "x_forwarded_host": request.META.get("HTTP_X_FORWARDED_HOST", "(not set)"),
-        "x_real_ip": request.META.get("HTTP_X_REAL_IP", "(not set)"),
-        "server_name": request.META.get("SERVER_NAME", "(not set)"),
-        "server_port": request.META.get("SERVER_PORT", "(not set)"),
-    }
-
-
 class VersionOut(Schema):
     """
     Schema to represent a Version.
