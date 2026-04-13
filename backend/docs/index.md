@@ -65,6 +65,7 @@ I originally built LenoreChore for my wife and me to simplify our weekly chore r
 - 👤 **Chore Assignment** – Assign tasks to specific users with clear accountability.
 - 📈 **Chore History Graph** – Visualize completed chores over time to track progress and consistency.
 - 🛫 **Vacation Mode** – Pause chore assignments when you're away, then resume with your schedule intact.
+- 📱 **Progressive Web App (PWA)** – Install LenoreChore as an app on desktop or mobile. Works offline with automatic background sync when reconnected.
 
 LenoreChore is built for **self-hosting** and is fully responsive—**mobile- and desktop-friendly** out of the box.
 
@@ -214,6 +215,26 @@ volumes:
 * Adjust exposed ports as needed for your environment.
 * If you encounter any issues, ensure your `.env` file has the correct values and your Docker and Docker Compose installations are up to date.
 
+### PWA and Reverse Proxy Requirement
+
+PWA features (installability, service worker, offline sync) require LenoreChore to be served over **HTTPS via a reverse proxy** (e.g. Traefik, nginx with SSL termination). The reverse proxy must forward the `X-Forwarded-Proto` header to the container.
+
+**Plain HTTP deployments will not support PWA features.** The install prompt will not appear and the service worker will not register.
+
+Example Traefik label to ensure the header is forwarded (most Traefik setups do this automatically):
+
+```yaml
+- "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+```
+
+Example nginx upstream config if you are using nginx as your outer proxy:
+
+```nginx
+proxy_set_header X-Forwarded-Proto $scheme;
+```
+
+> **Note:** If you previously accessed the site while it had a certificate error and clicked "Proceed anyway" in your browser, Chrome may remember that exception and block PWA installation. To fix this, go to **Chrome Settings → Privacy and Security → Site Settings**, find your site, and click **Reset permissions** — then reload the page.
+
 Enjoy using LenoreChore!
 
 ---
@@ -268,6 +289,7 @@ v1.3 consolidates the separate `frontend`, `backend`, `worker`, and `nginx` cont
     - [x] Form validation (vee-validate + yup)
     - [x] Dark/light theme toggle (persisted per browser)
     - [x] Mobile UI improvements (edge-to-edge cards, fullscreen forms)
+    - [x] PWA support (installable, offline queuing, background sync)
     - [ ] Demo Data
 
 See the [open issues](https://github.com/Novanglus96/LenoreChore/issues) for a full list of proposed features (and known issues).
