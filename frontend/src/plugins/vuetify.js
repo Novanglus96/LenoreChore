@@ -25,6 +25,7 @@ const myCustomLightTheme = {
     user2: "#3F51B5",
     user3: "#009688",
     user4: "#CDDC39",
+    chorePanel: "#E0E0E0",
   },
 };
 
@@ -48,6 +49,7 @@ const myCustomDarkTheme = {
     user2: "#3F51B5",
     user3: "#009688",
     user4: "#CDDC39",
+    chorePanel: "#424242",
   },
 };
 

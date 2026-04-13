@@ -1,54 +1,48 @@
 <template>
-  <vue3-datatable
-    :rows="historyItems ? historyItems.items : []"
-    :columns="columns"
+  <v-data-table-server
+    :headers="headers"
+    :items="historyItems ? historyItems.items : []"
+    :items-length="historyItems ? historyItems.total_records : 0"
     :loading="isLoading"
-    :totalRows="historyItems ? historyItems.total_records : 0"
-    :isServerMode="true"
-    :pageSize="historystore.pageinfo.page_size"
-    :stickyHeader="true"
-    noDataContent="No history"
-    search=""
-    ref="history_table"
+    :items-per-page="historystore.pageinfo.page_size"
+    :items-per-page-options="[{ value: 15, title: '15' }]"
+    density="compact"
+    fixed-header
     height="600px"
-    skin="bh-table-striped bh-table-compact"
-    :pageSizeOptions="[5]"
-    :showPageSize="false"
-    paginationInfo="Showing {0} to {1} of {2} items"
-    class="alt-pagination"
-    @change="pageChanged"
+    no-data-text="No history"
+    class="striped-table"
+    @update:options="pageChanged"
   >
-    <template #completed_by.email="row">
+    <template #item.completed_by="{ item }">
       <span>{{
-        row.value.completed_by.fullname == " "
-          ? row.value.completed_by.email
-          : row.value.completed_by.fullname
+        item.completed_by.fullname?.trim()
+          ? item.completed_by.fullname
+          : item.completed_by.email
       }}</span>
     </template>
-  </vue3-datatable>
+  </v-data-table-server>
 </template>
+
 <script setup>
 import { useHistoryItems } from "@/composables/historyItemsComposable";
-import Vue3Datatable from "@bhplugin/vue3-datatable";
-import "@bhplugin/vue3-datatable/dist/style.css";
-import { ref } from "vue";
 import { useHistoryItemsStore } from "@/stores/historyitems";
 
 const historystore = useHistoryItemsStore();
 const { historyItems, isLoading } = useHistoryItems();
-const columns = ref([
-  { field: "id", title: "ID", isUnique: true, hide: true },
-  { field: "completed_date", title: "Date", type: "date", width: "120px" },
-  { field: "chore.chore_name", title: "Chore", width: "100px" },
-  { field: "completed_by.email", title: "Completed By", width: "100px" },
-]);
-const pageChanged = data => {
-  historystore.pageinfo.page = data.current_page;
+
+const headers = [
+  { title: "Date", key: "completed_date", width: "120px", sortable: false },
+  { title: "Chore", key: "chore.chore_name", width: "100px", sortable: false },
+  { title: "Completed By", key: "completed_by", width: "100px", sortable: false },
+];
+
+const pageChanged = ({ page }) => {
+  historystore.pageinfo.page = page;
 };
 </script>
-<style>
-.alt-pagination .bh-pagination .bh-page-item {
-  background-color: #2196f3;
-  color: white;
+
+<style scoped>
+.striped-table :deep(tbody tr:nth-child(odd)) {
+  background-color: rgba(0, 0, 0, 0.09);
 }
 </style>

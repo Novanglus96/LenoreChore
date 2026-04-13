@@ -11,7 +11,6 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@bhplugin/vue3-datatable": "^1.1.4",
     "@fontsource/roboto": "^5.2.10",
     "@headlessui/vue": "^1.7.22",
     "@heroicons/vue": "^2.1.3",

@@ -1,6 +1,6 @@
 <template>
-  <div style="height: 400px" v-if="!isLoading">
-    <v-container fluid
+  <div v-if="!isLoading" style="height: 400px">
+    <v-container fluid class="bg-secondary"
       ><v-row
         ><v-col cols="3" class="text-right"
           ><v-btn
@@ -22,7 +22,7 @@
             :disabled="!historystore.graph.week"
           ></v-btn></v-col></v-row
     ></v-container>
-    <Bar id="my-chart-id" :options="chartOptions" :data="weeklyTotals" />
+    <Bar id="my-chart-id" :options="chartOptions" :data="weeklyTotals" :plugins="chartPlugins" />
   </div>
 </template>
 <script setup>
@@ -38,8 +38,11 @@ import {
 } from "chart.js";
 import { useWeeklyTotals } from "@/composables/historyItemsComposable";
 import { useHistoryItemsStore } from "@/stores/historyitems";
+import { useThemeStore } from "@/stores/theme";
+import { computed } from "vue";
 
 const historystore = useHistoryItemsStore();
+const themeStore = useThemeStore();
 const { weeklyTotals, isLoading } = useWeeklyTotals();
 
 ChartJS.register(
@@ -51,20 +54,46 @@ ChartJS.register(
   LinearScale,
 );
 
-const chartOptions = {
-  responsive: true,
-  indexAxis: "x",
-  title: {
-    display: true,
-    text: "Graphs",
-  },
-  plugins: {
-    legend: {
-      position: "bottom",
+const chartPlugins = computed(() => {
+  if (!themeStore.isDark) return [];
+  return [{
+    id: "lightBackground",
+    beforeDraw: (chart) => {
+      const ctx = chart.canvas.getContext("2d");
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-over";
+      ctx.fillStyle = "#EEEEEE";
+      ctx.fillRect(0, 0, chart.width, chart.height);
+      ctx.restore();
     },
-  },
-  maintainAspectRatio: false,
-};
+  }];
+});
+
+const chartOptions = computed(() => {
+  const textColor = themeStore.isDark ? "#333333" : undefined;
+  const gridColor = themeStore.isDark ? "rgba(0,0,0,0.1)" : undefined;
+  return {
+    responsive: true,
+    indexAxis: "x",
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: { color: textColor },
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: textColor },
+        grid: { color: gridColor },
+      },
+      y: {
+        ticks: { color: textColor },
+        grid: { color: gridColor },
+      },
+    },
+    maintainAspectRatio: false,
+  };
+});
 
 const increaseWeek = () => {
   historystore.graph.week += 1;
