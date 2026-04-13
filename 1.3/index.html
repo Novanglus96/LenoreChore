@@ -401,6 +401,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pwa-and-reverse-proxy-requirement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PWA and Reverse Proxy Requirement
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -787,6 +798,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pwa-and-reverse-proxy-requirement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PWA and Reverse Proxy Requirement
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1000,6 +1022,7 @@
 <li>👤 <strong>Chore Assignment</strong> – Assign tasks to specific users with clear accountability.</li>
 <li>📈 <strong>Chore History Graph</strong> – Visualize completed chores over time to track progress and consistency.</li>
 <li>🛫 <strong>Vacation Mode</strong> – Pause chore assignments when you're away, then resume with your schedule intact.</li>
+<li>📱 <strong>Progressive Web App (PWA)</strong> – Install LenoreChore as an app on desktop or mobile. Works offline with automatic background sync when reconnected.</li>
 </ul>
 <p>LenoreChore is built for <strong>self-hosting</strong> and is fully responsive—<strong>mobile- and desktop-friendly</strong> out of the box.</p>
 <p>Whether you're managing your own chores or teaching kids how to contribute around the house, LenoreChore helps bring structure, fairness, and visibility to your daily routines.</p>
@@ -1123,6 +1146,18 @@ volumes:
 <li>Adjust exposed ports as needed for your environment.</li>
 <li>If you encounter any issues, ensure your <code>.env</code> file has the correct values and your Docker and Docker Compose installations are up to date.</li>
 </ul>
+<h3 id="pwa-and-reverse-proxy-requirement">PWA and Reverse Proxy Requirement</h3>
+<p>PWA features (installability, service worker, offline sync) require LenoreChore to be served over <strong>HTTPS via a reverse proxy</strong> (e.g. Traefik, nginx with SSL termination). The reverse proxy must forward the <code>X-Forwarded-Proto</code> header to the container.</p>
+<p><strong>Plain HTTP deployments will not support PWA features.</strong> The install prompt will not appear and the service worker will not register.</p>
+<p>Example Traefik label to ensure the header is forwarded (most Traefik setups do this automatically):</p>
+<pre><code class="language-yaml">- &quot;traefik.http.middlewares.https-redirect.redirectscheme.scheme=https&quot;
+</code></pre>
+<p>Example nginx upstream config if you are using nginx as your outer proxy:</p>
+<pre><code class="language-nginx">proxy_set_header X-Forwarded-Proto $scheme;
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> If you previously accessed the site while it had a certificate error and clicked "Proceed anyway" in your browser, Chrome may remember that exception and block PWA installation. To fix this, go to <strong>Chrome Settings → Privacy and Security → Site Settings</strong>, find your site, and click <strong>Reset permissions</strong> — then reload the page.</p>
+</blockquote>
 <p>Enjoy using LenoreChore!</p>
 <hr />
 <h2 id="upgrading-to-v13">Upgrading to v1.3</h2>
@@ -1192,7 +1227,8 @@ volumes:
 <li>[x] Form validation (vee-validate + yup)</li>
 <li>[x] Dark/light theme toggle (persisted per browser)</li>
 <li>[x] Mobile UI improvements (edge-to-edge cards, fullscreen forms)</li>
-<li>[ ] Demo Data</li>
+<li>[x] PWA support (installable, offline queuing, background sync)</li>
+<li>[x] Demo Data</li>
 </ul>
 </li>
 </ul>
