@@ -1,3 +1,13 @@
+# [1.3.0-rc.26](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.25...v1.3.0-rc.26) (2026-04-13)
+
+
+### Bug Fixes
+
+* pre-release UI tweaks for 1.3 ([648ce46](https://github.com/Novanglus96/LenoreChore/commit/648ce46b27864a724f1c6c5a49085f9b42a96415))
+* pre-release UI tweaks for 1.3 ([f953038](https://github.com/Novanglus96/LenoreChore/commit/f9530384da0052f88077a872c31ea20606d259dc))
+* update jsconfig.json to modern Vite-compatible TS compiler options ([a55b72b](https://github.com/Novanglus96/LenoreChore/commit/a55b72b792dc04683a5d5b12d71e778a7ec93261))
+* use relative path in jsconfig paths to satisfy bundler moduleResolution ([3bc4755](https://github.com/Novanglus96/LenoreChore/commit/3bc475553c533283fd0eb7839d5b4f01e135329c))
+
 # [1.3.0-rc.25](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.24...v1.3.0-rc.25) (2026-04-13)
 
 
