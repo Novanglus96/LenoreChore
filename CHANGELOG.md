@@ -1,3 +1,11 @@
+## [1.3.4](https://github.com/Novanglus96/LenoreChore/compare/v1.3.3...v1.3.4) (2026-04-13)
+
+
+### Bug Fixes
+
+* add Back to Site to admin usermenu for mobile visibility ([7bfe314](https://github.com/Novanglus96/LenoreChore/commit/7bfe314a6f238978b2dfe65bf32abd3ee45bc0e7))
+* add Back to Site to admin usermenu so it's visible on mobile ([6200c20](https://github.com/Novanglus96/LenoreChore/commit/6200c2036ef7166e3e038f981ae66f9f0b75a13f))
+
 ## [1.3.3](https://github.com/Novanglus96/LenoreChore/compare/v1.3.2...v1.3.3) (2026-04-13)
 
 
