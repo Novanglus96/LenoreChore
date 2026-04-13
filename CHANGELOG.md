@@ -1,3 +1,11 @@
+## [1.3.3](https://github.com/Novanglus96/LenoreChore/compare/v1.3.2...v1.3.3) (2026-04-13)
+
+
+### Bug Fixes
+
+* clear SW and TanStack Query caches on version-mismatch reload ([97ae267](https://github.com/Novanglus96/LenoreChore/commit/97ae26707c2a926181bcc464e715c5a32c694299))
+* clear SW and TanStack Query caches on version-mismatch reload ([fee6e55](https://github.com/Novanglus96/LenoreChore/commit/fee6e55ce0a3b23d923ca604e4d75f1842e314d5))
+
 ## [1.3.2](https://github.com/Novanglus96/LenoreChore/compare/v1.3.1...v1.3.2) (2026-04-13)
 
 
