@@ -57,7 +57,7 @@ jobs:
       - name: Post to Reddit
         if: steps.version_parts.outputs.type == 'release'
         env:
-          COMMIT_TAG: ${{ github.event.release.tag_name }}
+          COMMIT_TAG: ${{ github.event.release.tag_name || inputs.tag }}
           RELEASE_NOTES: ${{ steps.release_notes.outputs.result }}
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
