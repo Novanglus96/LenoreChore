@@ -12,12 +12,11 @@ from api.models import (
 )
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 from ninja.errors import HttpError
 from dateutil.relativedelta import relativedelta
-from django.db.models import Count, F
+from django.db.models import Count
 from django.utils import timezone
-from django.db.models.functions import TruncDate
 from django.core.paginator import Paginator
 from django.core.cache import cache
 

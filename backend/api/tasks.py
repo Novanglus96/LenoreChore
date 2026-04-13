@@ -6,20 +6,8 @@ Author: John Adams <johnmadams96@gmail.com>
 Date: February 15, 2024
 """
 
-from django_q.tasks import async_task, result, schedule
-import arrow
 from api.models import Chore
-from django_q.models import Schedule
 from datetime import date, datetime
-from dateutil.relativedelta import relativedelta
-from django.shortcuts import get_object_or_404
-from django.utils import timezone
-import csv
-from io import StringIO
-from django.db import IntegrityError, connection, transaction
-from django.db.models import F, Window
-from django.db.models.functions import RowNumber
-from decimal import Decimal
 
 
 def process_seasonal():

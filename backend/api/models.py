@@ -1,8 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
-from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from datetime import date
-from django.utils import dateformat
 from colorfield.fields import ColorField
 from django.core.exceptions import ValidationError
 from .managers import CustomUserManager
@@ -167,7 +165,6 @@ class Area(models.Model):
         if total_chores > 0:
             # Calculate the percentage if there are chores
             percentage = total_dirtiness / total_chores
-            perecentage = round(percentage)
         else:
             # Handle the case when there are no chores
             percentage = 0

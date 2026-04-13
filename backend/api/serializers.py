@@ -1,6 +1,5 @@
-from rest_framework import routers,serializers,viewsets
+from rest_framework import serializers
 from .models import Area, Chore, HistoryItem, Option, CustomUser, AreaGroup, Month
-from django.contrib.auth.models import User
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 class CustomUserSerializer(serializers.ModelSerializer):
