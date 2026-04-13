@@ -1,3 +1,10 @@
+# [1.3.0-rc.24](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.23...v1.3.0-rc.24) (2026-04-13)
+
+
+### Bug Fixes
+
+* resolve all ruff lint errors across backend ([#41](https://github.com/Novanglus96/LenoreChore/issues/41)) ([5c42256](https://github.com/Novanglus96/LenoreChore/commit/5c422562ad3493cd420e8df162d3352061c5202f))
+
 # [1.3.0-rc.23](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.22...v1.3.0-rc.23) (2026-04-13)
 
 
