@@ -284,6 +284,15 @@ JAZZMIN_SETTINGS = {
             "new_window": False,
         },
     ],
+    # Links in the user profile dropdown — visible on both desktop and mobile
+    "usermenu_links": [
+        {
+            "name": "Back to Site",
+            "url": "/",
+            "icon": "fas fa-home",
+            "new_window": False,
+        },
+    ],
 }
 
 JAZZMIN_UI_TWEAKS = {
