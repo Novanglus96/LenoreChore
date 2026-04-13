@@ -23,10 +23,47 @@
         <AddChoreForm />
         <AddAreaGroupForm />
       </v-list>
+      <v-divider></v-divider>
+      <v-list>
+        <v-list-item>
+          <v-list-item-title class="text-body-2 font-italic text-secondary text-center">
+            version {{ appVersion }}
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
     </v-menu>
     <v-img :width="208" aspect-ratio="1/1" src="logov2.png" inline></v-img>
-    <span class="text-subtitle-2 font-italic text-grey-darken-1">v1.2.24</span>
     <v-spacer></v-spacer>
+    <v-tooltip
+      v-if="!offlineStore.isOnline"
+      location="bottom"
+      max-width="260"
+    >
+      <template v-slot:activator="{ props }">
+        <v-btn
+          v-bind="props"
+          icon="mdi-wifi-off"
+          color="warning"
+          variant="text"
+        ></v-btn>
+      </template>
+      <span>
+        You are offline.
+        <template v-if="offlineStore.mutationQueue.length > 0">
+          {{ offlineStore.mutationQueue.length }}
+          change{{ offlineStore.mutationQueue.length !== 1 ? "s" : "" }}
+          saved locally and will sync automatically when reconnected.
+        </template>
+        <template v-else>
+          Changes you make will be saved locally and sync when reconnected.
+        </template>
+      </span>
+    </v-tooltip>
+    <v-btn
+      :icon="themeStore.isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+      @click="themeStore.toggle()"
+      variant="text"
+    ></v-btn>
     <v-menu
       v-model="menu"
       :close-on-content-click="false"
@@ -69,11 +106,17 @@
 <script setup>
   import { ref } from "vue";
   import { useUserStore } from "@/stores/user";
+  import { useThemeStore } from "@/stores/theme";
+  import { useOfflineStore } from "@/stores/offline";
   import AddAreaForm from "@/components/AddAreaForm.vue";
   import AddChoreForm from "@/components/AddChoreForm.vue";
   import AddAreaGroupForm from "@/components/AddAreaGroupForm.vue";
   import { useOptions } from "@/composables/optionsComposable";
   import VacationForm from "@/components/VacationForm.vue";
+  import { version as appVersion } from "../../package.json";
+
+  const themeStore = useThemeStore();
+  const offlineStore = useOfflineStore();
 
   const { options } = useOptions();
   const showVacationForm = ref(false);

@@ -1,0 +1,40 @@
+wing: lenorechore
+rooms:
+- name: backup
+  description: Files from backup/
+  keywords:
+  - backup
+  - backup
+- name: screenshots
+  description: Files from screenshots/
+  keywords:
+  - screenshots
+  - screenshots
+- name: scripts
+  description: Files from scripts/
+  keywords:
+  - scripts
+  - scripts
+- name: frontend
+  description: Files from frontend/
+  keywords:
+  - frontend
+  - frontend
+- name: backend
+  description: Files from backend/
+  keywords:
+  - backend
+  - backend
+- name: nginx
+  description: Files from nginx/
+  keywords:
+  - nginx
+  - nginx
+- name: documentation
+  description: Files from docs/
+  keywords:
+  - documentation
+  - docs
+- name: general
+  description: Files that don't fit other rooms
+  keywords: []

@@ -1,56 +1,34 @@
-version: "3.8"
-
 services:
-  frontend:
-    build: ./frontend
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /home/app/web/start.app.sh
+    volumes:
+      - data_volume:/home/app/web/data
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    ports:
+      - 7000:80
+    depends_on:
+      - db
+      - redis
     networks:
       - default
+    env_file:
+      - ./.env
+    image: lenorechore:production
+    container_name: lenorechore
+    environment:
+      - DEBUG=0
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - default
+    container_name: lenorechore_redis
     restart: unless-stopped
-    expose:
-      - 80
-    env_file:
-      - ./.env
-    environment:
-      - NODE_ENV=production
-    image: lenorechore_frontend:production
-    container_name: lenorechore_frontend
-  backend:
-    build:
-      context: ./backend
-    command: /home/app/web/start.sh
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-    expose:
-      - 8000
-    depends_on:
-      - db
-    networks:
-      - default
-    env_file:
-      - ./.env
-    image: lenorechore_backend:production
-    container_name: lenorechore_backend
-    environment:
-      - DEBUG=0
-  worker:
-    build:
-      context: ./backend
-    command: /home/app/web/start_worker.sh
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-    depends_on:
-      - db
-      - backend
-    networks:
-      - default
-    env_file:
-      - ./.env
-    image: lenorechore_worker:production
-    container_name: lenorechore_worker
-    environment:
-      - DEBUG=0
+
   db:
     image: postgres:15
     volumes:
@@ -65,21 +43,9 @@ services:
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
       - POSTGRES_DB=${SQL_DATABASE}
-  nginx:
-    image: novanglus96/lenoreapps_proxy:latest
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - default
-    ports:
-      - 7000:80
-    container_name: lenorechore_proxy
 
 volumes:
   postgres_data:
+  data_volume:
   static_volume:
   media_volume:

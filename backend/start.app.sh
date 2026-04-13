@@ -3,13 +3,11 @@
 python manage.py makemigrations --no-input
 python manage.py migrate --no-input
 python manage.py collectstatic --no-input
-#python manage.py createcachetable
 
 if [ "$DJANGO_SUPERUSER_USERNAME" ]; then
     (python manage.py createsuperuser \
         --noinput \
-        --email $DJANGO_SUPERUSER_EMAIL) ||
-        true
+        --email $DJANGO_SUPERUSER_EMAIL) || true
 fi
 
 python manage.py loaddata groups
@@ -18,4 +16,6 @@ python manage.py loaddata month
 python manage.py loaddata usergroups
 python manage.py loaddata version
 python manage.py scheduletasks
-gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+python manage.py loaddemodata
+
+exec /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf

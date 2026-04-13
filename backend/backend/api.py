@@ -1,6 +1,5 @@
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.tokens import default_token_generator
 from ninja import NinjaAPI, Schema, Router, Query
+from ninja.security import django_auth
 from api.models import (
     CustomUser,
     AreaGroup,
@@ -13,19 +12,39 @@ from api.models import (
 )
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 from ninja.errors import HttpError
-from ninja.security import HttpBearer
 from dateutil.relativedelta import relativedelta
-from django.db.models import Count, F
+from django.db.models import Count
 from django.utils import timezone
-from django.db.models.functions import TruncDate
 from django.core.paginator import Paginator
+from django.core.cache import cache
 
-api = NinjaAPI()
+CACHE_TTL = 15 * 60  # 15 minutes
+
+
+def invalidate(*keys):
+    """Delete one or more exact cache keys."""
+    cache.delete_many(keys)
+
+
+def invalidate_pattern(*patterns):
+    """Delete all cache keys matching the given patterns.
+
+    Uses django-redis ``delete_pattern`` when available. Falls back to
+    ``cache.clear()`` for non-Redis backends (e.g. LocMemCache).
+    """
+    for pattern in patterns:
+        if hasattr(cache, "delete_pattern"):
+            cache.delete_pattern(pattern)
+        else:
+            cache.clear()
+
+
+api = NinjaAPI(auth=django_auth, csrf=True, urls_namespace="api_v2")
 router = Router()
 api.title = "LenoreChore API"
-api.version = "1.2.24"
+api.version = "1.3.0-rc.26"
 api.description = "API documentation for LenoreChore"
 
 
@@ -40,39 +59,6 @@ class VersionOut(Schema):
 
     id: int
     version_number: str
-
-
-class TokenAuth(HttpBearer):
-    def authenticate(self, request, token):
-        """
-        The function `authenticate` authenticates a user.
-
-        Args:
-            self ():
-            request ():
-            token ():
-
-        Returns:
-            user (token): Returns a user token.
-        """
-        try:
-            user = default_token_generator.get_user(token)
-        except Exception as e:
-            raise HttpError(401, f"Invalid token: {str(e)}")
-        return user
-
-
-class LoginSchema(Schema):
-    """
-    Schema to represent a LoginSchema.
-
-    Attributes:
-        username (str): Username string.
-        password (str): Password string.
-    """
-
-    username: str
-    password: str
 
 
 class LoginUserSchema(Schema):
@@ -135,6 +121,20 @@ class CustomUserSchema(Schema):
     is_superuser: bool
     is_staff: bool
     is_active: bool
+    groups: List[int]
+
+    @staticmethod
+    def resolve_groups(obj):
+        """
+        Resolve the groups field to a list of group IDs.
+
+        Args:
+            obj (CustomUser): The user instance being serialized.
+
+        Returns:
+            List[int]: List of group IDs the user belongs to.
+        """
+        return [group.id for group in obj.groups.all()]
 
 
 class AreaGroupIn(Schema):
@@ -528,6 +528,11 @@ def get_weeklytotals(request, week: Optional[int] = 0):
     Returns:
         (GraphData): The graph data with labels and datasets.
     """
+    cache_key = f"weeklytotals:{week}"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     today = timezone.now().date()
     days = week * 7
@@ -588,6 +593,7 @@ def get_weeklytotals(request, week: Optional[int] = 0):
         start_of_week.strftime("%m/%d") + " to " + end_of_week.strftime("%m/%d")
     )
     graph = GraphData(labels=labels, datasets=datasets, title=title)
+    cache.set(cache_key, graph, CACHE_TTL)
     return graph
 
 
@@ -606,6 +612,8 @@ def me(request):
     Returns:
         (CustomUserSchema): The CustomUser object of the logged in user.
     """
+    if not request.user.is_authenticated:
+        raise HttpError(401, "Not authenticated")
     return request.user
 
 
@@ -644,6 +652,8 @@ def toggle_vacation(request):
             chore.status = 0
             chore.nextDue = date.today() + timedelta(days=chore.vacationPause)
             chore.save()
+    invalidate("options")
+    invalidate_pattern("chores:*")
     return {"success": True}
 
 
@@ -664,6 +674,7 @@ def create_areagroup(request, payload: AreaGroupIn):
         (int): The ID of the newly created AreaGroup object.
     """
     areagroup = AreaGroup.objects.create(**payload.dict())
+    invalidate("areagroups")
     return {"id": areagroup.id}
 
 
@@ -684,6 +695,7 @@ def create_area(request, payload: AreaIn):
         (int): ID of the newly created Area object.
     """
     area = Area.objects.create(**payload.dict())
+    invalidate("areas", "areagroups")
     return {"id": area.id}
 
 
@@ -718,6 +730,7 @@ def create_chore(request, payload: ChoreIn):
     # Set the active_months field
     chore.active_months.set(active_months)
 
+    invalidate_pattern("chores:*")
     return {"id": chore.id}
 
 
@@ -744,6 +757,7 @@ def create_historyitem(request, payload: HistoryItemIn):
         completed_by=completed_by_object,
         chore_id=payload.chore_id,
     )
+    invalidate_pattern("chores:*", "weeklytotals:*")
     return {"id": historyitem.id}
 
 
@@ -862,7 +876,11 @@ def list_areagroups(request):
     Returns:
         (List[AreaGroupOut]): List of AreaGroup objects.
     """
-    qs = AreaGroup.objects.all()
+    cached = cache.get("areagroups")
+    if cached is not None:
+        return cached
+    qs = list(AreaGroup.objects.all())
+    cache.set("areagroups", qs, CACHE_TTL)
     return qs
 
 
@@ -881,7 +899,11 @@ def list_areas(request):
     Returns:
         (List[AreaOut]): List of Area objects.
     """
-    qs = Area.objects.all().order_by("group__group_order", "area_name")
+    cached = cache.get("areas")
+    if cached is not None:
+        return cached
+    qs = list(Area.objects.all().order_by("group__group_order", "area_name"))
+    cache.set("areas", qs, CACHE_TTL)
     return qs
 
 
@@ -910,6 +932,11 @@ def list_chores(
     Returns:
         (List[ChoreOut]): List of Chore objects.
     """
+    cache_key = f"chores:{inactive}:{timeframe}:{assignee_id}:{area_id}"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     qs = Chore.objects.all().order_by(
         "status", "nextDue", "lastCompleted", "effort", "chore_name", "id"
     )
@@ -967,6 +994,7 @@ def list_chores(
         )
         chore_list.append(chore_data)
 
+    cache.set(cache_key, chore_list, CACHE_TTL)
     return chore_list
 
 
@@ -1038,7 +1066,11 @@ def list_options(request):
     Returns:
         (List[OptionOut]): List of Option objects.
     """
-    qs = Option.objects.all()
+    cached = cache.get("options")
+    if cached is not None:
+        return cached
+    qs = list(Option.objects.all())
+    cache.set("options", qs, CACHE_TTL)
     return qs
 
 
@@ -1057,7 +1089,11 @@ def list_users(request):
     Returns:
         (List[CustomUserSchema]): List of CustomUser objects.
     """
-    qs = CustomUser.objects.all()
+    cached = cache.get("users")
+    if cached is not None:
+        return cached
+    qs = list(CustomUser.objects.all())
+    cache.set("users", qs, CACHE_TTL)
     return qs
 
 
@@ -1083,6 +1119,7 @@ def update_areagroup(request, areagroup_id: int, payload: AreaGroupIn):
     areagroup.group_order = payload.group_order
     areagroup.group_color = payload.group_color
     areagroup.save()
+    invalidate("areagroups")
     return {"success": True}
 
 
@@ -1108,6 +1145,7 @@ def update_area(request, area_id: int, payload: AreaIn):
     area.area_icon = payload.area_icon
     area.group_id = payload.group_id
     area.save()
+    invalidate("areas", "areagroups")
     return {"success": True}
 
 
@@ -1140,6 +1178,7 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
     chore.assignee_id = payload.assignee_id
     chore.effort = payload.effort
     chore.save()
+    invalidate_pattern("chores:*")
     return {"success": True}
 
 
@@ -1163,6 +1202,7 @@ def toggle_chore(request, chore_id: int, payload: TogglActive):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.status = payload.status
     chore.save()
+    invalidate_pattern("chores:*")
     return {"success": True}
 
 
@@ -1186,6 +1226,7 @@ def snooze_chore(request, chore_id: int, payload: SnoozeChore):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.nextDue = payload.nextDue
     chore.save()
+    invalidate_pattern("chores:*")
     return {"success": True}
 
 
@@ -1209,6 +1250,7 @@ def claim_chore(request, chore_id: int, payload: ClaimChore):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.assignee_id = payload.assignee_id
     chore.save()
+    invalidate_pattern("chores:*")
     return {"success": True}
 
 
@@ -1254,6 +1296,7 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
         completed_by_id=payload.completed_by_id,
         chore=chore,
     )
+    invalidate_pattern("chores:*", "weeklytotals:*")
     return {"success": True}
 
 
@@ -1279,6 +1322,7 @@ def update_historyitem(request, historyitem_id: int, payload: HistoryItemIn):
     historyitem.completed_by = payload.completed_by
     historyitem.chore_id = payload.chore_id
     historyitem.save()
+    invalidate_pattern("chores:*", "weeklytotals:*")
     return {"success": True}
 
 
@@ -1304,6 +1348,7 @@ def update_option(request, option_id: int, payload: OptionIn):
     option.med_thresh = payload.med_thresh
     option.high_thresh = payload.high_thresh
     option.save()
+    invalidate("options")
     return {"success": True}
 
 
@@ -1325,6 +1370,7 @@ def delete_areagroup(request, areagroup_id: int):
     """
     areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
     areagroup.delete()
+    invalidate("areagroups")
     return {"success": True}
 
 
@@ -1346,6 +1392,7 @@ def delete_area(request, area_id: int):
     """
     area = get_object_or_404(Area, id=area_id)
     area.delete()
+    invalidate("areas", "areagroups")
     return {"success": True}
 
 
@@ -1367,6 +1414,7 @@ def delete_chore(request, chore_id: int):
     """
     chore = get_object_or_404(Chore, id=chore_id)
     chore.delete()
+    invalidate_pattern("chores:*")
     return {"success": True}
 
 
@@ -1388,71 +1436,11 @@ def delete_historyitem(request, historyitem_id: int):
     """
     historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
     historyitem.delete()
+    invalidate_pattern("chores:*", "weeklytotals:*")
     return {"success": True}
 
 
-@router.post("/login")
-def login_user(request, payload: LoginSchema):
-    """
-    The function `login_user` logs in a user.
-
-    Endpoint:
-        - **Path**: `/api/v2/login`
-        - **Method**: `POST`
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-        payload (LoginSchema): A username and password.
-
-    Returns:
-        (object): Returns a user object with token.
-    """
-    username = payload.username
-    password = payload.password
-
-    user = authenticate(request, username=username, password=password)
-    if user:
-        login(request, user)
-
-        # Retrieve or create a token for the authenticated user
-        token = default_token_generator.make_token(user)
-
-        return {
-            "token": token,
-            "firstname": user.first_name,
-            "lastname": user.last_name,
-            "email": user.email,
-            "isAdmin": user.is_superuser,
-            "male": user.male,
-            "id": user.id,
-            "user_color": user.user_color,
-            "groups": [group.id for group in user.groups.all()],
-        }
-    else:
-        raise HttpError(401, "Invalid credentials")
-
-
-@router.post("/logout")
-def logout_user(request):
-    """
-    The function `logout_user` logs out.
-
-    Endpoint:
-        - **Path**: `/api/v2/logout`
-        - **Method**: `POST`
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-
-    Returns:
-        (str): Returns `detail: Logout successful` if successful.
-    """
-    # Log the user out
-    logout(request)
-    return {"detail": "Logout successful"}
-
-
-@api.get("/version/list", response=VersionOut)
+@api.get("/version/list", response=VersionOut, auth=None)
 def list_version(request):
     """
     The function `list_version` retrieves the app version number

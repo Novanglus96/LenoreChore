@@ -23,14 +23,13 @@ import { loginUser } from "@/composables/usersComposable";
 const router = useRouter();
 const login = async credentials => {
   const user = await loginUser(credentials);
-  const token = user.token;
+  if (!user) return;
   const userstore = useUserStore();
-  localStorage.setItem("authToken", token);
   userstore.loginUser(
-    user.firstname,
-    user.lastname,
+    user.first_name,
+    user.last_name,
     user.email,
-    user.isAdmin,
+    user.is_superuser,
     user.male,
     user.id,
     user.user_color,

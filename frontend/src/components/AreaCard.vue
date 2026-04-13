@@ -1,5 +1,5 @@
 <template>
-  <v-card :color="props.area.group.group_color" border elevation="3">
+  <v-card :color="props.area.group.group_color" border elevation="3" :rounded="$vuetify.display.smAndDown ? 0 : undefined">
     <v-card-title class="text-h5">
       <v-icon :icon="props.area.area_icon" size="25" class="me-1 pb-1"></v-icon
       >{{ props.area.area_name }}
@@ -37,7 +37,7 @@
         <v-container>
           <v-row dense>
             <v-col>
-              <v-dialog v-model="editcard" persistent width="1024">
+              <v-dialog v-model="editcard" persistent :fullscreen="$vuetify.display.smAndDown" width="1024">
                 <template v-slot:activator="{ props }">
                   <v-btn icon="mdi-note-edit-outline" v-bind="props"></v-btn>
                 </template>

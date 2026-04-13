@@ -1,30 +1,9 @@
+import { computed } from "vue";
+import { useUserStore } from "@/stores/user";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
-import axios from "axios";
+import apiClient from "@/api/client";
 import { useChoreStore } from "@/stores/chores";
-
-const apiClient = axios.create({
-  baseURL: "/api/v2",
-  withCredentials: false,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
-
-function handleApiError(error, message) {
-  const chorestore = useChoreStore();
-  if (error.response) {
-    console.error("Response error:", error.response.data);
-    console.error("Status code:", error.response.status);
-    console.error("Headers", error.response.headers);
-  } else if (error.request) {
-    console.error("No response received:", error.request);
-  } else {
-    console.error("Error during request setup:", error.message);
-  }
-  chorestore.showSnackbar(message + "Error #" + error.response.status, "error");
-  throw error;
-}
+import { handleApiError } from "@/utils/apiErrorHandler";
 
 async function createChoreFunction(newChore) {
   const chorestore = useChoreStore();
@@ -140,12 +119,14 @@ async function getChoresFunction(filters) {
 
 export function useChores() {
   const queryClient = useQueryClient();
+  const userStore = useUserStore();
+  const isAuthenticated = computed(() => userStore.isLoggedIn);
   const chorestore = useChoreStore();
   const { data: chores, isLoading } = useQuery({
     queryKey: ["chores", chorestore.filters],
     queryFn: () => getChoresFunction(chorestore.filters),
     select: response => response,
-    client: queryClient,
+    enabled: isAuthenticated,
   });
 
   const createChoreMutation = useMutation({
@@ -168,6 +149,26 @@ export function useChores() {
 
   const completeChoreMutation = useMutation({
     mutationFn: completeChoreFunction,
+    onMutate: async (completedChore) => {
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      queryClient.setQueriesData({ queryKey: ["chores"] }, (old) =>
+        Array.isArray(old) ? old.filter((c) => c.id !== completedChore.id) : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      if (error.queued) {
+        chorestore.showSnackbar(
+          "Chore marked complete — will sync when reconnected",
+          "warning"
+        );
+      } else {
+        context?.snapshots?.forEach(([key, data]) =>
+          queryClient.setQueryData(key, data)
+        );
+      }
+    },
     onSuccess: () => {
       console.log("Success completing chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
@@ -179,6 +180,30 @@ export function useChores() {
 
   const snoozeChoreMutation = useMutation({
     mutationFn: snoozeChoreFunction,
+    onMutate: async (snoozedChore) => {
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      queryClient.setQueriesData({ queryKey: ["chores"] }, (old) =>
+        Array.isArray(old)
+          ? old.map((c) =>
+              c.id === snoozedChore.id ? { ...c, nextDue: snoozedChore.nextDue } : c
+            )
+          : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      if (error.queued) {
+        chorestore.showSnackbar(
+          "Chore snoozed — will sync when reconnected",
+          "warning"
+        );
+      } else {
+        context?.snapshots?.forEach(([key, data]) =>
+          queryClient.setQueryData(key, data)
+        );
+      }
+    },
     onSuccess: () => {
       console.log("Success snoozing chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
@@ -188,6 +213,40 @@ export function useChores() {
 
   const claimChoreMutation = useMutation({
     mutationFn: claimChoreFunction,
+    onMutate: async (claimedChore) => {
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      const users = queryClient.getQueryData(["users"]);
+      const newAssignee =
+        users?.find((u) => u.id === claimedChore.assignee_id) ?? null;
+      queryClient.setQueriesData({ queryKey: ["chores"] }, (old) =>
+        Array.isArray(old)
+          ? old.map((c) =>
+              c.id === claimedChore.id
+                ? {
+                    ...c,
+                    assignee_id: claimedChore.assignee_id,
+                    assignee: newAssignee,
+                    isAssigned: !!claimedChore.assignee_id,
+                  }
+                : c
+            )
+          : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      if (error.queued) {
+        chorestore.showSnackbar(
+          "Chore assignment updated — will sync when reconnected",
+          "warning"
+        );
+      } else {
+        context?.snapshots?.forEach(([key, data]) =>
+          queryClient.setQueryData(key, data)
+        );
+      }
+    },
     onSuccess: () => {
       console.log("Success claiming chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
@@ -197,6 +256,30 @@ export function useChores() {
 
   const toggleChoreMutation = useMutation({
     mutationFn: toggleChoreFunction,
+    onMutate: async (toggledChore) => {
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      queryClient.setQueriesData({ queryKey: ["chores"] }, (old) =>
+        Array.isArray(old)
+          ? old.map((c) =>
+              c.id === toggledChore.id ? { ...c, status: toggledChore.status } : c
+            )
+          : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      if (error.queued) {
+        chorestore.showSnackbar(
+          "Chore toggled — will sync when reconnected",
+          "warning"
+        );
+      } else {
+        context?.snapshots?.forEach(([key, data]) =>
+          queryClient.setQueryData(key, data)
+        );
+      }
+    },
     onSuccess: () => {
       console.log("Success toggling chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });

@@ -1,30 +1,9 @@
+import { computed } from "vue";
+import { useUserStore } from "@/stores/user";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
-import axios from "axios";
+import apiClient from "@/api/client";
 import { useChoreStore } from "@/stores/chores";
-
-const apiClient = axios.create({
-  baseURL: "/api/v2",
-  withCredentials: false,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
-
-function handleApiError(error, message) {
-  const chorestore = useChoreStore();
-  if (error.response) {
-    console.error("Response error:", error.response.data);
-    console.error("Status code:", error.response.status);
-    console.error("Headers", error.response.headers);
-  } else if (error.request) {
-    console.error("No response received:", error.request);
-  } else {
-    console.error("Error during request setup:", error.message);
-  }
-  chorestore.showSnackbar(message + "Error #" + error.response.status, "error");
-  throw error;
-}
+import { handleApiError } from "@/utils/apiErrorHandler";
 
 async function createAreaGroupFunction(newAreaGroup) {
   const chorestore = useChoreStore();
@@ -75,11 +54,13 @@ async function getAreaGroupsFunction() {
 
 export function useAreaGroups() {
   const queryClient = useQueryClient();
+  const userStore = useUserStore();
+  const isAuthenticated = computed(() => userStore.isLoggedIn);
   const { data: areagroups, isLoading } = useQuery({
     queryKey: ["areagroups"],
     queryFn: getAreaGroupsFunction,
     select: response => response,
-    client: queryClient,
+    enabled: isAuthenticated,
   });
 
   const createAreaGroupMutation = useMutation({

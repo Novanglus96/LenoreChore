@@ -1,30 +1,10 @@
-import { useQuery, useQueryClient } from "@tanstack/vue-query";
+import { computed } from "vue";
+import { useUserStore } from "@/stores/user";
+import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
+import apiClient from "@/api/client";
 import { useChoreStore } from "@/stores/chores";
-
-const apiClient = axios.create({
-  baseURL: "/api/v2",
-  withCredentials: false,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
-
-function handleApiError(error, message) {
-  const chorestore = useChoreStore();
-  if (error.response) {
-    console.error("Response error:", error.response.data);
-    console.error("Status code:", error.response.status);
-    console.error("Headers", error.response.headers);
-  } else if (error.request) {
-    console.error("No response received:", error.request);
-  } else {
-    console.error("Error during request setup:", error.message);
-  }
-  chorestore.showSnackbar(message + "Error #" + error.response.status, "error");
-  throw error;
-}
+import { handleApiError } from "@/utils/apiErrorHandler";
 
 async function getUsersFunction() {
   try {
@@ -36,12 +16,13 @@ async function getUsersFunction() {
 }
 
 export function useUsers() {
-  const queryClient = useQueryClient();
+  const userStore = useUserStore();
+  const isAuthenticated = computed(() => userStore.isLoggedIn);
   const { data: users, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: getUsersFunction,
     select: response => response,
-    client: queryClient,
+    enabled: isAuthenticated,
   });
 
   return {
@@ -54,11 +35,28 @@ export async function loginUser(credentials) {
   const chorestore = useChoreStore();
 
   try {
-    const response = await apiClient.post("/auth/login", credentials);
+    await axios.post("/_allauth/browser/v1/auth/login", credentials);
+  } catch (error) {
+    // 409 means already authenticated — proceed to fetch user
+    if (!error.response || error.response.status !== 409) {
+      handleApiError(error, "User not logged in: ");
+      return;
+    }
+  }
+
+  try {
+    const meResponse = await apiClient.get("/me");
     chorestore.showSnackbar("User logged in successfully!", "success");
-    const user = response.data;
-    return user;
+    return meResponse.data;
   } catch (error) {
     handleApiError(error, "User not logged in: ");
+  }
+}
+
+export async function logoutUser() {
+  try {
+    await axios.delete("/_allauth/browser/v1/auth/session");
+  } catch {
+    // Session may already be invalid — proceed with local cleanup
   }
 }

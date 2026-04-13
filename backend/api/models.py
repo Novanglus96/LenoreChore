@@ -1,8 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
-from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from datetime import date
-from django.utils import dateformat
 from colorfield.fields import ColorField
 from django.core.exceptions import ValidationError
 from .managers import CustomUserManager
@@ -12,9 +10,10 @@ import os
 
 class SingletonModel(models.Model):
     """
-    Model representing a singleton model.
+    Abstract base model that enforces a single instance.
 
-    Attributes:
+    Subclasses may only have one row in the database. Attempting to create
+    a second instance raises a ValidationError, and deletion is also blocked.
     """
 
     class Meta:
@@ -36,6 +35,16 @@ class SingletonModel(models.Model):
 
 
 def user_profile_picture_upload(instance, filename):
+    """
+    Generate an upload path for a user's profile picture.
+
+    Args:
+        instance (CustomUser): The user instance being saved.
+        filename (str): The original filename of the uploaded image.
+
+    Returns:
+        str: Upload path in the form ``profile_pictures/<email><ext>``.
+    """
     _, file_extension = os.path.splitext(filename)
 
     return f"profile_pictures/{instance.email}{file_extension}"
@@ -85,6 +94,12 @@ class CustomUser(AbstractUser):
 
     @property
     def fullname(self):
+        """
+        Returns the user's full name as a single string.
+
+        Returns:
+            str: First name and last name joined by a space.
+        """
         fullname = self.first_name + " " + self.last_name
         return fullname
 
@@ -150,7 +165,6 @@ class Area(models.Model):
         if total_chores > 0:
             # Calculate the percentage if there are chores
             percentage = total_dirtiness / total_chores
-            perecentage = round(percentage)
         else:
             # Handle the case when there are no chores
             percentage = 0
@@ -211,7 +225,7 @@ class Month(models.Model):
 
 class Chore(models.Model):
     """
-    Model representing a month.
+    Model representing a chore.
 
     Attributes:
         chore_name (CharField): The name of the chore. Max=254
@@ -324,6 +338,12 @@ class Option(SingletonModel):
 
     @classmethod
     def load(cls):
+        """
+        Load the singleton Option instance.
+
+        Returns:
+            Option: The first (and only) Option object, or None if not yet created.
+        """
         return cls.objects.first()
 
 
@@ -335,7 +355,7 @@ class Version(SingletonModel):
     - version_number (CharField): The current version of the app.
     """
 
-    version_number = models.CharField(max_length=10)
+    version_number = models.CharField(max_length=20)
 
     def __str__(self):
         """

@@ -14,26 +14,28 @@
       >{{ formData.first_name }} {{ formData.last_name }}</v-card-subtitle
     >
     <v-card-text class="py-0">
-      <v-form v-model="valid">
+      <Form @submit="submitForm" :validation-schema="schema" v-slot="{ errors }">
         <v-container>
           <v-row>
             <v-col>
-              <v-text-field
-                v-model="formData.first_name"
-                :rules="nameRules"
-                :counter="20"
-                label="First name"
-                required
-              ></v-text-field>
+              <Field name="first_name" v-slot="{ field }">
+                <v-text-field
+                  v-bind="field"
+                  :counter="20"
+                  label="First name"
+                  :error-messages="errors.first_name"
+                ></v-text-field>
+              </Field>
             </v-col>
             <v-col>
-              <v-text-field
-                v-model="formData.last_name"
-                :rules="nameRules"
-                :counter="20"
-                label="Last name"
-                required
-              ></v-text-field>
+              <Field name="last_name" v-slot="{ field }">
+                <v-text-field
+                  v-bind="field"
+                  :counter="20"
+                  label="Last name"
+                  :error-messages="errors.last_name"
+                ></v-text-field>
+              </Field>
             </v-col>
           </v-row>
           <v-row>
@@ -72,12 +74,12 @@
             </v-col>
           </v-row>
         </v-container>
-      </v-form>
+        <v-card-actions>
+          <v-btn variant="outlined">Change Password</v-btn>
+          <v-btn variant="outlined" type="submit">Save Changes</v-btn>
+        </v-card-actions>
+      </Form>
     </v-card-text>
-    <v-card-actions>
-      <v-btn variant="outlined">Change Password</v-btn>
-      <v-btn variant="outlined" @click="submitForm">Save Changes</v-btn>
-    </v-card-actions>
     <v-snackbar
       v-model="snackbar"
       :color="snackbarColor"
@@ -88,8 +90,11 @@
     </v-snackbar>
   </v-card>
 </template>
+
 <script setup>
 import { ref } from "vue";
+import { Form, Field } from "vee-validate";
+import * as yup from "yup";
 import { useUserStore } from "@/stores/user";
 
 const snackbar = ref(false);
@@ -97,30 +102,24 @@ const snackbarText = ref("");
 const snackbarColor = ref("");
 const snackbarTimeout = ref(1500);
 const userstore = useUserStore();
+
 const colors = ref([
-  {
-    name: "Color1",
-    value: "#E91E63",
-  },
-  {
-    name: "Color2",
-    value: "#3F51B5",
-  },
-  {
-    name: "Color3",
-    value: "#009688",
-  },
-  {
-    name: "Color4",
-    value: "#CDDC39",
-  },
+  { name: "Color1", value: "#E91E63" },
+  { name: "Color2", value: "#3F51B5" },
+  { name: "Color3", value: "#009688" },
+  { name: "Color4", value: "#CDDC39" },
 ]);
 
-const valid = ref(false);
-const nameRules = ref([
-  v => !!v || "Name is required",
-  v => v.length <= 20 || "Name must be less than 20 characters",
-]);
+const schema = yup.object({
+  first_name: yup
+    .string()
+    .required("First name is required")
+    .max(20, "First name must be 20 characters or less"),
+  last_name: yup
+    .string()
+    .required("Last name is required")
+    .max(20, "Last name must be 20 characters or less"),
+});
 
 const formData = ref({
   first_name: userstore.firstname,
@@ -133,13 +132,11 @@ const formData = ref({
   id: userstore.id,
 });
 
-const submitForm = async () => {
+const submitForm = (values) => {
   try {
-    userstore.updateProfile(formData.value);
+    userstore.updateProfile({ ...formData.value, ...values });
     showSnackbar("Profile updated successfully!", "success");
   } catch (error) {
-    // Handle errors (e.g., show an error message)
-    console.log("Error:", error);
     showSnackbar("Profile not updated!", "error");
   }
 };

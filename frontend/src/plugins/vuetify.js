@@ -25,6 +25,31 @@ const myCustomLightTheme = {
     user2: "#3F51B5",
     user3: "#009688",
     user4: "#CDDC39",
+    chorePanel: "#E0E0E0",
+  },
+};
+
+const myCustomDarkTheme = {
+  dark: true,
+  colors: {
+    primary: "#90CAF9",
+    secondary: "#4FC3F7",
+    accent: "#ffeb3b",
+    error: "#FF5252",
+    warning: "#FFB300",
+    info: "#BCAAA4",
+    success: "#69F0AE",
+    area1: "#1A237E",
+    area2: "#283593",
+    area3: "#303F9F",
+    area4: "#3949AB",
+    area5: "#3F51B5",
+    area6: "#5C6BC0",
+    user1: "#E91E63",
+    user2: "#3F51B5",
+    user3: "#009688",
+    user4: "#CDDC39",
+    chorePanel: "#424242",
   },
 };
 
@@ -33,6 +58,7 @@ export default createVuetify({
     defaultTheme: "myCustomLightTheme",
     themes: {
       myCustomLightTheme,
+      myCustomDarkTheme,
     },
   },
   icons: {

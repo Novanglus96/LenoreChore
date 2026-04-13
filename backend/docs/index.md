@@ -65,6 +65,7 @@ I originally built LenoreChore for my wife and me to simplify our weekly chore r
 - 👤 **Chore Assignment** – Assign tasks to specific users with clear accountability.
 - 📈 **Chore History Graph** – Visualize completed chores over time to track progress and consistency.
 - 🛫 **Vacation Mode** – Pause chore assignments when you're away, then resume with your schedule intact.
+- 📱 **Progressive Web App (PWA)** – Install LenoreChore as an app on desktop or mobile. Works offline with automatic background sync when reconnected.
 
 LenoreChore is built for **self-hosting** and is fully responsive—**mobile- and desktop-friendly** out of the box.
 
@@ -99,7 +100,22 @@ Make sure you have the following installed on your system:
 <!-- INSTALLATION -->
 ### Step 1: Create a `.env` File
 
-Create a `.env` file in the root directory of the project. This file will store environment variables required to run the application. Below is an example of the variables you need to define:
+Create a `.env` file in the root directory of the project. PostgreSQL and Redis are both **optional** — if omitted, LenoreChore will use SQLite and an in-memory cache automatically.
+
+**Minimal setup** (SQLite + in-memory cache):
+
+```env
+DEBUG=0
+SECRET_KEY=mysupersecretkey
+DJANGO_ALLOWED_HOSTS=localhost
+CSRF_TRUSTED_ORIGINS=http://localhost
+DJANGO_SUPERUSER_PASSWORD=supervisorpassword
+DJANGO_SUPERUSER_EMAIL=someone@somewhere.com
+DJANGO_SUPERUSER_USERNAME=supervisor
+TIMEZONE=America/New_York
+```
+
+**Full setup** (PostgreSQL + Redis):
 
 ```env
 DEBUG=0
@@ -112,47 +128,56 @@ SQL_USER=LenoreChoreuser
 SQL_PASSWORD=somepassword
 SQL_HOST=db
 SQL_PORT=5432
-DATABASE=postgres
-DJANGO_SUPERUSER_PASSWORD=suepervisorpassword
+DJANGO_SUPERUSER_PASSWORD=supervisorpassword
 DJANGO_SUPERUSER_EMAIL=someone@somewhere.com
 DJANGO_SUPERUSER_USERNAME=supervisor
-VITE_API_KEY=someapikey
 TIMEZONE=America/New_York
+REDIS_URL=redis://redis:6379/0
 ```
 
 Adjust these values according to your environment and application requirements.
 
 ### Step 2: Create a `docker-compose.yml` File
 
-Create a `docker-compose.yml` file in the root directory of the project. Below is an example configuration:
+**Minimal setup** (single container, SQLite, no Redis):
 
 ```yaml
 services:
-  frontend:
-    image: novanglus96/LenoreChore_frontend:latest
-    container_name: LenoreChore_frontend
-    networks:
-      - LenoreChore
-    restart: unless-stopped
-    expose:
-      - 80
+  app:
+    image: novanglus96/lenorechore:latest
+    container_name: LenoreChore
+    ports:
+      - "8080:80"
+    volumes:
+      - LenoreChore_data_volume:/home/app/web/data
+      - LenoreChore_media_volume:/home/app/web/mediafiles
     env_file:
       - ./.env
-  backend:
-    image: novanglus96/LenoreChore_backend:latest
-    container_name: LenoreChore_backend
-    command: /home/app/web/start.sh
+    restart: unless-stopped
+
+volumes:
+  LenoreChore_data_volume:
+  LenoreChore_media_volume:
+```
+
+**Full setup** (PostgreSQL + Redis):
+
+```yaml
+services:
+  app:
+    image: novanglus96/lenorechore:latest
+    container_name: LenoreChore
+    ports:
+      - "8080:80"
     volumes:
       - LenoreChore_static_volume:/home/app/web/staticfiles
       - LenoreChore_media_volume:/home/app/web/mediafiles
-    expose:
-      - 8000
     depends_on:
       - db
-    networks:
-      - LenoreChore
+      - redis
     env_file:
       - ./.env
+    restart: unless-stopped
   db:
     image: postgres:15
     container_name: LenoreChore_db
@@ -160,36 +185,19 @@ services:
       - LenoreChore_postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
-    networks:
-      - LenoreChore
     environment:
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
       - POSTGRES_DB=${SQL_DATABASE}
-  nginx:
-    image: novanglus96/lenoreapps_proxy:latest
-    container_name: LenoreChore_nginx
-    ports:
-      - "8080:80"
-    volumes:
-      - LenoreChore_static_volume:/home/app/web/staticfiles
-      - LenoreChore_media_volume:/home/app/web/mediafiles
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - LenoreChore
-
-networks:
-  LenoreChore:
+  redis:
+    image: redis:7-alpine
+    container_name: LenoreChore_redis
+    restart: unless-stopped
 
 volumes:
   LenoreChore_postgres_data:
-    external: true
   LenoreChore_static_volume:
-    external: true
   LenoreChore_media_volume:
-    external: true
 ```
 
 ### Step 3: Run the Application
@@ -207,7 +215,67 @@ volumes:
 * Adjust exposed ports as needed for your environment.
 * If you encounter any issues, ensure your `.env` file has the correct values and your Docker and Docker Compose installations are up to date.
 
+### PWA and Reverse Proxy Requirement
+
+PWA features (installability, service worker, offline sync) require LenoreChore to be served over **HTTPS via a reverse proxy** (e.g. Traefik, nginx with SSL termination). The reverse proxy must forward the `X-Forwarded-Proto` header to the container.
+
+**Plain HTTP deployments will not support PWA features.** The install prompt will not appear and the service worker will not register.
+
+Example Traefik label to ensure the header is forwarded (most Traefik setups do this automatically):
+
+```yaml
+- "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+```
+
+Example nginx upstream config if you are using nginx as your outer proxy:
+
+```nginx
+proxy_set_header X-Forwarded-Proto $scheme;
+```
+
+> **Note:** If you previously accessed the site while it had a certificate error and clicked "Proceed anyway" in your browser, Chrome may remember that exception and block PWA installation. To fix this, go to **Chrome Settings → Privacy and Security → Site Settings**, find your site, and click **Reset permissions** — then reload the page.
+
 Enjoy using LenoreChore!
+
+---
+
+## Upgrading to v1.3
+
+v1.3 consolidates the separate `frontend`, `backend`, `worker`, and `nginx` containers into a **single `app` container**. PostgreSQL and Redis are now optional.
+
+### What changed
+
+| Before (≤ v1.2) | After (v1.3+) |
+|---|---|
+| `novanglus96/lenorechore_frontend` | _(removed)_ |
+| `novanglus96/lenorechore_backend` | _(removed)_ |
+| `novanglus96/lenorechore_worker` | _(removed)_ |
+| `novanglus96/lenoreapps_proxy` (nginx) | _(removed)_ |
+| — | `novanglus96/lenorechore` ✅ |
+
+### Steps
+
+1. **Stop your existing stack:**
+
+   ```bash
+   docker compose down
+   ```
+
+2. **Replace your `docker-compose.yml`** — remove the `frontend`, `backend`, `worker`, and `nginx` services and add the single `app` service. See the [Getting Started](#getting-started) examples above.
+
+3. **Update your `.env`** — remove the `DATABASE=postgres` line if present (no longer required). All other variables remain the same.
+
+4. **Start the new stack:**
+
+   ```bash
+   docker compose up -d
+   ```
+
+### Will my data be safe?
+
+**Yes.** PostgreSQL data is stored in a named Docker volume (`LenoreChore_postgres_data`) that exists independently of the containers. As long as your `docker-compose.yml` references the same volume name and your `SQL_*` env vars are unchanged, all data is preserved through the upgrade.
+
+> **Note:** If you choose to drop the `db` service and switch to SQLite, your existing PostgreSQL data will **not** be migrated automatically. Export your data first if needed.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -216,8 +284,13 @@ Enjoy using LenoreChore!
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] v1.3 Release
-    - [ ] Demo Data
+- [x] v1.3 Release
+    - [x] Redis caching with write-through invalidation
+    - [x] Form validation (vee-validate + yup)
+    - [x] Dark/light theme toggle (persisted per browser)
+    - [x] Mobile UI improvements (edge-to-edge cards, fullscreen forms)
+    - [x] PWA support (installable, offline queuing, background sync)
+    - [x] Demo Data
 
 See the [open issues](https://github.com/Novanglus96/LenoreChore/issues) for a full list of proposed features (and known issues).
 
