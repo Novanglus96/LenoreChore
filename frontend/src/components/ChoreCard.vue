@@ -72,8 +72,8 @@
 
     <v-expand-transition>
       <div v-if="expand">
-        <v-container theme="dark" class="bg-secondary">
-          <v-row dense class="bg-secondary">
+        <v-container class="bg-chorePanel">
+          <v-row dense class="bg-chorePanel">
             <v-col>
               <v-text-field
                 v-model="localchore.chore_name"
@@ -82,7 +82,7 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-row dense class="bg-secondary">
+          <v-row dense class="bg-chorePanel">
             <v-col>
               <VueDatePicker
                 v-model="localchore.lastCompleted"
@@ -134,7 +134,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Jan"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="1"
                 @update:modelValue="changeDetected()"
@@ -144,7 +144,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Feb"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="2"
                 @update:modelValue="changeDetected()"
@@ -154,7 +154,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Mar"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="3"
                 @update:modelValue="changeDetected()"
@@ -164,7 +164,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Apr"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="4"
                 @update:modelValue="changeDetected()"
@@ -176,7 +176,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="May"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="5"
                 @update:modelValue="changeDetected()"
@@ -186,7 +186,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Jun"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="6"
                 @update:modelValue="changeDetected()"
@@ -196,7 +196,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Jul"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="7"
                 @update:modelValue="changeDetected()"
@@ -206,7 +206,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Aug"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="8"
                 @update:modelValue="changeDetected()"
@@ -218,7 +218,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Sep"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="9"
                 @update:modelValue="changeDetected()"
@@ -228,7 +228,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Oct"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="10"
                 @update:modelValue="changeDetected()"
@@ -238,7 +238,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Nov"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="11"
                 @update:modelValue="changeDetected()"
@@ -248,7 +248,7 @@
               <v-checkbox
                 v-model="localchore.active_months"
                 label="Dec"
-                color="accent"
+                color="primary"
                 hide-details
                 :value="12"
                 @update:modelValue="changeDetected()"
@@ -319,10 +319,10 @@
     </v-expand-transition>
     <v-expand-transition>
       <div v-if="localchore.history">
-        <v-container class="bg-secondary" theme="dark">
+        <v-container class="bg-chorePanel">
           <v-row dense>
             <v-col>
-              <v-table class="bg-secondary">
+              <v-table class="bg-chorePanel">
                 <thead>
                   <tr>
                     <th class="text-left">Date</th>
@@ -463,9 +463,7 @@ const callResetChore = async () => {
   localchore.value.duedays = props.chore.duedays;
   localchore.value.unit = props.chore.unit;
   localchore.value.intervalNumber = props.chore.intervalNumber;
-  localchore.value.active_months = props.chore.active_months.map(
-    month => month.id,
-  );
+  localchore.value.active_months = deepCopy(props.chore.active_months);
   localchore.value.nextDue = props.chore.nextDue;
   localchore.value.lastCompleted = props.chore.lastCompleted;
   localchore.value.effort = props.chore.effort;
