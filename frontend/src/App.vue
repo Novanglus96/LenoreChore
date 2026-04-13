@@ -90,7 +90,25 @@ import { useTheme } from "vuetify";
 import axios from "axios";
 import { version as appVersion } from "../package.json";
 
-const reloadPage = () => {
+const reloadPage = async () => {
+  // Clear TanStack Query cache so stale data isn't served after reload
+  queryClient.clear();
+
+  // Clear all Workbox/SW caches so the new assets are fetched from the network
+  if ("caches" in window) {
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map(name => caches.delete(name)));
+  }
+
+  // Tell the waiting SW (if any) to take control immediately, then reload
+  if ("serviceWorker" in navigator) {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration?.waiting) {
+      registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      await new Promise(resolve => navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true }));
+    }
+  }
+
   window.location.reload();
 };
 
