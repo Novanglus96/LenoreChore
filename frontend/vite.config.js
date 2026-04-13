@@ -76,7 +76,7 @@ export default defineConfig({
         navigateFallback: "index.html",
         navigateFallbackDenylist: [
           /^\/api\//,
-          /^\/admin\//,
+          /^\/admin/,
           /^\/_allauth\//,
         ],
         runtimeCaching: [
