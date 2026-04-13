@@ -290,7 +290,7 @@ v1.3 consolidates the separate `frontend`, `backend`, `worker`, and `nginx` cont
     - [x] Dark/light theme toggle (persisted per browser)
     - [x] Mobile UI improvements (edge-to-edge cards, fullscreen forms)
     - [x] PWA support (installable, offline queuing, background sync)
-    - [ ] Demo Data
+    - [x] Demo Data
 
 See the [open issues](https://github.com/Novanglus96/LenoreChore/issues) for a full list of proposed features (and known issues).
 
