@@ -1,6 +1,11 @@
 name: Announce on Reddit
 
 on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to announce (e.g. v1.3.0)"
+        required: true
   release:
     types: [published]
 
@@ -8,8 +13,8 @@ permissions:
   contents: read
 
 env:
-  VERSION: ${{ github.event.release.tag_name }}
-  IS_PRERELEASE: ${{ github.event.release.prerelease }}
+  VERSION: ${{ github.event.release.tag_name || inputs.tag }}
+  IS_PRERELEASE: ${{ github.event.release.prerelease || 'false' }}
 
 jobs:
   reddit:
