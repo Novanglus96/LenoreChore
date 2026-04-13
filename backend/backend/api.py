@@ -57,7 +57,11 @@ def debug_headers(request):
         "headers": headers,
         "is_secure": request.is_secure(),
         "scheme": request.scheme,
-        "X-Forwarded-Proto": request.META.get("HTTP_X_FORWARDED_PROTO", "(not set)"),
+        "x_forwarded_proto": request.META.get("HTTP_X_FORWARDED_PROTO", "(not set)"),
+        "x_forwarded_host": request.META.get("HTTP_X_FORWARDED_HOST", "(not set)"),
+        "x_real_ip": request.META.get("HTTP_X_REAL_IP", "(not set)"),
+        "server_name": request.META.get("SERVER_NAME", "(not set)"),
+        "server_port": request.META.get("SERVER_PORT", "(not set)"),
     }
 
 
