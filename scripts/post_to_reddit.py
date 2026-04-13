@@ -9,13 +9,24 @@ FLAIR_ID_MAP = {
 
 
 def main():
-    tag = os.environ["COMMIT_TAG"].lower()
+    raw_tag = os.environ["COMMIT_TAG"].lstrip("vV")
     version = Path("scripts/version.txt").read_text().strip()
     changelog = os.environ["RELEASE_NOTES"]
 
-    flair_id = FLAIR_ID_MAP.get(tag)
+    try:
+        major, minor, patch = (int(x) for x in raw_tag.split(".")[:3])
+    except ValueError:
+        print(f"⚠️ Could not parse version tag '{raw_tag}', skipping Reddit post.")
+        return
+
+    if patch != 0:
+        print(f"⚠️ Patch release '{raw_tag}', skipping Reddit post.")
+        return
+
+    release_type = "major" if minor == 0 else "minor"
+    flair_id = FLAIR_ID_MAP.get(release_type)
     if not flair_id:
-        print(f"⚠️ Unknown tag '{tag}', skipping Reddit post.")
+        print(f"⚠️ No flair configured for release type '{release_type}', skipping Reddit post.")
         return
 
     reddit = praw.Reddit(
