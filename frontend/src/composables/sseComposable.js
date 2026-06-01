@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/vue-query";
 import { useOfflineStore } from "@/stores/offline";
 
 const QUERY_KEYS = {
-  chores: ["chores"],
+  chores: ["chores", "areas"],
   areas: ["areas", "areagroups"],
   areagroups: ["areagroups"],
   options: ["options"],

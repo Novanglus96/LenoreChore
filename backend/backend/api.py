@@ -655,6 +655,7 @@ def toggle_vacation(request):
             chore.save()
     invalidate("options")
     invalidate_pattern("chores:*")
+    invalidate("areas")
     notify("options")
     notify("chores")
     return {"success": True}
@@ -736,6 +737,7 @@ def create_chore(request, payload: ChoreIn):
     chore.active_months.set(active_months)
 
     invalidate_pattern("chores:*")
+    invalidate("areas")
     notify("chores")
     return {"id": chore.id}
 
@@ -1189,6 +1191,7 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
     chore.effort = payload.effort
     chore.save()
     invalidate_pattern("chores:*")
+    invalidate("areas")
     notify("chores")
     return {"success": True}
 
@@ -1214,6 +1217,7 @@ def toggle_chore(request, chore_id: int, payload: TogglActive):
     chore.status = payload.status
     chore.save()
     invalidate_pattern("chores:*")
+    invalidate("areas")
     notify("chores")
     return {"success": True}
 
@@ -1239,6 +1243,7 @@ def snooze_chore(request, chore_id: int, payload: SnoozeChore):
     chore.nextDue = payload.nextDue
     chore.save()
     invalidate_pattern("chores:*")
+    invalidate("areas")
     notify("chores")
     return {"success": True}
 
@@ -1311,6 +1316,7 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
         chore=chore,
     )
     invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate("areas")
     notify("chores")
     notify("history")
     return {"success": True}
@@ -1436,6 +1442,7 @@ def delete_chore(request, chore_id: int):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.delete()
     invalidate_pattern("chores:*")
+    invalidate("areas")
     notify("chores")
     return {"success": True}
 
