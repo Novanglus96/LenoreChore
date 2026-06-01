@@ -1,3 +1,15 @@
+# [1.4.0-alpha.1](https://github.com/Novanglus96/LenoreChore/compare/v1.3.4...v1.4.0-alpha.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* invalidate areas cache and query on chore mutations for SSE sync ([f718413](https://github.com/Novanglus96/LenoreChore/commit/f718413ba2fff410bc1b504bb18d38509086f8c9))
+
+
+### Features
+
+* add SSE real-time sync for multi-user invalidation ([fe02bf2](https://github.com/Novanglus96/LenoreChore/commit/fe02bf26e29a7909220f42b603d9dab5fd5cc46e))
+
 ## [1.3.4](https://github.com/Novanglus96/LenoreChore/compare/v1.3.3...v1.3.4) (2026-04-13)
 
 
