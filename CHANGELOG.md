@@ -1,3 +1,10 @@
+# [1.4.0-alpha.4](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.3...v1.4.0-alpha.4) (2026-06-01)
+
+
+### Features
+
+* add Docker health checks to all services and containers ([#60](https://github.com/Novanglus96/LenoreChore/issues/60)) ([332fa47](https://github.com/Novanglus96/LenoreChore/commit/332fa47b1822b2195809b680fb566c18e3a04da0))
+
 # [1.4.0-alpha.3](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.2...v1.4.0-alpha.3) (2026-06-01)
 
 
