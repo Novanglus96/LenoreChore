@@ -1,5 +1,6 @@
 from ninja import NinjaAPI, Schema, Router, Query
 from ninja.security import django_auth
+from backend.sse import notify
 from api.models import (
     CustomUser,
     AreaGroup,
@@ -654,6 +655,9 @@ def toggle_vacation(request):
             chore.save()
     invalidate("options")
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("options")
+    notify("chores")
     return {"success": True}
 
 
@@ -675,6 +679,7 @@ def create_areagroup(request, payload: AreaGroupIn):
     """
     areagroup = AreaGroup.objects.create(**payload.dict())
     invalidate("areagroups")
+    notify("areagroups")
     return {"id": areagroup.id}
 
 
@@ -696,6 +701,7 @@ def create_area(request, payload: AreaIn):
     """
     area = Area.objects.create(**payload.dict())
     invalidate("areas", "areagroups")
+    notify("areas")
     return {"id": area.id}
 
 
@@ -731,6 +737,8 @@ def create_chore(request, payload: ChoreIn):
     chore.active_months.set(active_months)
 
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"id": chore.id}
 
 
@@ -758,6 +766,8 @@ def create_historyitem(request, payload: HistoryItemIn):
         chore_id=payload.chore_id,
     )
     invalidate_pattern("chores:*", "weeklytotals:*")
+    notify("chores")
+    notify("history")
     return {"id": historyitem.id}
 
 
@@ -1120,6 +1130,7 @@ def update_areagroup(request, areagroup_id: int, payload: AreaGroupIn):
     areagroup.group_color = payload.group_color
     areagroup.save()
     invalidate("areagroups")
+    notify("areagroups")
     return {"success": True}
 
 
@@ -1146,6 +1157,7 @@ def update_area(request, area_id: int, payload: AreaIn):
     area.group_id = payload.group_id
     area.save()
     invalidate("areas", "areagroups")
+    notify("areas")
     return {"success": True}
 
 
@@ -1179,6 +1191,8 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
     chore.effort = payload.effort
     chore.save()
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"success": True}
 
 
@@ -1203,6 +1217,8 @@ def toggle_chore(request, chore_id: int, payload: TogglActive):
     chore.status = payload.status
     chore.save()
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"success": True}
 
 
@@ -1227,6 +1243,8 @@ def snooze_chore(request, chore_id: int, payload: SnoozeChore):
     chore.nextDue = payload.nextDue
     chore.save()
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"success": True}
 
 
@@ -1251,6 +1269,7 @@ def claim_chore(request, chore_id: int, payload: ClaimChore):
     chore.assignee_id = payload.assignee_id
     chore.save()
     invalidate_pattern("chores:*")
+    notify("chores")
     return {"success": True}
 
 
@@ -1297,6 +1316,9 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
         chore=chore,
     )
     invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate("areas")
+    notify("chores")
+    notify("history")
     return {"success": True}
 
 
@@ -1323,6 +1345,8 @@ def update_historyitem(request, historyitem_id: int, payload: HistoryItemIn):
     historyitem.chore_id = payload.chore_id
     historyitem.save()
     invalidate_pattern("chores:*", "weeklytotals:*")
+    notify("chores")
+    notify("history")
     return {"success": True}
 
 
@@ -1349,6 +1373,7 @@ def update_option(request, option_id: int, payload: OptionIn):
     option.high_thresh = payload.high_thresh
     option.save()
     invalidate("options")
+    notify("options")
     return {"success": True}
 
 
@@ -1371,6 +1396,7 @@ def delete_areagroup(request, areagroup_id: int):
     areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
     areagroup.delete()
     invalidate("areagroups")
+    notify("areagroups")
     return {"success": True}
 
 
@@ -1393,6 +1419,7 @@ def delete_area(request, area_id: int):
     area = get_object_or_404(Area, id=area_id)
     area.delete()
     invalidate("areas", "areagroups")
+    notify("areas")
     return {"success": True}
 
 
@@ -1415,6 +1442,8 @@ def delete_chore(request, chore_id: int):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.delete()
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"success": True}
 
 
@@ -1437,6 +1466,8 @@ def delete_historyitem(request, historyitem_id: int):
     historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
     historyitem.delete()
     invalidate_pattern("chores:*", "weeklytotals:*")
+    notify("chores")
+    notify("history")
     return {"success": True}
 
 
