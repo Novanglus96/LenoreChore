@@ -185,7 +185,7 @@ const emit = defineEmits(["editArea", "removeArea"]);
 const props = defineProps({
   area: Array,
 });
-const dirtiness = ref(props.area.dirtiness || 0);
+const dirtiness = computed(() => props.area.dirtiness || 0);
 const editForm = ref({
   id: props.area.id || 0,
   area_name: props.area.area_name || "",
