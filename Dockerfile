@@ -46,6 +46,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     netcat-openbsd \
     postgresql-client \
     redis-server \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # App directory
@@ -79,6 +80,9 @@ RUN rm -f /etc/nginx/sites-enabled/default
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost/api/v2/version/list || exit 1
 
 ENTRYPOINT ["/home/app/web/entrypoint.sh"]
 CMD ["/home/app/web/start.app.sh"]
