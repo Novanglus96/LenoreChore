@@ -13,11 +13,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: backend
-        run: pip install -r requirements-test.txt
+        run: pip install --user -r requirements-test.txt
 
       - name: Run tests
         working-directory: backend
-        run: pytest -q
+        run: python -m pytest -q
 
   frontend:
     if: github.repository != 'Novanglus96/LenoreTemplate'
@@ -27,8 +27,16 @@ jobs:
 
       - name: Run tests
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}/frontend:/app \
-            -w /app \
-            node:lts-alpine \
-            sh -c "npm install && npm test"
+          cat > /tmp/Dockerfile.frontend-test <<'DOCKERFILE'
+          FROM node:lts-alpine
+          WORKDIR /app
+          COPY package*.json ./
+          RUN npm install
+          COPY . .
+          CMD ["npm", "test"]
+          DOCKERFILE
+          docker build -t lenorechore-frontend-test \
+            -f /tmp/Dockerfile.frontend-test \
+            ${{ github.workspace }}/frontend
+          docker run --rm lenorechore-frontend-test
+          docker rmi lenorechore-frontend-test || true
