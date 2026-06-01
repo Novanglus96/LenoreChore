@@ -11,8 +11,10 @@ services:
     ports:
       - 7000:80
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - default
     env_file:
@@ -21,6 +23,12 @@ services:
     container_name: lenorechore
     environment:
       - DEBUG=0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/api/v2/version/list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   redis:
     image: redis:7-alpine
@@ -28,6 +36,12 @@ services:
       - default
     container_name: lenorechore_redis
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
   db:
     image: postgres:15
@@ -43,6 +57,12 @@ services:
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
       - POSTGRES_DB=${SQL_DATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
 volumes:
   postgres_data:
