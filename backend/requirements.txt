@@ -2,7 +2,7 @@ Django==4.2.21
 gunicorn==26.0.0
 psycopg2-binary==2.9.12
 markdown==3.4.4
-django-filter==25.2
+django-filter==24.3
 djangorestframework==3.17.1
 django-cors-headers==4.9.0
 pillow==12.2.0
