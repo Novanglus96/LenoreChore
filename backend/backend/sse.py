@@ -6,9 +6,7 @@ from django.http import HttpResponse, StreamingHttpResponse
 
 
 def _get_redis():
-    redis_url = os.environ.get("REDIS_URL")
-    if not redis_url:
-        return None
+    redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
     try:
         import redis
 
