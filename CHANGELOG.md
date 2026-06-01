@@ -1,3 +1,10 @@
+# [1.4.0-alpha.2](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.1...v1.4.0-alpha.2) (2026-06-01)
+
+
+### Features
+
+* bundle redis-server in single-container image for SSE and caching ([#58](https://github.com/Novanglus96/LenoreChore/issues/58)) ([f3e1f06](https://github.com/Novanglus96/LenoreChore/commit/f3e1f06f5ac85b5ccbc56b317f4d00703884bb5f))
+
 # [1.4.0-alpha.1](https://github.com/Novanglus96/LenoreChore/compare/v1.3.4...v1.4.0-alpha.1) (2026-06-01)
 
 
