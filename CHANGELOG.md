@@ -1,3 +1,10 @@
+# [1.4.0-alpha.5](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.4...v1.4.0-alpha.5) (2026-06-01)
+
+
+### Bug Fixes
+
+* always include localhost in ALLOWED_HOSTS for health checks ([#61](https://github.com/Novanglus96/LenoreChore/issues/61)) ([782278e](https://github.com/Novanglus96/LenoreChore/commit/782278eef66392e9d816a94f3c9ab4252b84d532))
+
 # [1.4.0-alpha.4](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.3...v1.4.0-alpha.4) (2026-06-01)
 
 
