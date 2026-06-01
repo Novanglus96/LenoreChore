@@ -13,11 +13,13 @@ jobs:
 
       - name: Install dependencies
         working-directory: backend
-        run: pip install --user -r requirements-test.txt
+        run: |
+          python -m venv .ci-venv
+          .ci-venv/bin/pip install -r requirements-test.txt
 
       - name: Run tests
         working-directory: backend
-        run: python -m pytest -q
+        run: .ci-venv/bin/python -m pytest -q
 
   frontend:
     if: github.repository != 'Novanglus96/LenoreTemplate'
