@@ -1,3 +1,10 @@
+# [1.4.0-alpha.3](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.2...v1.4.0-alpha.3) (2026-06-01)
+
+
+### Bug Fixes
+
+* make area dirtiness progress bar reactive to prop updates ([#59](https://github.com/Novanglus96/LenoreChore/issues/59)) ([3691bf0](https://github.com/Novanglus96/LenoreChore/commit/3691bf053d0e6b30f921aa6a82c857de2dee4f97))
+
 # [1.4.0-alpha.2](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.1...v1.4.0-alpha.2) (2026-06-01)
 
 
