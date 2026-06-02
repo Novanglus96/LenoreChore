@@ -1,3 +1,10 @@
+# [1.4.0-alpha.10](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.9...v1.4.0-alpha.10) (2026-06-02)
+
+
+### Bug Fixes
+
+* sync dev/prod deps via npm ci + non-breaking security fixes ([#68](https://github.com/Novanglus96/LenoreChore/issues/68)) ([e4da76e](https://github.com/Novanglus96/LenoreChore/commit/e4da76ee6374e707551ae64a0f09fe7fc12628cd)), closes [#65](https://github.com/Novanglus96/LenoreChore/issues/65)
+
 # [1.4.0-alpha.9](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.8...v1.4.0-alpha.9) (2026-06-02)
 
 
