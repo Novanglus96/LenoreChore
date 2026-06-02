@@ -1,3 +1,10 @@
+# [1.4.0-alpha.14](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.13...v1.4.0-alpha.14) (2026-06-02)
+
+
+### Bug Fixes
+
+* add Profile link to the nav overflow menu ([#73](https://github.com/Novanglus96/LenoreChore/issues/73)) ([bc044cb](https://github.com/Novanglus96/LenoreChore/commit/bc044cb2024e30f034399273caf21883b544b958))
+
 # [1.4.0-alpha.13](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.12...v1.4.0-alpha.13) (2026-06-02)
 
 
