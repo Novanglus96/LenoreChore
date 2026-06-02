@@ -98,6 +98,9 @@
           v-model="showVacationForm"
           @update-dialog="updateVacationDialog"
         />
+        <v-list-item to="/profile" prepend-icon="mdi-account">
+          <v-list-item-title>Profile</v-list-item-title>
+        </v-list-item>
         <v-list-item to="/logout" prepend-icon="mdi-logout">
           <v-list-item-title>Logout</v-list-item-title>
         </v-list-item>
