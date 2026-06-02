@@ -1,3 +1,10 @@
+# [1.4.0-alpha.8](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.7...v1.4.0-alpha.8) (2026-06-02)
+
+
+### Bug Fixes
+
+* revert theme.change() to theme.global.name.value (prod crash) ([#65](https://github.com/Novanglus96/LenoreChore/issues/65)) ([9b50792](https://github.com/Novanglus96/LenoreChore/commit/9b5079208a091168c37abb7b38a42e8894579066))
+
 # [1.4.0-alpha.7](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.6...v1.4.0-alpha.7) (2026-06-02)
 
 
