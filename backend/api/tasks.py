@@ -8,8 +8,28 @@ Date: February 15, 2024
 
 from api.models import Chore, CustomUser
 from datetime import date, datetime
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from django.conf import settings
 from django.utils import timezone
 from backend.push import send_web_push
+
+
+def _user_timezone(user):
+    """
+    Resolve a user's notification timezone, falling back to the server's
+    configured timezone when unset or invalid.
+
+    Args:
+        user (CustomUser): The user whose timezone to resolve.
+
+    Returns:
+        (ZoneInfo): The timezone to evaluate the user's notify_time in.
+    """
+    name = user.notify_timezone or settings.TIME_ZONE
+    try:
+        return ZoneInfo(name)
+    except (ZoneInfoNotFoundError, ValueError):
+        return ZoneInfo(settings.TIME_ZONE)
 
 
 def build_rollup_payload(due_today, overdue, assigned):
@@ -37,34 +57,42 @@ def send_due_notifications():
     due/overdue chores to each opted-in user once per day, at or after their
     chosen local time. Designed to run frequently (e.g. every 5 minutes).
 
-    Each eligible user is marked notified for the day regardless of whether a
+    Each user's notify_time is interpreted in their own timezone
+    (notify_timezone, falling back to the server timezone), so reminders fire
+    at the right local wall-clock time and stay correct across DST. Each
+    eligible user is marked notified for the day regardless of whether a
     message was sent, so the rollup fires once per day rather than repeatedly.
 
     Returns:
         (str): A short summary of how many users were notified.
     """
-    now = timezone.localtime()
-    today = now.date()
-    current_time = now.time()
-
-    due_today = Chore.objects.filter(status=0, nextDue__lte=today).count()
-    overdue = Chore.objects.filter(status=0, nextDue__lt=today).count()
-
-    users = CustomUser.objects.filter(
-        notify_enabled=True, notify_time__lte=current_time
-    ).exclude(last_notified_date=today)
+    now_utc = timezone.now()
 
     notified = 0
-    for user in users:
+    for user in CustomUser.objects.filter(notify_enabled=True):
+        local_now = now_utc.astimezone(_user_timezone(user))
+        local_today = local_now.date()
+
+        if user.last_notified_date == local_today:
+            continue
+        if user.notify_time > local_now.time():
+            continue
+
+        due_today = Chore.objects.filter(
+            status=0, nextDue__lte=local_today
+        ).count()
         if due_today > 0:
+            overdue = Chore.objects.filter(
+                status=0, nextDue__lt=local_today
+            ).count()
             assigned = Chore.objects.filter(
-                status=0, nextDue__lte=today, assignee=user
+                status=0, nextDue__lte=local_today, assignee=user
             ).count()
             payload = build_rollup_payload(due_today, overdue, assigned)
             for subscription in user.push_subscriptions.all():
                 send_web_push(subscription, payload)
             notified += 1
-        user.last_notified_date = today
+        user.last_notified_date = local_today
         user.save(update_fields=["last_notified_date"])
 
     return f"Notified {notified} user(s)"

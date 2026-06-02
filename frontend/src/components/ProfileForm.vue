@@ -80,6 +80,42 @@
         </v-card-actions>
       </Form>
     </v-card-text>
+    <v-divider></v-divider>
+    <v-card-text>
+      <template v-if="pushSupported">
+        <v-row align="center" no-gutters>
+          <v-col>
+            <div class="text-subtitle-2">Daily reminders</div>
+            <div class="text-caption text-medium-emphasis">
+              A daily summary of what's due and overdue.
+            </div>
+          </v-col>
+          <v-col cols="auto">
+            <v-switch
+              v-model="notifyEnabled"
+              color="white"
+              hide-details
+              :loading="notifyBusy"
+              @update:modelValue="onToggleReminders"
+            ></v-switch>
+          </v-col>
+        </v-row>
+        <v-row v-if="notifyEnabled" no-gutters align="center" class="mt-2">
+          <v-col cols="auto" class="me-3 text-body-2">Remind me at</v-col>
+          <v-col cols="auto" style="min-width: 150px">
+            <VueDatePicker
+              v-model="notifyTime"
+              time-picker
+              auto-apply
+              @update:modelValue="onTimeChange"
+            ></VueDatePicker>
+          </v-col>
+        </v-row>
+      </template>
+      <div v-else class="text-caption text-medium-emphasis">
+        Daily reminders aren't supported on this device or browser.
+      </div>
+    </v-card-text>
     <v-snackbar
       v-model="snackbar"
       :color="snackbarColor"
@@ -92,16 +128,74 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { useUserStore } from "@/stores/user";
+import { usePush } from "@/composables/pushComposable";
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
 const snackbar = ref(false);
 const snackbarText = ref("");
 const snackbarColor = ref("");
 const snackbarTimeout = ref(1500);
 const userstore = useUserStore();
+
+// ── Daily reminders ──────────────────────────────────────────────────────────
+const { isSupported, subscribe, unsubscribe, getPrefs, savePrefs } = usePush();
+const pushSupported = isSupported();
+const notifyEnabled = ref(false);
+const notifyTime = ref({ hours: 8, minutes: 0, seconds: 0 });
+const notifyBusy = ref(false);
+
+const pad = (n) => String(n).padStart(2, "0");
+const timeToString = (t) => `${pad(t.hours)}:${pad(t.minutes)}:${pad(t.seconds || 0)}`;
+const stringToTime = (s) => {
+  const [h, m, sec] = s.split(":").map(Number);
+  return { hours: h || 0, minutes: m || 0, seconds: sec || 0 };
+};
+
+onMounted(async () => {
+  if (!pushSupported) return;
+  try {
+    const prefs = await getPrefs();
+    notifyEnabled.value = prefs.notify_enabled;
+    if (prefs.notify_time) notifyTime.value = stringToTime(prefs.notify_time);
+  } catch {
+    // Leave defaults if prefs can't be loaded.
+  }
+});
+
+const onToggleReminders = async (value) => {
+  notifyBusy.value = true;
+  try {
+    if (value) {
+      await subscribe();
+      await savePrefs(true, timeToString(notifyTime.value));
+      showSnackbar("Daily reminders enabled!", "success");
+    } else {
+      await savePrefs(false, timeToString(notifyTime.value));
+      await unsubscribe();
+      showSnackbar("Daily reminders disabled.", "success");
+    }
+  } catch (error) {
+    notifyEnabled.value = !value; // revert on failure
+    showSnackbar(error.message || "Could not update reminders.", "error");
+  } finally {
+    notifyBusy.value = false;
+  }
+};
+
+const onTimeChange = async () => {
+  if (!notifyEnabled.value) return;
+  try {
+    await savePrefs(true, timeToString(notifyTime.value));
+    showSnackbar("Reminder time updated.", "success");
+  } catch {
+    showSnackbar("Could not update reminder time.", "error");
+  }
+};
 
 const colors = ref([
   { name: "Color1", value: "#E91E63" },
