@@ -30,7 +30,7 @@
             About LenoreChore
           </v-list-item-title>
           <v-list-item-title class="text-body-2 font-italic text-secondary text-center">
-            version {{ appVersion }}
+            {{ appVersion }}
           </v-list-item-title>
         </v-list-item>
       </v-list>
