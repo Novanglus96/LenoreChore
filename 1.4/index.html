@@ -429,6 +429,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#push-notifications-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Push Notifications (optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -843,6 +854,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#push-notifications-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Push Notifications (optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1234,6 +1256,20 @@ volumes:
 <blockquote>
 <p><strong>Note:</strong> If you previously accessed the site while it had a certificate error and clicked "Proceed anyway" in your browser, Chrome may remember that exception and block PWA installation. To fix this, go to <strong>Chrome Settings → Privacy and Security → Site Settings</strong>, find your site, and click <strong>Reset permissions</strong> — then reload the page.</p>
 </blockquote>
+<h3 id="push-notifications-optional">Push Notifications (optional)</h3>
+<p>LenoreChore can send each user a <strong>daily Web Push</strong> summarizing what's due and overdue, at a time they choose. Users opt in (and pick a time) on their <strong>Profile</strong> page.</p>
+<p>To enable it on the server, generate a VAPID key pair once and add it to your <code>.env</code>:</p>
+<pre><code class="language-bash">docker compose exec app python manage.py generate_vapid_keys
+</code></pre>
+<p>Copy the printed values into <code>.env</code>:</p>
+<pre><code class="language-env">VAPID_PUBLIC_KEY=...
+VAPID_PRIVATE_KEY=...
+VAPID_SUBJECT=mailto:you@example.com
+</code></pre>
+<p>Restart the container. If these are unset, push notifications are simply disabled (the rest of the app is unaffected).</p>
+<p><strong>Caveats:</strong>
+- Web Push requires <strong>HTTPS via a reverse proxy</strong> — the same requirement as the PWA features above.
+- On <strong>iOS/iPadOS (16.4+)</strong>, the user must first <strong>install the app to their home screen</strong>; Safari does not deliver Web Push to a regular browser tab.</p>
 <p>Enjoy using LenoreChore!</p>
 <hr />
 <h2 id="upgrading-to-v13">Upgrading to v1.3</h2>
