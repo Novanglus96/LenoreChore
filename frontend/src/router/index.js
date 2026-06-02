@@ -7,6 +7,7 @@ import ProfileView from "../views/ProfileView.vue";
 import SettingsView from "../views/SettingsView.vue";
 import LogoutView from "../views/LogoutView.vue";
 import LoginView from "../views/LoginView.vue";
+import AboutView from "../views/AboutView.vue";
 import FourView from "../views/FourView.vue";
 import { useUserStore } from "@/stores/user";
 
@@ -51,6 +52,12 @@ const routes = [
     path: "/logout",
     name: "logout",
     component: LogoutView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: AboutView,
     meta: { requiresAuth: true },
   },
   {

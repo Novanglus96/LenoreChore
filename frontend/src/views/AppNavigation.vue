@@ -25,9 +25,12 @@
       </v-list>
       <v-divider></v-divider>
       <v-list>
-        <v-list-item>
+        <v-list-item to="/about">
           <v-list-item-title class="text-body-2 font-italic text-secondary text-center">
-            version {{ appVersion }}
+            About LenoreChore
+          </v-list-item-title>
+          <v-list-item-title class="text-caption font-italic text-medium-emphasis text-center">
+            {{ appVersion }}
           </v-list-item-title>
         </v-list-item>
       </v-list>

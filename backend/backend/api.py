@@ -11,7 +11,7 @@ from api.models import (
     Option,
     Version,
 )
-from typing import List, Optional
+from typing import Dict, List, Optional
 from django.shortcuts import get_object_or_404
 from datetime import date, timedelta
 from ninja.errors import HttpError
@@ -20,6 +20,9 @@ from django.db.models import Count
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.core.cache import cache
+import importlib.metadata
+import platform
+import django
 
 CACHE_TTL = 15 * 60  # 15 minutes
 
@@ -60,6 +63,24 @@ class VersionOut(Schema):
 
     id: int
     version_number: str
+
+
+class VersionDetailsOut(Schema):
+    """
+    Schema reporting the app version alongside key runtime/dependency
+    versions, for confirming what a deployment is actually running.
+
+    Attributes:
+        app_version (str): The LenoreChore release version.
+        python_version (str): The running Python version.
+        django_version (str): The installed Django version.
+        packages (Dict[str, str]): Map of key package name to installed version.
+    """
+
+    app_version: str
+    python_version: str
+    django_version: str
+    packages: Dict[str, str]
 
 
 class LoginUserSchema(Schema):
@@ -1493,6 +1514,60 @@ def list_version(request):
         return qs
     except Exception as e:
         raise HttpError(500, f"Record retrieval error: {str(e)}")
+
+
+# Packages reported by /version/details. Add or remove names here as needed.
+VERSION_DETAIL_PACKAGES = [
+    "django-ninja",
+    "djangorestframework",
+    "django-redis",
+    "django-q2",
+    "django-allauth",
+    "django-filter",
+    "gunicorn",
+    "gevent",
+    "pillow",
+    "arrow",
+    "setuptools",
+    "wheel",
+]
+
+
+@api.get("/version/details", response=VersionDetailsOut)
+def version_details(request):
+    """
+    The function `version_details` reports the app version alongside the
+    running Python/Django versions and a set of key installed package
+    versions, so a deployment's full stack can be confirmed from one call.
+
+    Authentication is required, so exact dependency versions are not exposed
+    publicly. The unauthenticated `/version/list` endpoint (used by the UI
+    update check) is unchanged.
+
+    Endpoint:
+        - **Path**: `/api/v2/version/details`
+        - **Method**: `GET`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        (VersionDetailsOut): App, Python, Django, and package versions.
+    """
+    packages = {}
+    for name in VERSION_DETAIL_PACKAGES:
+        try:
+            packages[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            packages[name] = "not installed"
+
+    version_obj = Version.objects.filter(id=1).first()
+    return VersionDetailsOut(
+        app_version=version_obj.version_number if version_obj else "unknown",
+        python_version=platform.python_version(),
+        django_version=django.get_version(),
+        packages=packages,
+    )
 
 
 api.add_router("/auth", router)
