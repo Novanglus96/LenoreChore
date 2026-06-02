@@ -96,7 +96,7 @@ class CustomUser(AbstractUser):
         return self.email
 
     @property
-    def fullname(self):
+    def fullname(self) -> str:
         """
         Returns the user's full name as a single string.
 
@@ -340,7 +340,7 @@ class Option(SingletonModel):
         return "Options"
 
     @classmethod
-    def load(cls):
+    def load(cls) -> "Option":
         """
         Load the singleton Option instance.
 

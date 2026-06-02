@@ -1560,7 +1560,7 @@ def delete_historyitem(request, historyitem_id: int):
 
 
 @api.get("/version/list", response=VersionOut, auth=None)
-def list_version(request):
+def list_version(request) -> VersionOut:
     """
     The function `list_version` retrieves the app version number
     from the backend.
