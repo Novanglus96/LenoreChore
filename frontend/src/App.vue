@@ -156,16 +156,20 @@ const checkSession = async () => {
 };
 
 // ── Theme ───────────────────────────────────────────────────────────────────
-vuetifyTheme.change(
-  themeStore.isDark ? "myCustomDarkTheme" : "myCustomLightTheme"
-);
+// NOTE: use theme.global.name.value (not theme.change()). theme.change() does
+// not exist in the vuetify version pinned in package-lock (3.6.8) and crashes
+// the app at setup in production builds; the deprecation warning only appears
+// on newer 3.x. This form works across all 3.x versions.
+vuetifyTheme.global.name.value = themeStore.isDark
+  ? "myCustomDarkTheme"
+  : "myCustomLightTheme";
 
 watch(
   () => themeStore.isDark,
   (isDark) => {
-    vuetifyTheme.change(
-      isDark ? "myCustomDarkTheme" : "myCustomLightTheme"
-    );
+    vuetifyTheme.global.name.value = isDark
+      ? "myCustomDarkTheme"
+      : "myCustomLightTheme";
   }
 );
 
