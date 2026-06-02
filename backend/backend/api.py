@@ -1,4 +1,4 @@
-from ninja import NinjaAPI, Schema, Router, Query
+from ninja import NinjaAPI, Schema, Router
 from ninja.security import django_auth
 from backend.sse import notify
 from api.models import (
@@ -42,7 +42,7 @@ def invalidate_pattern(*patterns):
             cache.clear()
 
 
-api = NinjaAPI(auth=django_auth, csrf=True, urls_namespace="api_v2")
+api = NinjaAPI(auth=django_auth, urls_namespace="api_v2")
 router = Router()
 api.title = "LenoreChore API"
 api.version = "1.4.0-alpha.5"
@@ -81,7 +81,7 @@ class LoginUserSchema(Schema):
     """
 
     email: str
-    profile_picture: str = None
+    profile_picture: Optional[str] = None
     male: bool
     user_color: str
     first_name: str
@@ -113,7 +113,7 @@ class CustomUserSchema(Schema):
 
     id: int
     email: str
-    profile_picture: str = None
+    profile_picture: Optional[str] = None
     male: bool
     user_color: str
     first_name: str
@@ -242,16 +242,16 @@ class ChoreIn(Schema):
         status (int): ID of the status. Optional.
     """
 
-    chore_name: Optional[str]
-    area_id: Optional[int]
-    intervalNumber: Optional[int]
-    unit: Optional[str]
-    active_months: Optional[List[int]]
-    effort: Optional[int]
-    nextDue: Optional[date]
-    lastCompleted: Optional[date]
-    assignee_id: Optional[int]
-    status: Optional[int]
+    chore_name: Optional[str] = None
+    area_id: Optional[int] = None
+    intervalNumber: Optional[int] = None
+    unit: Optional[str] = None
+    active_months: Optional[List[int]] = None
+    effort: Optional[int] = None
+    nextDue: Optional[date] = None
+    lastCompleted: Optional[date] = None
+    assignee_id: Optional[int] = None
+    status: Optional[int] = None
 
 
 class TogglActive(Schema):
@@ -297,7 +297,7 @@ class ClaimChore(Schema):
         assignee_id (int): ID of a user to assign to chore. Optional.
     """
 
-    assignee_id: Optional[int]
+    assignee_id: Optional[int] = None
 
 
 class LastHistoryItem(Schema):
@@ -346,8 +346,8 @@ class ChoreOut(Schema):
     intervalNumber: int
     unit: str
     active_months: List[int]
-    assignee_id: Optional[int]
-    assignee: CustomUserSchema = None
+    assignee_id: Optional[int] = None
+    assignee: Optional[CustomUserSchema] = None
     effort: int
     vacationPause: int
     expand: bool
@@ -390,8 +390,8 @@ class ChoreOutFull(Schema):
     intervalNumber: int
     unit: str
     active_months: List[MonthOut]
-    assignee_id: Optional[int]
-    assignee: CustomUserSchema = None
+    assignee_id: Optional[int] = None
+    assignee: Optional[CustomUserSchema] = None
     effort: int
     vacationPause: int
     expand: bool
@@ -492,9 +492,9 @@ class DatasetObject(Schema):
         label (str): Label for the gaph dataset.
     """
 
-    backgroundColor: Optional[str]
-    data: Optional[List[int]]
-    label: Optional[str]
+    backgroundColor: Optional[str] = None
+    data: Optional[List[int]] = None
+    label: Optional[str] = None
 
 
 # The class GraphData is a schema representing a graph data object.
@@ -514,7 +514,7 @@ class GraphData(Schema):
 
 
 @api.get("/weeklytotals", response=GraphData)
-def get_weeklytotals(request, week: Optional[int] = 0):
+def get_weeklytotals(request, week: int = 0):
     """
     The function `get_weeklytotals` retrieves the weekly totals.
 
@@ -677,7 +677,7 @@ def create_areagroup(request, payload: AreaGroupIn):
     Returns:
         (int): The ID of the newly created AreaGroup object.
     """
-    areagroup = AreaGroup.objects.create(**payload.dict())
+    areagroup = AreaGroup.objects.create(**payload.model_dump())
     invalidate("areagroups")
     notify("areagroups")
     return {"id": areagroup.id}
@@ -699,7 +699,7 @@ def create_area(request, payload: AreaIn):
     Returns:
         (int): ID of the newly created Area object.
     """
-    area = Area.objects.create(**payload.dict())
+    area = Area.objects.create(**payload.model_dump())
     invalidate("areas", "areagroups")
     notify("areas")
     return {"id": area.id}
@@ -921,9 +921,9 @@ def list_areas(request):
 def list_chores(
     request,
     inactive: bool = False,
-    timeframe: int = None,
-    assignee_id: int = None,
-    area_id: int = None,
+    timeframe: Optional[int] = None,
+    assignee_id: Optional[int] = None,
+    area_id: Optional[int] = None,
 ):
     """
     The function `list_chores` retrieves a list of Chore objects.
@@ -1025,8 +1025,8 @@ def calculate_duedays(next_due):
 @api.get("/historyitems", response=PaginatedHistoryItems)
 def list_historyitems(
     request,
-    page: Optional[int] = Query(1),
-    page_size: Optional[int] = Query(60),
+    page: int = 1,
+    page_size: int = 60,
 ):
     """
     The function `list_historyitems` retrieves a list of HistoryItem objects.

@@ -217,7 +217,6 @@ export const useChoreStore = defineStore("chore", {
         this.fetchAll();
       } catch (error) {
         // Handle errors (e.g., show an error message)
-        console.log("Error:", error);
       }
     },
     async enableVacationMode() {
@@ -230,7 +229,6 @@ export const useChoreStore = defineStore("chore", {
         this.fetchAll();
       } catch (error) {
         // Handle errors (e.g., show an error message)
-        console.log("Error:", error);
       }
     },
   },

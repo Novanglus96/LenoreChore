@@ -264,7 +264,8 @@ JAZZMIN_SETTINGS = {
     "copyright": "John Adams",
     # List of model admins to search from the search bar, search bar omitted if excluded
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
-    "user_avatar": "profile_picture",
+    # Omitted: jazzmin falls back to an AdminLTE stock photo for users without
+    # a picture; without this setting it shows a neutral user-circle icon instead.
     ############
     # Top Menu #
     ############

@@ -22,7 +22,7 @@
             :disabled="!historystore.graph.week"
           ></v-btn></v-col></v-row
     ></v-container>
-    <Bar id="my-chart-id" :options="chartOptions" :data="weeklyTotals" :plugins="chartPlugins" />
+    <Bar id="my-chart-id" :options="chartOptions" :data="chartData" :plugins="chartPlugins" />
   </div>
 </template>
 <script setup>
@@ -53,6 +53,14 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
 );
+
+// Hand Chart.js a plain, non-reactive clone of the query data. Passing the
+// reactive (readonly) proxy directly causes Chart.js to throw on teardown when
+// it tries to splice listener arrays off the dataset ("target is readonly").
+const chartData = computed(() => {
+  if (!weeklyTotals.value) return { labels: [], datasets: [] };
+  return JSON.parse(JSON.stringify(weeklyTotals.value));
+});
 
 const chartPlugins = computed(() => {
   if (!themeStore.isDark) return [];
