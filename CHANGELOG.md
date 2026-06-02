@@ -1,3 +1,10 @@
+# [1.4.0-alpha.9](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.8...v1.4.0-alpha.9) (2026-06-02)
+
+
+### Features
+
+* skip bundled Redis when an external REDIS_URL is configured ([#66](https://github.com/Novanglus96/LenoreChore/issues/66)) ([c6a11ce](https://github.com/Novanglus96/LenoreChore/commit/c6a11ced30f2e1bd11080243f5330f78dd0e6024))
+
 # [1.4.0-alpha.8](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.7...v1.4.0-alpha.8) (2026-06-02)
 
 
