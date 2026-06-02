@@ -1,3 +1,10 @@
+# [1.4.0-alpha.12](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.11...v1.4.0-alpha.12) (2026-06-02)
+
+
+### Features
+
+* push notification backend (daily due/overdue rollup) ([#70](https://github.com/Novanglus96/LenoreChore/issues/70)) ([0f3dcd0](https://github.com/Novanglus96/LenoreChore/commit/0f3dcd0d784eed12df731f29b611d6f5286649ba))
+
 # [1.4.0-alpha.11](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.10...v1.4.0-alpha.11) (2026-06-02)
 
 
