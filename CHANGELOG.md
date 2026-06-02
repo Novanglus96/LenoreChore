@@ -1,3 +1,16 @@
+# [1.4.0-alpha.6](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.5...v1.4.0-alpha.6) (2026-06-02)
+
+
+### Bug Fixes
+
+* add anonymous node_modules volume to frontend dev service ([1223071](https://github.com/Novanglus96/LenoreChore/commit/1223071d211590aeea5abfb2c268fd57d4af1099))
+* add explicit basename to chore-complete router registration ([b2da3ff](https://github.com/Novanglus96/LenoreChore/commit/b2da3ffdc4e45e6ae3a31503344ebea0cb59d149))
+* pass non-reactive clone to Chart.js to stop readonly proxy errors ([be5c1a5](https://github.com/Novanglus96/LenoreChore/commit/be5c1a521b83e1722932625c5e4b1823c4a31f43))
+* pin django-filter to 24.3 (25.2 requires Django>=5.2) ([0f7be1b](https://github.com/Novanglus96/LenoreChore/commit/0f7be1b5db6e6fba45e6f3be5c3365e2bd6414b4))
+* remove csrf=True from NinjaAPI (removed in django-ninja 1.x) ([6c949ff](https://github.com/Novanglus96/LenoreChore/commit/6c949ff1d3edecbd89be9fb3986fa481011dc0d5))
+* remove jazzmin user_avatar to drop AdminLTE stock photo fallback ([dbbe5b6](https://github.com/Novanglus96/LenoreChore/commit/dbbe5b6df23bd41cf2a3e97405d67903d1c210f5))
+* resolve Vuetify 3.x deprecations, prop types, and console noise ([e94d44a](https://github.com/Novanglus96/LenoreChore/commit/e94d44ab10021ef1108c531bdc26ff1e3f4b6dd7))
+
 # [1.4.0-alpha.5](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.4...v1.4.0-alpha.5) (2026-06-01)
 
 
