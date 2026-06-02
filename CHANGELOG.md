@@ -1,3 +1,10 @@
+# [1.4.0-alpha.11](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.10...v1.4.0-alpha.11) (2026-06-02)
+
+
+### Features
+
+* version/details endpoint + About page ([#69](https://github.com/Novanglus96/LenoreChore/issues/69)) ([75c94e2](https://github.com/Novanglus96/LenoreChore/commit/75c94e2779738e7dc6307c5e004623b1db6123aa))
+
 # [1.4.0-alpha.10](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.9...v1.4.0-alpha.10) (2026-06-02)
 
 
