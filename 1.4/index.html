@@ -366,6 +366,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step 1: Create a .env File">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-an-external-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using an external Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -763,6 +780,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step 1: Create a .env File">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-an-external-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using an external Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -1047,8 +1081,12 @@
 </ul>
 <!-- INSTALLATION -->
 <h3 id="step-1-create-a-env-file">Step 1: Create a <code>.env</code> File</h3>
-<p>Create a <code>.env</code> file in the root directory of the project. PostgreSQL and Redis are both <strong>optional</strong> — if omitted, LenoreChore will use SQLite and an in-memory cache automatically.</p>
-<p><strong>Minimal setup</strong> (SQLite + in-memory cache):</p>
+<p>Create a <code>.env</code> file in the root directory of the project.</p>
+<ul>
+<li><strong>PostgreSQL is optional</strong> — if the <code>SQL_*</code> variables are omitted, LenoreChore falls back to SQLite automatically.</li>
+<li><strong>Redis is bundled</strong> into the container and used automatically for caching and real-time sync — no configuration required. To use your own Redis server instead, set <code>REDIS_URL</code> (see <a href="#using-an-external-redis">Using an external Redis</a>); the bundled instance is then skipped.</li>
+</ul>
+<p><strong>Minimal setup</strong> (SQLite + bundled Redis):</p>
 <pre><code class="language-env">DEBUG=0
 SECRET_KEY=mysupersecretkey
 DJANGO_ALLOWED_HOSTS=localhost
@@ -1058,7 +1096,7 @@ DJANGO_SUPERUSER_EMAIL=someone@somewhere.com
 DJANGO_SUPERUSER_USERNAME=supervisor
 TIMEZONE=America/New_York
 </code></pre>
-<p><strong>Full setup</strong> (PostgreSQL + Redis):</p>
+<p><strong>Full setup</strong> (PostgreSQL + external Redis):</p>
 <pre><code class="language-env">DEBUG=0
 SECRET_KEY=mysupersecretkey
 DJANGO_ALLOWED_HOSTS=localhost
@@ -1076,6 +1114,44 @@ TIMEZONE=America/New_York
 REDIS_URL=redis://redis:6379/0
 </code></pre>
 <p>Adjust these values according to your environment and application requirements.</p>
+<h4 id="using-an-external-redis">Using an external Redis</h4>
+<p><code>REDIS_URL</code> is <strong>optional</strong>. When it is unset (or points at <code>localhost</code> /
+<code>127.0.0.1</code>), LenoreChore uses the Redis bundled inside the container. To use
+your own Redis server instead, set <code>REDIS_URL</code> to point at it — the bundled
+instance is then skipped automatically, so no redundant Redis runs.</p>
+<p>Format: <code>redis://[:password@]host:port/db</code></p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th><code>REDIS_URL</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bundled Redis (default)</td>
+<td><em>unset</em></td>
+</tr>
+<tr>
+<td>Redis running as a Compose service named <code>redis</code></td>
+<td><code>redis://redis:6379/0</code></td>
+</tr>
+<tr>
+<td>External host by address</td>
+<td><code>redis://10.1.10.50:6379/0</code></td>
+</tr>
+<tr>
+<td>Password-protected</td>
+<td><code>redis://:yourpassword@redis.internal:6379/0</code></td>
+</tr>
+<tr>
+<td>TLS</td>
+<td><code>rediss://redis.internal:6380/0</code></td>
+</tr>
+</tbody>
+</table>
+<p>Redis is used only for ephemeral caching and SSE pub/sub, so no persistence is
+required on the external server.</p>
 <h3 id="step-2-create-a-docker-composeyml-file">Step 2: Create a <code>docker-compose.yml</code> File</h3>
 <p><strong>Minimal setup</strong> (single container, SQLite, no Redis):</p>
 <pre><code class="language-yaml">services:
