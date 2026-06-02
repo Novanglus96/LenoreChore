@@ -99,7 +99,13 @@ def test_get_notification_prefs(auth_client, user):
 def test_update_notification_prefs(auth_client, user):
     response = auth_client.put(
         "/api/v2/me/notifications",
-        data=json.dumps({"notify_enabled": True, "notify_time": "07:30:00"}),
+        data=json.dumps(
+            {
+                "notify_enabled": True,
+                "notify_time": "07:30:00",
+                "notify_timezone": "America/Chicago",
+            }
+        ),
         content_type="application/json",
     )
     assert response.status_code == 200
@@ -107,3 +113,25 @@ def test_update_notification_prefs(auth_client, user):
     user.refresh_from_db()
     assert user.notify_enabled is True
     assert user.notify_time == time(7, 30)
+    assert user.notify_timezone == "America/Chicago"
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_update_notification_prefs_rejects_invalid_timezone(auth_client, user):
+    response = auth_client.put(
+        "/api/v2/me/notifications",
+        data=json.dumps(
+            {
+                "notify_enabled": True,
+                "notify_time": "07:30:00",
+                "notify_timezone": "Not/AZone",
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
+    user.refresh_from_db()
+    # Invalid timezone is dropped (empty = server fallback), never stored.
+    assert user.notify_timezone == ""

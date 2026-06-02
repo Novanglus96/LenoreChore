@@ -25,6 +25,7 @@ from django.core.cache import cache
 import importlib.metadata
 import platform
 import django
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 CACHE_TTL = 15 * 60  # 15 minutes
 
@@ -91,11 +92,14 @@ class NotificationPrefsIn(Schema):
 
     Attributes:
         notify_enabled (bool): Whether daily reminders are enabled.
-        notify_time (time): Local time of day to send the reminder.
+        notify_time (time): Local wall-clock time to send the reminder.
+        notify_timezone (str): IANA timezone the time is interpreted in
+            (e.g. "America/New_York"). Empty falls back to the server tz.
     """
 
     notify_enabled: bool
     notify_time: time
+    notify_timezone: str = ""
 
 
 class NotificationPrefsOut(Schema):
@@ -104,11 +108,13 @@ class NotificationPrefsOut(Schema):
 
     Attributes:
         notify_enabled (bool): Whether daily reminders are enabled.
-        notify_time (time): Local time of day to send the reminder.
+        notify_time (time): Local wall-clock time to send the reminder.
+        notify_timezone (str): IANA timezone the time is interpreted in.
     """
 
     notify_enabled: bool
     notify_time: time
+    notify_timezone: str
 
 
 class PushSubscriptionIn(Schema):
@@ -1676,7 +1682,17 @@ def update_notification_prefs(request, payload: NotificationPrefsIn):
     user = request.user
     user.notify_enabled = payload.notify_enabled
     user.notify_time = payload.notify_time
-    user.save(update_fields=["notify_enabled", "notify_time"])
+    # Only store a valid IANA timezone; otherwise fall back (empty = server tz).
+    tz = payload.notify_timezone or ""
+    if tz:
+        try:
+            ZoneInfo(tz)
+        except (ZoneInfoNotFoundError, ValueError):
+            tz = ""
+    user.notify_timezone = tz
+    user.save(
+        update_fields=["notify_enabled", "notify_time", "notify_timezone"]
+    )
     return user
 
 

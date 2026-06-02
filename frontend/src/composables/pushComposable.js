@@ -74,11 +74,16 @@ export function usePush() {
     return data; // { notify_enabled, notify_time }
   }
 
-  // Persist the current user's daily reminder preferences.
+  // Persist the current user's daily reminder preferences. The time is
+  // interpreted in this browser's timezone, which we send so the backend fires
+  // the reminder at the right local wall-clock time.
   async function savePrefs(notifyEnabled, notifyTime) {
+    const timezone =
+      Intl.DateTimeFormat().resolvedOptions().timeZone || "";
     const { data } = await apiClient.put("/me/notifications", {
       notify_enabled: notifyEnabled,
       notify_time: notifyTime,
+      notify_timezone: timezone,
     });
     return data;
   }

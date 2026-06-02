@@ -81,6 +81,7 @@ class CustomUser(AbstractUser):
     user_color = ColorField(default="#E91E63", samples=COLOR_PALETTE)
     notify_enabled = models.BooleanField(default=False)
     notify_time = models.TimeField(default=time(8, 0))
+    notify_timezone = models.CharField(max_length=64, blank=True, default="")
     last_notified_date = models.DateField(null=True, blank=True, default=None)
 
     USERNAME_FIELD = "email"
