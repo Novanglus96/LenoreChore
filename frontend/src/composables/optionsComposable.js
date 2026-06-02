@@ -75,7 +75,6 @@ export function useOptions() {
   const createOptionMutation = useMutation({
     mutationFn: createOptionFunction,
     onSuccess: () => {
-      console.log("Success adding option");
       queryClient.invalidateQueries({ queryKey: ["options"] });
     },
   });
@@ -83,7 +82,6 @@ export function useOptions() {
   const updateOptionMutation = useMutation({
     mutationFn: updateOptionFunction,
     onSuccess: () => {
-      console.log("Success updating option");
       queryClient.invalidateQueries({ queryKey: ["options"] });
     },
   });
@@ -91,7 +89,6 @@ export function useOptions() {
   const deleteOptionMutation = useMutation({
     mutationFn: deleteOptionFunction,
     onSuccess: () => {
-      console.log("Success deleting option");
       queryClient.invalidateQueries({ queryKey: ["options"] });
     },
   });
@@ -99,7 +96,6 @@ export function useOptions() {
   const toggleVacationMutation = useMutation({
     mutationFn: toggleVacationFunction,
     onSuccess: () => {
-      console.log("Success toggling vacation mode");
       queryClient.invalidateQueries({ queryKey: ["options"] });
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });

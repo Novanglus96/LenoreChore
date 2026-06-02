@@ -440,7 +440,7 @@ const emit = defineEmits([
   "toggleActivation",
 ]);
 const props = defineProps({
-  chore: Array,
+  chore: Object,
 });
 const localchore = ref({ ...props.chore });
 

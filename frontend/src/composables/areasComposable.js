@@ -64,7 +64,6 @@ export function useAreas() {
   const createAreaMutation = useMutation({
     mutationFn: createAreaFunction,
     onSuccess: () => {
-      console.log("Success adding area");
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
@@ -72,7 +71,6 @@ export function useAreas() {
   const updateAreaMutation = useMutation({
     mutationFn: updateAreaFunction,
     onSuccess: () => {
-      console.log("Success updating area");
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
@@ -80,7 +78,6 @@ export function useAreas() {
   const deleteAreaMutation = useMutation({
     mutationFn: deleteAreaFunction,
     onSuccess: () => {
-      console.log("Success deleting area");
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });

@@ -156,16 +156,16 @@ const checkSession = async () => {
 };
 
 // ── Theme ───────────────────────────────────────────────────────────────────
-vuetifyTheme.global.name.value = themeStore.isDark
-  ? "myCustomDarkTheme"
-  : "myCustomLightTheme";
+vuetifyTheme.change(
+  themeStore.isDark ? "myCustomDarkTheme" : "myCustomLightTheme"
+);
 
 watch(
   () => themeStore.isDark,
   (isDark) => {
-    vuetifyTheme.global.name.value = isDark
-      ? "myCustomDarkTheme"
-      : "myCustomLightTheme";
+    vuetifyTheme.change(
+      isDark ? "myCustomDarkTheme" : "myCustomLightTheme"
+    );
   }
 );
 

@@ -183,7 +183,7 @@ const deletecard = ref(false);
 const chorestore = useChoreStore();
 const emit = defineEmits(["editArea", "removeArea"]);
 const props = defineProps({
-  area: Array,
+  area: Object,
 });
 const dirtiness = computed(() => props.area.dirtiness || 0);
 const editForm = ref({
