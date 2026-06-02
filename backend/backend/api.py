@@ -10,10 +10,12 @@ from api.models import (
     HistoryItem,
     Option,
     Version,
+    PushSubscription,
 )
 from typing import Dict, List, Optional
+from django.conf import settings
 from django.shortcuts import get_object_or_404
-from datetime import date, timedelta
+from datetime import date, time, timedelta
 from ninja.errors import HttpError
 from dateutil.relativedelta import relativedelta
 from django.db.models import Count
@@ -83,6 +85,69 @@ class VersionDetailsOut(Schema):
     packages: Dict[str, str]
 
 
+class NotificationPrefsIn(Schema):
+    """
+    Schema to update a user's daily reminder preferences.
+
+    Attributes:
+        notify_enabled (bool): Whether daily reminders are enabled.
+        notify_time (time): Local time of day to send the reminder.
+    """
+
+    notify_enabled: bool
+    notify_time: time
+
+
+class NotificationPrefsOut(Schema):
+    """
+    Schema reporting a user's daily reminder preferences.
+
+    Attributes:
+        notify_enabled (bool): Whether daily reminders are enabled.
+        notify_time (time): Local time of day to send the reminder.
+    """
+
+    notify_enabled: bool
+    notify_time: time
+
+
+class PushSubscriptionIn(Schema):
+    """
+    Schema to register a Web Push subscription.
+
+    Attributes:
+        endpoint (str): The push service endpoint URL.
+        p256dh (str): The client public key for payload encryption.
+        auth (str): The client auth secret for payload encryption.
+    """
+
+    endpoint: str
+    p256dh: str
+    auth: str
+
+
+class PushUnsubscribeIn(Schema):
+    """
+    Schema to remove a Web Push subscription.
+
+    Attributes:
+        endpoint (str): The push service endpoint URL to remove.
+    """
+
+    endpoint: str
+
+
+class VapidKeyOut(Schema):
+    """
+    Schema reporting the public VAPID key for Web Push subscription.
+
+    Attributes:
+        public_key (str): The application server public VAPID key.
+    """
+
+    public_key: str
+
+
 class LoginUserSchema(Schema):
     """
     Schema to represent a LoginUserSchema.
@@ -144,6 +209,8 @@ class CustomUserSchema(Schema):
     is_staff: bool
     is_active: bool
     groups: List[int]
+    notify_enabled: bool
+    notify_time: time
 
     @staticmethod
     def resolve_groups(obj):
@@ -1568,6 +1635,120 @@ def version_details(request):
         django_version=django.get_version(),
         packages=packages,
     )
+
+
+@api.get("/me/notifications", response=NotificationPrefsOut)
+def get_notification_prefs(request):
+    """
+    The function `get_notification_prefs` returns the current user's daily
+    reminder preferences.
+
+    Endpoint:
+        - **Path**: `/api/v2/me/notifications`
+        - **Method**: `GET`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        (NotificationPrefsOut): The user's notify_enabled and notify_time.
+    """
+    return request.user
+
+
+@api.put("/me/notifications", response=NotificationPrefsOut)
+def update_notification_prefs(request, payload: NotificationPrefsIn):
+    """
+    The function `update_notification_prefs` updates the current user's daily
+    reminder preferences.
+
+    Endpoint:
+        - **Path**: `/api/v2/me/notifications`
+        - **Method**: `PUT`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (NotificationPrefsIn): The new preferences.
+
+    Returns:
+        (NotificationPrefsOut): The updated preferences.
+    """
+    user = request.user
+    user.notify_enabled = payload.notify_enabled
+    user.notify_time = payload.notify_time
+    user.save(update_fields=["notify_enabled", "notify_time"])
+    return user
+
+
+@api.get("/push/vapid-key", response=VapidKeyOut)
+def push_vapid_key(request):
+    """
+    The function `push_vapid_key` returns the public VAPID key used by the
+    browser to create a push subscription.
+
+    Endpoint:
+        - **Path**: `/api/v2/push/vapid-key`
+        - **Method**: `GET`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        (VapidKeyOut): The public VAPID key (empty string if push is not
+        configured on this deployment).
+    """
+    return {"public_key": settings.VAPID_PUBLIC_KEY}
+
+
+@api.post("/push/subscribe")
+def push_subscribe(request, payload: PushSubscriptionIn):
+    """
+    The function `push_subscribe` registers a Web Push subscription for the
+    current user (one per browser/device).
+
+    Endpoint:
+        - **Path**: `/api/v2/push/subscribe`
+        - **Method**: `POST`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (PushSubscriptionIn): The browser push subscription details.
+
+    Returns:
+        (str): Returns `success` if successful.
+    """
+    PushSubscription.objects.update_or_create(
+        endpoint=payload.endpoint,
+        defaults={
+            "user": request.user,
+            "p256dh": payload.p256dh,
+            "auth": payload.auth,
+        },
+    )
+    return {"success": True}
+
+
+@api.post("/push/unsubscribe")
+def push_unsubscribe(request, payload: PushUnsubscribeIn):
+    """
+    The function `push_unsubscribe` removes a Web Push subscription belonging
+    to the current user.
+
+    Endpoint:
+        - **Path**: `/api/v2/push/unsubscribe`
+        - **Method**: `POST`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (PushUnsubscribeIn): The endpoint to remove.
+
+    Returns:
+        (str): Returns `success` if successful.
+    """
+    PushSubscription.objects.filter(
+        endpoint=payload.endpoint, user=request.user
+    ).delete()
+    return {"success": True}
 
 
 api.add_router("/auth", router)

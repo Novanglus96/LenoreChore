@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from datetime import date
+from datetime import date, time
 from colorfield.fields import ColorField
 from django.core.exceptions import ValidationError
 from .managers import CustomUserManager
@@ -79,6 +79,9 @@ class CustomUser(AbstractUser):
     )
     male = models.BooleanField(default=True)
     user_color = ColorField(default="#E91E63", samples=COLOR_PALETTE)
+    notify_enabled = models.BooleanField(default=False)
+    notify_time = models.TimeField(default=time(8, 0))
+    last_notified_date = models.DateField(null=True, blank=True, default=None)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -363,3 +366,34 @@ class Version(SingletonModel):
             (String): The app version number.
         """
         return self.version_number
+
+
+class PushSubscription(models.Model):
+    """
+    Model representing a Web Push subscription for a single browser/device.
+
+    A user may have multiple subscriptions (e.g. phone and desktop). Each
+    holds the endpoint URL and the keys needed to encrypt a push message.
+
+    Fields:
+        user (CustomUser): The owning user.
+        endpoint (CharField): Unique push service endpoint URL.
+        p256dh (CharField): The client public key for payload encryption.
+        auth (CharField): The client auth secret for payload encryption.
+        created (DateTimeField): When the subscription was registered.
+    """
+
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="push_subscriptions"
+    )
+    endpoint = models.CharField(max_length=512, unique=True)
+    p256dh = models.CharField(max_length=255)
+    auth = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """
+        Returns:
+            (String): The owning user's email and a truncated endpoint.
+        """
+        return f"{self.user.email} ({self.endpoint[:40]}...)"

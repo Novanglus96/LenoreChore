@@ -42,6 +42,16 @@ class Command(BaseCommand):
                 "start_today": False,
                 "delete": False,
             },
+            {
+                "task_name": "Send Due Notifications",
+                "function": "api.tasks.send_due_notifications",
+                "time": "",
+                "arguments": "",
+                "type": "MINUTES",  # DAILY, HOURLY, MINUTES
+                "minutes": 5,
+                "start_today": True,
+                "delete": False,
+            },
         ]
 
         # Schedule or modify tasks

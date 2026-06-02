@@ -9,6 +9,7 @@ from .models import (
     AreaGroup,
     Month,
     Version,
+    PushSubscription,
 )
 from import_export.admin import ImportExportModelAdmin
 
@@ -182,3 +183,10 @@ admin.site.register(Option, OptionAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Month, MonthAdmin)
 admin.site.register(Version, VersionAdmin)
+
+
+@admin.register(PushSubscription)
+class PushSubscriptionAdmin(admin.ModelAdmin):
+    list_display = ("user", "endpoint", "created")
+    search_fields = ("user__email", "endpoint")
+    readonly_fields = ("created",)
