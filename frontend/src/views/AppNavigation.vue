@@ -29,7 +29,7 @@
           <v-list-item-title class="text-body-2 font-italic text-secondary text-center">
             About LenoreChore
           </v-list-item-title>
-          <v-list-item-title class="text-body-2 font-italic text-secondary text-center">
+          <v-list-item-title class="text-caption font-italic text-medium-emphasis text-center">
             {{ appVersion }}
           </v-list-item-title>
         </v-list-item>
