@@ -3204,7 +3204,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">email</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">profile_picture</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">profile_picture</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">male</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">user_color</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">first_name</span><span class="p">:</span> <span class="nb">str</span>
@@ -3461,7 +3461,7 @@
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">email</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">profile_picture</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">profile_picture</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">male</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">user_color</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">first_name</span><span class="p">:</span> <span class="nb">str</span>
@@ -3639,7 +3639,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        (int): The ID of the newly created AreaGroup object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">areagroup</span> <span class="o">=</span> <span class="n">AreaGroup</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+    <span class="n">areagroup</span> <span class="o">=</span> <span class="n">AreaGroup</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
     <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
     <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">areagroup</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
@@ -4606,7 +4606,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        (int): ID of the newly created Area object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">area</span> <span class="o">=</span> <span class="n">Area</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="n">Area</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
     <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">,</span> <span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
     <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">area</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
@@ -6167,9 +6167,9 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">list_chores</span><span class="p">(</span>
     <span class="n">request</span><span class="p">,</span>
     <span class="n">inactive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">timeframe</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">assignee_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">area_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timeframe</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">area_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `list_chores` retrieves a list of Chore objects.</span>
@@ -7571,16 +7571,16 @@
 <span class="sd">        status (int): ID of the status. Optional.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">chore_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">area_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">intervalNumber</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">unit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">active_months</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
-    <span class="n">effort</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">nextDue</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]</span>
-    <span class="n">lastCompleted</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]</span>
-    <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">chore_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">area_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">intervalNumber</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">unit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">active_months</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">effort</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">nextDue</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lastCompleted</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -7906,8 +7906,8 @@
     <span class="n">intervalNumber</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">active_months</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">assignee</span><span class="p">:</span> <span class="n">CustomUserSchema</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">assignee</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CustomUserSchema</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">effort</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">vacationPause</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">expand</span><span class="p">:</span> <span class="nb">bool</span>
@@ -8239,8 +8239,8 @@
     <span class="n">intervalNumber</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">active_months</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MonthOut</span><span class="p">]</span>
-    <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">assignee</span><span class="p">:</span> <span class="n">CustomUserSchema</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">assignee</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CustomUserSchema</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">effort</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">vacationPause</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">expand</span><span class="p">:</span> <span class="nb">bool</span>
@@ -8629,7 +8629,7 @@
 <span class="sd">        assignee_id (int): ID of a user to assign to chore. Optional.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -8948,7 +8948,7 @@
 
 
 <h4 id="backend.api.list_historyitems" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">list_historyitems</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="n">Query</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">page_size</span><span class="o">=</span><span class="n">Query</span><span class="p">(</span><span class="mi">60</span><span class="p">))</span></code>
+            <code class="highlight language-python"><span class="n">list_historyitems</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">page_size</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span></code>
 
 </h4>
 
@@ -9006,7 +9006,7 @@
               </div>
             </td>
             <td>
-                  <code><span title="ninja.Query">Query</span>(1)</code>
+                  <code>1</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -9022,7 +9022,7 @@
               </div>
             </td>
             <td>
-                  <code><span title="ninja.Query">Query</span>(60)</code>
+                  <code>60</code>
             </td>
           </tr>
       </tbody>
@@ -9093,8 +9093,8 @@
 <span class="normal">1061</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/historyitems&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">PaginatedHistoryItems</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_historyitems</span><span class="p">(</span>
     <span class="n">request</span><span class="p">,</span>
-    <span class="n">page</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-    <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span>
+    <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `list_historyitems` retrieves a list of HistoryItem objects.</span>
@@ -11215,7 +11215,7 @@ from the backend.</p>
 <span class="normal">596</span>
 <span class="normal">597</span>
 <span class="normal">598</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/weeklytotals&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">GraphData</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_weeklytotals</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">week</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_weeklytotals</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">week</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `get_weeklytotals` retrieves the weekly totals.</span>
 
@@ -11399,9 +11399,9 @@ from the backend.</p>
 <span class="sd">        label (str): Label for the gaph dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">backgroundColor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
-    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">backgroundColor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
