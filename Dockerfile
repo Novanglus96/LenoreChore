@@ -5,8 +5,8 @@
 FROM node:lts-alpine AS frontend-build
 
 WORKDIR /app
-COPY frontend/package*.json ./
-RUN npm install
+COPY frontend/package*.json frontend/.npmrc ./
+RUN npm ci
 COPY frontend/ .
 RUN npm run build
 
@@ -23,7 +23,7 @@ ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends gcc
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install flake8==6.0.0
 COPY backend/ /usr/src/app/
 RUN flake8 --ignore=E501,F401 ./backend
@@ -58,7 +58,7 @@ WORKDIR $APP_HOME
 # Python dependencies
 COPY --from=backend-builder /usr/src/app/wheels /wheels
 COPY --from=backend-builder /usr/src/app/requirements.txt .
-RUN pip install --upgrade pip && pip install --no-cache /wheels/*
+RUN pip install --upgrade pip setuptools wheel && pip install --no-cache /wheels/*
 
 # Vue static files
 COPY --from=frontend-build /app/dist /usr/share/nginx/html

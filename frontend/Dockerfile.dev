@@ -4,11 +4,11 @@ FROM node:lts-alpine AS vue-develop-stage
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy package.json, package-lock.json, and .npmrc
+COPY package*.json .npmrc ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies (exact, from lockfile — keeps dev in sync with prod)
+RUN npm ci
 
 # Install TZDATA
 RUN apk add -U tzdata
