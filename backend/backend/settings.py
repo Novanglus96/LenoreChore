@@ -239,6 +239,12 @@ ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 HEADLESS_ONLY = True
 HEADLESS_FRONTEND_URLS = {}
 
+# Web Push (VAPID) — daily chore reminder notifications. Generate a key pair
+# once and supply via env; when unset, push notifications are simply disabled.
+VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY", "")
+VAPID_PRIVATE_KEY = os.environ.get("VAPID_PRIVATE_KEY", "")
+VAPID_SUBJECT = os.environ.get("VAPID_SUBJECT", "mailto:admin@example.com")
+
 JAZZMIN_SETTINGS = {
     "show_ui_builder": False,
     # title of the window (Will default to current_admin_site.site_title if absent or None)

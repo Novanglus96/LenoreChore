@@ -258,6 +258,30 @@ proxy_set_header X-Forwarded-Proto $scheme;
 
 > **Note:** If you previously accessed the site while it had a certificate error and clicked "Proceed anyway" in your browser, Chrome may remember that exception and block PWA installation. To fix this, go to **Chrome Settings → Privacy and Security → Site Settings**, find your site, and click **Reset permissions** — then reload the page.
 
+### Push Notifications (optional)
+
+LenoreChore can send each user a **daily Web Push** summarizing what's due and overdue, at a time they choose. Users opt in (and pick a time) on their **Profile** page.
+
+To enable it on the server, generate a VAPID key pair once and add it to your `.env`:
+
+```bash
+docker compose exec app python manage.py generate_vapid_keys
+```
+
+Copy the printed values into `.env`:
+
+```env
+VAPID_PUBLIC_KEY=...
+VAPID_PRIVATE_KEY=...
+VAPID_SUBJECT=mailto:you@example.com
+```
+
+Restart the container. If these are unset, push notifications are simply disabled (the rest of the app is unaffected).
+
+**Caveats:**
+- Web Push requires **HTTPS via a reverse proxy** — the same requirement as the PWA features above.
+- On **iOS/iPadOS (16.4+)**, the user must first **install the app to their home screen**; Safari does not deliver Web Push to a regular browser tab.
+
 Enjoy using LenoreChore!
 
 ---
