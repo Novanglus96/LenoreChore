@@ -71,6 +71,7 @@ COPY backend/ $APP_HOME/
 # Scripts
 RUN sed -i 's/\r$//g' $APP_HOME/entrypoint.sh && chmod +x $APP_HOME/entrypoint.sh
 RUN sed -i 's/\r$//g' $APP_HOME/start.app.sh && chmod +x $APP_HOME/start.app.sh
+RUN sed -i 's/\r$//g' $APP_HOME/start-redis.sh && chmod +x $APP_HOME/start-redis.sh
 
 # Nginx config
 COPY nginx/app.conf /etc/nginx/conf.d/default.conf
