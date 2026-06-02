@@ -1,3 +1,10 @@
+# [1.4.0-alpha.7](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.6...v1.4.0-alpha.7) (2026-06-02)
+
+
+### Bug Fixes
+
+* migrate to non-deprecated django-allauth account settings ([#64](https://github.com/Novanglus96/LenoreChore/issues/64)) ([9fb5b7c](https://github.com/Novanglus96/LenoreChore/commit/9fb5b7c6f16decbbf9ce10295fc669d033784139))
+
 # [1.4.0-alpha.6](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.5...v1.4.0-alpha.6) (2026-06-02)
 
 
