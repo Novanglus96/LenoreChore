@@ -1,3 +1,10 @@
+# [1.4.0-alpha.21](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.20...v1.4.0-alpha.21) (2026-06-03)
+
+
+### Bug Fixes
+
+* chore list 500 when a chore has an assignee (groups resolver) ([#80](https://github.com/Novanglus96/LenoreChore/issues/80)) ([bd38046](https://github.com/Novanglus96/LenoreChore/commit/bd3804608ae5dd5c724f931b7a454c6de52486ab))
+
 # [1.4.0-alpha.20](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.19...v1.4.0-alpha.20) (2026-06-03)
 
 
