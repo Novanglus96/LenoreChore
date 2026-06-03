@@ -1,6 +1,7 @@
 import pytest
 import json
-from datetime import time
+import datetime as dt
+from datetime import date, time
 
 
 # ── VAPID key ────────────────────────────────────────────────────────────────
@@ -114,6 +115,87 @@ def test_update_notification_prefs(auth_client, user):
     assert user.notify_enabled is True
     assert user.notify_time == time(7, 30)
     assert user.notify_timezone == "America/Chicago"
+
+
+def _pin_now_to_1pm_eastern(mocker):
+    """Pin the endpoint clock to 17:00 UTC (12-13:00 US-Eastern)."""
+    now_utc = dt.datetime.combine(
+        date.today(), dt.time(17, 0), tzinfo=dt.timezone.utc
+    )
+    mocker.patch("backend.api.timezone.now", return_value=now_utc)
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_update_prefs_future_time_resets_today_dedup(auth_client, user, mocker):
+    """Moving the reminder to a still-future time clears last_notified_date."""
+    _pin_now_to_1pm_eastern(mocker)
+    user.last_notified_date = date.today()
+    user.save()
+
+    response = auth_client.put(
+        "/api/v2/me/notifications",
+        data=json.dumps(
+            {
+                "notify_enabled": True,
+                "notify_time": "23:00:00",  # ahead of ~1 PM Eastern
+                "notify_timezone": "America/New_York",
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
+    user.refresh_from_db()
+    assert user.last_notified_date is None
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_update_prefs_past_time_keeps_dedup(auth_client, user, mocker):
+    """A time already passed today must NOT re-arm the reminder."""
+    _pin_now_to_1pm_eastern(mocker)
+    user.last_notified_date = date.today()
+    user.save()
+
+    auth_client.put(
+        "/api/v2/me/notifications",
+        data=json.dumps(
+            {
+                "notify_enabled": True,
+                "notify_time": "08:00:00",  # before ~1 PM Eastern
+                "notify_timezone": "America/New_York",
+            }
+        ),
+        content_type="application/json",
+    )
+
+    user.refresh_from_db()
+    assert user.last_notified_date == date.today()
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_update_prefs_disabled_does_not_reset_dedup(auth_client, user, mocker):
+    """Disabling reminders never re-arms today's dedup."""
+    _pin_now_to_1pm_eastern(mocker)
+    user.last_notified_date = date.today()
+    user.save()
+
+    auth_client.put(
+        "/api/v2/me/notifications",
+        data=json.dumps(
+            {
+                "notify_enabled": False,
+                "notify_time": "23:00:00",
+                "notify_timezone": "America/New_York",
+            }
+        ),
+        content_type="application/json",
+    )
+
+    user.refresh_from_db()
+    assert user.last_notified_date == date.today()
 
 
 @pytest.mark.django_db
