@@ -531,7 +531,7 @@ class HistoryItemOut(Schema):
 
     id: int
     completed_date: date
-    completed_by: CustomUserSchema
+    completed_by: Optional[CustomUserSchema] = None
     chore: ChoreOutFull
 
 
@@ -1076,7 +1076,10 @@ def list_chores(
         last_three = []
         for item in last_three_query:
             display_name = ""
-            if item.completed_by.fullname == " ":
+            if item.completed_by is None:
+                # completed_by is SET_NULL on user delete; don't crash on it.
+                display_name = "Unknown"
+            elif item.completed_by.fullname == " ":
                 display_name = item.completed_by.email
             else:
                 display_name = item.completed_by.fullname
