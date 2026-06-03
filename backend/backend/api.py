@@ -1690,8 +1690,22 @@ def update_notification_prefs(request, payload: NotificationPrefsIn):
         except (ZoneInfoNotFoundError, ValueError):
             tz = ""
     user.notify_timezone = tz
+
+    # If the chosen time is still ahead today (in the user's timezone), clear
+    # today's dedup so moving the reminder to a later time fires today rather
+    # than waiting until tomorrow.
+    tz_obj = ZoneInfo(tz) if tz else ZoneInfo(settings.TIME_ZONE)
+    local_now = timezone.now().astimezone(tz_obj)
+    if payload.notify_enabled and payload.notify_time > local_now.time():
+        user.last_notified_date = None
+
     user.save(
-        update_fields=["notify_enabled", "notify_time", "notify_timezone"]
+        update_fields=[
+            "notify_enabled",
+            "notify_time",
+            "notify_timezone",
+            "last_notified_date",
+        ]
     )
     return user
 
