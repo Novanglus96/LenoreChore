@@ -74,47 +74,48 @@
             </v-col>
           </v-row>
         </v-container>
+        <v-divider class="mb-3"></v-divider>
+        <v-container>
+          <template v-if="pushSupported">
+            <v-row align="center" no-gutters>
+              <v-col>
+                <div class="text-subtitle-2">Daily reminders</div>
+                <div class="text-caption text-medium-emphasis">
+                  A daily summary of what's due and overdue.
+                </div>
+              </v-col>
+              <v-col cols="auto">
+                <v-switch
+                  v-model="notifyEnabled"
+                  color="white"
+                  hide-details
+                  :loading="notifyBusy"
+                  @update:modelValue="onToggleReminders"
+                ></v-switch>
+              </v-col>
+            </v-row>
+            <v-row v-if="notifyEnabled" no-gutters align="center" class="mt-2">
+              <v-col cols="auto" class="me-3 text-body-2">Remind me at</v-col>
+              <v-col cols="auto" style="min-width: 150px">
+                <VueDatePicker
+                  v-model="notifyTime"
+                  time-picker
+                  auto-apply
+                  :teleport="true"
+                  @update:modelValue="onTimeChange"
+                ></VueDatePicker>
+              </v-col>
+            </v-row>
+          </template>
+          <div v-else class="text-caption text-medium-emphasis">
+            Daily reminders aren't supported on this device or browser.
+          </div>
+        </v-container>
         <v-card-actions>
           <v-btn variant="outlined">Change Password</v-btn>
           <v-btn variant="outlined" type="submit">Save Changes</v-btn>
         </v-card-actions>
       </Form>
-    </v-card-text>
-    <v-divider></v-divider>
-    <v-card-text>
-      <template v-if="pushSupported">
-        <v-row align="center" no-gutters>
-          <v-col>
-            <div class="text-subtitle-2">Daily reminders</div>
-            <div class="text-caption text-medium-emphasis">
-              A daily summary of what's due and overdue.
-            </div>
-          </v-col>
-          <v-col cols="auto">
-            <v-switch
-              v-model="notifyEnabled"
-              color="white"
-              hide-details
-              :loading="notifyBusy"
-              @update:modelValue="onToggleReminders"
-            ></v-switch>
-          </v-col>
-        </v-row>
-        <v-row v-if="notifyEnabled" no-gutters align="center" class="mt-2">
-          <v-col cols="auto" class="me-3 text-body-2">Remind me at</v-col>
-          <v-col cols="auto" style="min-width: 150px">
-            <VueDatePicker
-              v-model="notifyTime"
-              time-picker
-              auto-apply
-              @update:modelValue="onTimeChange"
-            ></VueDatePicker>
-          </v-col>
-        </v-row>
-      </template>
-      <div v-else class="text-caption text-medium-emphasis">
-        Daily reminders aren't supported on this device or browser.
-      </div>
     </v-card-text>
     <v-snackbar
       v-model="snackbar"
