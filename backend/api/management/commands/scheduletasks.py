@@ -58,22 +58,19 @@ class Command(BaseCommand):
         for task in tasks:
             next_run = ""
             schedule_type = ""
-            if task["start_today"]:
-                next_run = datetime.combine(
-                    today, datetime.strptime(task["time"], "%H:%M").time()
-                )
-            else:
-                next_run = datetime.combine(
-                    tomorrow, datetime.strptime(task["time"], "%H:%M").time()
-                )
-            next_run = next_run.astimezone(current_timezone)
-            if task["type"] == "DAILY":
-                schedule_type = Schedule.DAILY
-            elif task["type"] == "HOURLY":
-                schedule_type = Schedule.HOURLY
-            elif task["type"] == "MINUTES":
+            if task["type"] == "MINUTES":
+                # Interval schedules run immediately; they have no clock time.
                 schedule_type = Schedule.MINUTES
                 next_run = timezone.now()
+            else:
+                day = today if task["start_today"] else tomorrow
+                next_run = datetime.combine(
+                    day, datetime.strptime(task["time"], "%H:%M").time()
+                ).astimezone(current_timezone)
+                if task["type"] == "DAILY":
+                    schedule_type = Schedule.DAILY
+                elif task["type"] == "HOURLY":
+                    schedule_type = Schedule.HOURLY
             existing_schedule = Schedule.objects.filter(
                 name=task["task_name"]
             ).first()
