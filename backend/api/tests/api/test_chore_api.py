@@ -22,6 +22,25 @@ def test_list_chores(auth_client, chore):
 
 @pytest.mark.django_db
 @pytest.mark.api
+def test_list_chores_with_assignee(auth_client, chore, user):
+    """Listing a chore that has an assignee must serialize the nested user.
+
+    Regression: the nested CustomUserSchema failed to resolve `groups` during
+    response re-validation, 500ing the chore list after a chore was claimed.
+    """
+    chore.assignee = user
+    chore.save()
+
+    response = auth_client.get("/api/v2/chores")
+    assert response.status_code == 200
+    result = next(c for c in response.json() if c["id"] == chore.id)
+    assert result["assignee"] is not None
+    assert result["assignee"]["id"] == user.id
+    assert result["assignee"]["groups"] == []
+
+
+@pytest.mark.django_db
+@pytest.mark.api
 def test_create_chore(auth_client, area):
     payload = {
         "chore_name": "New Chore",

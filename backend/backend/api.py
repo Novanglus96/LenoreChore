@@ -223,13 +223,22 @@ class CustomUserSchema(Schema):
         """
         Resolve the groups field to a list of group IDs.
 
+        Handles both a CustomUser model (groups is a related manager) and an
+        already-serialized value (a list of ids), so the schema survives
+        re-validation when used as a nested field (e.g. ChoreOut.assignee).
+
         Args:
             obj (CustomUser): The user instance being serialized.
 
         Returns:
             List[int]: List of group IDs the user belongs to.
         """
-        return [group.id for group in obj.groups.all()]
+        groups = getattr(obj, "groups", None)
+        if groups is None:
+            return []
+        if hasattr(groups, "all"):
+            return [group.id for group in groups.all()]
+        return list(groups)
 
 
 class AreaGroupIn(Schema):
