@@ -1,3 +1,10 @@
+# [1.4.0-alpha.20](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.19...v1.4.0-alpha.20) (2026-06-03)
+
+
+### Bug Fixes
+
+* profile header layout, avatar preview, and overflow menu closing ([#79](https://github.com/Novanglus96/LenoreChore/issues/79)) ([c668519](https://github.com/Novanglus96/LenoreChore/commit/c668519e506ce17aa5ff80a170934a9edc76e2c7))
+
 # [1.4.0-alpha.19](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.18...v1.4.0-alpha.19) (2026-06-03)
 
 
