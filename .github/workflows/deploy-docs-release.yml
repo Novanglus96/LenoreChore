@@ -3,6 +3,11 @@ name: Deploy MkDocs (Release)
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to (re)deploy and alias as latest, e.g. 1.4"
+        required: true
 
 permissions:
   contents: write
@@ -13,10 +18,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout release tag
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ github.event.release.tag_name || github.ref_name }}
           fetch-depth: 0
 
       - name: Set up Python
@@ -38,14 +43,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          VERSION=${{ github.event.release.tag_name }}
-          VERSION=${VERSION#v}
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            VERSION="${VERSION#v}"
+            PRERELEASE="${{ github.event.release.prerelease }}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+            PRERELEASE="false"
+          fi
 
           MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2)
 
           mike deploy "$MAJOR_MINOR" --push --update-aliases --config-file backend/mkdocs.yml
 
-          if [[ "${{ github.event.release.prerelease }}" != "true" ]]; then
-            mike alias "$MAJOR_MINOR" latest --push --config-file backend/mkdocs.yml
+          if [[ "$PRERELEASE" != "true" ]]; then
+            mike alias "$MAJOR_MINOR" latest --push --update-aliases --config-file backend/mkdocs.yml
             mike set-default latest --push --config-file backend/mkdocs.yml
           fi
