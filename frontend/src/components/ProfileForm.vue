@@ -1,18 +1,22 @@
 <template>
   <v-card color="primary" class="mx-auto" max-width="434" rounded="0" outline>
-    <v-avatar
-      :image="formData.avatar"
-      size="80"
-      color="white"
-      tonal
-      rounded="0"
-    ></v-avatar>
-    <v-card-title>
-      {{ formData.email }}
-    </v-card-title>
-    <v-card-subtitle
-      >{{ formData.first_name }} {{ formData.last_name }}</v-card-subtitle
-    >
+    <div class="d-flex align-center pa-4">
+      <v-avatar
+        :image="avatarPreview"
+        size="80"
+        color="white"
+        rounded="0"
+        class="elevation-4 me-4"
+      ></v-avatar>
+      <div class="text-truncate">
+        <div class="text-subtitle-1 font-weight-medium text-truncate">
+          {{ formData.email }}
+        </div>
+        <div class="text-body-2">
+          {{ formData.first_name }} {{ formData.last_name }}
+        </div>
+      </div>
+    </div>
     <v-card-text class="py-0">
       <Form
         @submit="submitForm"
@@ -137,7 +141,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { useUserStore } from "@/stores/user";
@@ -233,6 +237,16 @@ const formData = ref({
   avatar: userstore.avatar,
   isAdmin: userstore.isAdmin,
   id: userstore.id,
+});
+
+// Live avatar preview that follows the selected gender (and child role),
+// so picking a different avatar updates the picture immediately.
+const avatarPreview = computed(() => {
+  const child = userstore.isChild;
+  if (formData.value.male) {
+    return child ? "child_male_avatar.jpg" : "adult_male_avatar.jpg";
+  }
+  return child ? "child_female_avatar.jpg" : "adult_female_avatar.jpg";
 });
 
 const submitForm = (values) => {

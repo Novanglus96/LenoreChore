@@ -67,12 +67,7 @@
       @click="themeStore.toggle()"
       variant="text"
     ></v-btn>
-    <v-menu
-      v-model="menu"
-      :close-on-content-click="false"
-      location="end"
-      v-if="store.isLoggedIn"
-    >
+    <v-menu v-model="menu" location="end" v-if="store.isLoggedIn">
       <template v-slot:activator="{ props }">
         <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
       </template>
@@ -94,10 +89,6 @@
             }}
           </v-list-item-title>
         </v-list-item>
-        <VacationForm
-          v-model="showVacationForm"
-          @update-dialog="updateVacationDialog"
-        />
         <v-list-item to="/profile" prepend-icon="mdi-account">
           <v-list-item-title>Profile</v-list-item-title>
         </v-list-item>
@@ -106,6 +97,11 @@
         </v-list-item>
       </v-list>
     </v-menu>
+    <VacationForm
+      v-if="store.isLoggedIn"
+      v-model="showVacationForm"
+      @update-dialog="updateVacationDialog"
+    />
   </v-app-bar>
 </template>
 
