@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0...v1.4.1) (2026-06-03)
+
+
+### Bug Fixes
+
+* Pydantic v2 500s on /areas, /chores, /historyitems (dirtiness float + null completer) ([#84](https://github.com/Novanglus96/LenoreChore/issues/84)) ([ab0ec1e](https://github.com/Novanglus96/LenoreChore/commit/ab0ec1e0fa451dade8892ed9009cfc718b0d7a95))
+
 # [1.4.0](https://github.com/Novanglus96/LenoreChore/compare/v1.3.4...v1.4.0) (2026-06-03)
 
 
