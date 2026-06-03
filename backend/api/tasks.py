@@ -6,7 +6,7 @@ Author: John Adams <johnmadams96@gmail.com>
 Date: February 15, 2024
 """
 
-from api.models import Chore, CustomUser
+from api.models import Chore, CustomUser, Option
 from datetime import date, datetime
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from django.conf import settings
@@ -66,6 +66,10 @@ def send_due_notifications():
     Returns:
         (str): A short summary of how many users were notified.
     """
+    option = Option.objects.filter(id=1).first()
+    if option and option.vacation_mode:
+        return "Vacation mode active; no notifications sent"
+
     now_utc = timezone.now()
 
     notified = 0
