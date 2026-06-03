@@ -135,6 +135,27 @@ def test_invalid_timezone_falls_back_to_server(db, chore, fixed_now, mocker):
 
 @pytest.mark.django_db
 @pytest.mark.unit
+def test_skips_all_when_vacation_mode_active(db, chore, fixed_now, mocker):
+    """No reminders go out while vacation mode is on, and nobody is marked."""
+    from api.models import Option, PushSubscription
+
+    Option.objects.create(vacation_mode=True, med_thresh=50, high_thresh=75)
+    send = mocker.patch("api.tasks.send_web_push", return_value=True)
+    user = _make_user("a@example.com", enabled=True, hour=8)
+    PushSubscription.objects.create(
+        user=user, endpoint="https://p/x", p256dh="k", auth="s"
+    )
+
+    result = send_due_notifications()
+
+    assert send.call_count == 0
+    user.refresh_from_db()
+    assert user.last_notified_date is None
+    assert "acation" in result
+
+
+@pytest.mark.django_db
+@pytest.mark.unit
 def test_no_due_chores_marks_notified_without_pushing(db, fixed_now, mocker):
     send = mocker.patch("api.tasks.send_web_push", return_value=True)
     user = _make_user("a@example.com", enabled=True, hour=8)
