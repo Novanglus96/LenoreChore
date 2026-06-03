@@ -1,3 +1,10 @@
+# [1.4.0-alpha.19](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.18...v1.4.0-alpha.19) (2026-06-03)
+
+
+### Features
+
+* suppress daily reminders while vacation mode is active ([#78](https://github.com/Novanglus96/LenoreChore/issues/78)) ([79e7704](https://github.com/Novanglus96/LenoreChore/commit/79e7704a91b9eb061fa56c441b5b1a026bb5c9f7))
+
 # [1.4.0-alpha.18](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.17...v1.4.0-alpha.18) (2026-06-03)
 
 
