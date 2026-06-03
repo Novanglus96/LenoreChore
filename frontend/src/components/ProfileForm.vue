@@ -27,20 +27,20 @@
           <v-row>
             <v-col>
               <Field name="first_name" v-slot="{ field }">
+                <div class="text-body-2 mb-1">First name</div>
                 <v-text-field
                   v-bind="field"
                   :counter="20"
-                  label="First name"
                   :error-messages="errors.first_name"
                 ></v-text-field>
               </Field>
             </v-col>
             <v-col>
               <Field name="last_name" v-slot="{ field }">
+                <div class="text-body-2 mb-1">Last name</div>
                 <v-text-field
                   v-bind="field"
                   :counter="20"
-                  label="Last name"
                   :error-messages="errors.last_name"
                 ></v-text-field>
               </Field>
