@@ -1,3 +1,10 @@
+# [1.4.0-alpha.17](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.16...v1.4.0-alpha.17) (2026-06-03)
+
+
+### Bug Fixes
+
+* scheduletasks crash left the notification schedule uncreated ([#76](https://github.com/Novanglus96/LenoreChore/issues/76)) ([98556a8](https://github.com/Novanglus96/LenoreChore/commit/98556a832ab2f5a4b97550d2476d9edca471ec50))
+
 # [1.4.0-alpha.16](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.15...v1.4.0-alpha.16) (2026-06-03)
 
 
