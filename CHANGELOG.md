@@ -1,3 +1,41 @@
+# [1.4.0-rc.1](https://github.com/Novanglus96/LenoreChore/compare/v1.3.4...v1.4.0-rc.1) (2026-06-03)
+
+
+### Bug Fixes
+
+* add anonymous node_modules volume to frontend dev service ([1223071](https://github.com/Novanglus96/LenoreChore/commit/1223071d211590aeea5abfb2c268fd57d4af1099))
+* add explicit basename to chore-complete router registration ([b2da3ff](https://github.com/Novanglus96/LenoreChore/commit/b2da3ffdc4e45e6ae3a31503344ebea0cb59d149))
+* add Profile link to the nav overflow menu ([#73](https://github.com/Novanglus96/LenoreChore/issues/73)) ([bc044cb](https://github.com/Novanglus96/LenoreChore/commit/bc044cb2024e30f034399273caf21883b544b958))
+* always include localhost in ALLOWED_HOSTS for health checks ([#61](https://github.com/Novanglus96/LenoreChore/issues/61)) ([782278e](https://github.com/Novanglus96/LenoreChore/commit/782278eef66392e9d816a94f3c9ab4252b84d532))
+* chore list 500 when a chore has an assignee (groups resolver) ([#80](https://github.com/Novanglus96/LenoreChore/issues/80)) ([bd38046](https://github.com/Novanglus96/LenoreChore/commit/bd3804608ae5dd5c724f931b7a454c6de52486ab))
+* invalidate areas cache and query on chore mutations for SSE sync ([f718413](https://github.com/Novanglus96/LenoreChore/commit/f718413ba2fff410bc1b504bb18d38509086f8c9))
+* make area dirtiness progress bar reactive to prop updates ([#59](https://github.com/Novanglus96/LenoreChore/issues/59)) ([3691bf0](https://github.com/Novanglus96/LenoreChore/commit/3691bf053d0e6b30f921aa6a82c857de2dee4f97))
+* migrate to non-deprecated django-allauth account settings ([#64](https://github.com/Novanglus96/LenoreChore/issues/64)) ([9fb5b7c](https://github.com/Novanglus96/LenoreChore/commit/9fb5b7c6f16decbbf9ce10295fc669d033784139))
+* pass non-reactive clone to Chart.js to stop readonly proxy errors ([be5c1a5](https://github.com/Novanglus96/LenoreChore/commit/be5c1a521b83e1722932625c5e4b1823c4a31f43))
+* pin django-filter to 24.3 (25.2 requires Django>=5.2) ([0f7be1b](https://github.com/Novanglus96/LenoreChore/commit/0f7be1b5db6e6fba45e6f3be5c3365e2bd6414b4))
+* profile header layout, avatar preview, and overflow menu closing ([#79](https://github.com/Novanglus96/LenoreChore/issues/79)) ([c668519](https://github.com/Novanglus96/LenoreChore/commit/c668519e506ce17aa5ff80a170934a9edc76e2c7))
+* profile name fields — pre-fill values and move labels above inputs ([#75](https://github.com/Novanglus96/LenoreChore/issues/75)) ([937bce9](https://github.com/Novanglus96/LenoreChore/commit/937bce9b7f45648be8a32515c25c454286ec3cd7))
+* remove csrf=True from NinjaAPI (removed in django-ninja 1.x) ([6c949ff](https://github.com/Novanglus96/LenoreChore/commit/6c949ff1d3edecbd89be9fb3986fa481011dc0d5))
+* remove jazzmin user_avatar to drop AdminLTE stock photo fallback ([dbbe5b6](https://github.com/Novanglus96/LenoreChore/commit/dbbe5b6df23bd41cf2a3e97405d67903d1c210f5))
+* reposition daily reminders above Save and teleport the time picker ([#74](https://github.com/Novanglus96/LenoreChore/issues/74)) ([82e6baf](https://github.com/Novanglus96/LenoreChore/commit/82e6baf0b63284783323fe5d41fc1ba33430448b))
+* resolve Vuetify 3.x deprecations, prop types, and console noise ([e94d44a](https://github.com/Novanglus96/LenoreChore/commit/e94d44ab10021ef1108c531bdc26ff1e3f4b6dd7))
+* revert theme.change() to theme.global.name.value (prod crash) ([#65](https://github.com/Novanglus96/LenoreChore/issues/65)) ([9b50792](https://github.com/Novanglus96/LenoreChore/commit/9b5079208a091168c37abb7b38a42e8894579066))
+* scheduletasks crash left the notification schedule uncreated ([#76](https://github.com/Novanglus96/LenoreChore/issues/76)) ([98556a8](https://github.com/Novanglus96/LenoreChore/commit/98556a832ab2f5a4b97550d2476d9edca471ec50))
+* sync dev/prod deps via npm ci + non-breaking security fixes ([#68](https://github.com/Novanglus96/LenoreChore/issues/68)) ([e4da76e](https://github.com/Novanglus96/LenoreChore/commit/e4da76ee6374e707551ae64a0f09fe7fc12628cd)), closes [#65](https://github.com/Novanglus96/LenoreChore/issues/65)
+
+
+### Features
+
+* add Docker health checks to all services and containers ([#60](https://github.com/Novanglus96/LenoreChore/issues/60)) ([332fa47](https://github.com/Novanglus96/LenoreChore/commit/332fa47b1822b2195809b680fb566c18e3a04da0))
+* add SSE real-time sync for multi-user invalidation ([fe02bf2](https://github.com/Novanglus96/LenoreChore/commit/fe02bf26e29a7909220f42b603d9dab5fd5cc46e))
+* bundle redis-server in single-container image for SSE and caching ([#58](https://github.com/Novanglus96/LenoreChore/issues/58)) ([f3e1f06](https://github.com/Novanglus96/LenoreChore/commit/f3e1f06f5ac85b5ccbc56b317f4d00703884bb5f))
+* push notification backend (daily due/overdue rollup) ([#70](https://github.com/Novanglus96/LenoreChore/issues/70)) ([0f3dcd0](https://github.com/Novanglus96/LenoreChore/commit/0f3dcd0d784eed12df731f29b611d6f5286649ba))
+* push notification frontend + per-user timezone handling ([#72](https://github.com/Novanglus96/LenoreChore/issues/72)) ([ec56c2e](https://github.com/Novanglus96/LenoreChore/commit/ec56c2e57b3f819320744237848e472a215ff827))
+* re-arm today's reminder when the time is moved to later today ([#77](https://github.com/Novanglus96/LenoreChore/issues/77)) ([d5d3830](https://github.com/Novanglus96/LenoreChore/commit/d5d3830a2e4af801f657d71e786a30239afec62c))
+* skip bundled Redis when an external REDIS_URL is configured ([#66](https://github.com/Novanglus96/LenoreChore/issues/66)) ([c6a11ce](https://github.com/Novanglus96/LenoreChore/commit/c6a11ced30f2e1bd11080243f5330f78dd0e6024))
+* suppress daily reminders while vacation mode is active ([#78](https://github.com/Novanglus96/LenoreChore/issues/78)) ([79e7704](https://github.com/Novanglus96/LenoreChore/commit/79e7704a91b9eb061fa56c441b5b1a026bb5c9f7))
+* version/details endpoint + About page ([#69](https://github.com/Novanglus96/LenoreChore/issues/69)) ([75c94e2](https://github.com/Novanglus96/LenoreChore/commit/75c94e2779738e7dc6307c5e004623b1db6123aa))
+
 # [1.4.0-alpha.21](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.20...v1.4.0-alpha.21) (2026-06-03)
 
 
