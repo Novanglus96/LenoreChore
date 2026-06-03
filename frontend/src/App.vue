@@ -84,6 +84,7 @@ import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
 import { useVersion } from "@/composables/versionComposable";
 import { useSync } from "@/composables/syncComposable";
 import { usePrefetch } from "@/composables/prefetchComposable";
+import { useSSE } from "@/composables/sseComposable";
 import { useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
 import { useTheme } from "vuetify";
@@ -122,6 +123,7 @@ const queryClient = useQueryClient();
 const { prefetchVersion, version } = useVersion();
 const { replayQueue } = useSync();
 const { prefetchCriticalData } = usePrefetch();
+const { connect: sseConnect, disconnect: sseDisconnect } = useSSE();
 
 const showBanner = ref(false);
 const showInstallPrompt = ref(false);
@@ -154,6 +156,10 @@ const checkSession = async () => {
 };
 
 // ── Theme ───────────────────────────────────────────────────────────────────
+// NOTE: use theme.global.name.value (not theme.change()). theme.change() does
+// not exist in the vuetify version pinned in package-lock (3.6.8) and crashes
+// the app at setup in production builds; the deprecation warning only appears
+// on newer 3.x. This form works across all 3.x versions.
 vuetifyTheme.global.name.value = themeStore.isDark
   ? "myCustomDarkTheme"
   : "myCustomLightTheme";
@@ -235,9 +241,11 @@ onMounted(async () => {
   const handleOnline = () => {
     offlineStore.setOnline(true);
     replayQueue();
+    if (userstore.isLoggedIn) sseConnect();
   };
   const handleOffline = () => {
     offlineStore.setOnline(false);
+    sseDisconnect();
   };
   window.addEventListener("online", handleOnline);
   window.addEventListener("offline", handleOffline);
@@ -275,6 +283,7 @@ onMounted(async () => {
     window.removeEventListener("offline", handleOffline);
     window.removeEventListener("beforeinstallprompt", handleInstallPrompt);
     window.removeEventListener("appinstalled", handleAppInstalled);
+    sseDisconnect();
   });
 
   await checkSession();
@@ -284,6 +293,7 @@ onMounted(async () => {
   // Pre-warm critical API data in TanStack Query + Workbox cache
   if (userstore.isLoggedIn) {
     prefetchCriticalData();
+    sseConnect();
   }
 
   // Replay any mutations that were queued in a previous offline session
@@ -301,8 +311,10 @@ watch(
   (isLoggedIn) => {
     if (!isLoggedIn) {
       queryClient.clear();
+      sseDisconnect();
     } else {
       prefetchCriticalData();
+      sseConnect();
     }
   }
 );

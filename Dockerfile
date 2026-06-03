@@ -5,8 +5,8 @@
 FROM node:lts-alpine AS frontend-build
 
 WORKDIR /app
-COPY frontend/package*.json ./
-RUN npm install
+COPY frontend/package*.json frontend/.npmrc ./
+RUN npm ci
 COPY frontend/ .
 RUN npm run build
 
@@ -23,7 +23,7 @@ ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends gcc
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install flake8==6.0.0
 COPY backend/ /usr/src/app/
 RUN flake8 --ignore=E501,F401 ./backend
@@ -45,6 +45,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor \
     netcat-openbsd \
     postgresql-client \
+    redis-server \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # App directory
@@ -56,7 +58,7 @@ WORKDIR $APP_HOME
 # Python dependencies
 COPY --from=backend-builder /usr/src/app/wheels /wheels
 COPY --from=backend-builder /usr/src/app/requirements.txt .
-RUN pip install --upgrade pip && pip install --no-cache /wheels/*
+RUN pip install --upgrade pip setuptools wheel && pip install --no-cache /wheels/*
 
 # Vue static files
 COPY --from=frontend-build /app/dist /usr/share/nginx/html
@@ -69,6 +71,7 @@ COPY backend/ $APP_HOME/
 # Scripts
 RUN sed -i 's/\r$//g' $APP_HOME/entrypoint.sh && chmod +x $APP_HOME/entrypoint.sh
 RUN sed -i 's/\r$//g' $APP_HOME/start.app.sh && chmod +x $APP_HOME/start.app.sh
+RUN sed -i 's/\r$//g' $APP_HOME/start-redis.sh && chmod +x $APP_HOME/start-redis.sh
 
 # Nginx config
 COPY nginx/app.conf /etc/nginx/conf.d/default.conf
@@ -78,6 +81,9 @@ RUN rm -f /etc/nginx/sites-enabled/default
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost/api/v2/version/list || exit 1
 
 ENTRYPOINT ["/home/app/web/entrypoint.sh"]
 CMD ["/home/app/web/start.app.sh"]

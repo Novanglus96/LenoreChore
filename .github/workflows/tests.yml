@@ -1,0 +1,44 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main, rc, beta, alpha]
+
+jobs:
+  backend:
+    if: github.repository != 'Novanglus96/LenoreTemplate'
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m venv .ci-venv
+          .ci-venv/bin/pip install -r requirements-test.txt
+
+      - name: Run tests
+        working-directory: backend
+        run: .ci-venv/bin/python -m pytest -q
+
+  frontend:
+    if: github.repository != 'Novanglus96/LenoreTemplate'
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests
+        run: |
+          cat > /tmp/Dockerfile.frontend-test <<'DOCKERFILE'
+          FROM node:lts-alpine
+          WORKDIR /app
+          COPY package*.json ./
+          RUN npm install
+          COPY . .
+          CMD ["npm", "test"]
+          DOCKERFILE
+          docker build -t lenorechore-frontend-test \
+            -f /tmp/Dockerfile.frontend-test \
+            ${{ github.workspace }}/frontend
+          docker run --rm lenorechore-frontend-test
+          docker rmi lenorechore-frontend-test || true

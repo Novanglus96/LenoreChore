@@ -1,5 +1,6 @@
-from ninja import NinjaAPI, Schema, Router, Query
+from ninja import NinjaAPI, Schema, Router
 from ninja.security import django_auth
+from backend.sse import notify
 from api.models import (
     CustomUser,
     AreaGroup,
@@ -9,16 +10,22 @@ from api.models import (
     HistoryItem,
     Option,
     Version,
+    PushSubscription,
 )
-from typing import List, Optional
+from typing import Dict, List, Optional
+from django.conf import settings
 from django.shortcuts import get_object_or_404
-from datetime import date, timedelta
+from datetime import date, time, timedelta
 from ninja.errors import HttpError
 from dateutil.relativedelta import relativedelta
 from django.db.models import Count
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.core.cache import cache
+import importlib.metadata
+import platform
+import django
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 CACHE_TTL = 15 * 60  # 15 minutes
 
@@ -41,10 +48,10 @@ def invalidate_pattern(*patterns):
             cache.clear()
 
 
-api = NinjaAPI(auth=django_auth, csrf=True, urls_namespace="api_v2")
+api = NinjaAPI(auth=django_auth, urls_namespace="api_v2")
 router = Router()
 api.title = "LenoreChore API"
-api.version = "1.3.4"
+api.version = "1.4.0-rc.1"
 api.description = "API documentation for LenoreChore"
 
 
@@ -59,6 +66,92 @@ class VersionOut(Schema):
 
     id: int
     version_number: str
+
+
+class VersionDetailsOut(Schema):
+    """
+    Schema reporting the app version alongside key runtime/dependency
+    versions, for confirming what a deployment is actually running.
+
+    Attributes:
+        app_version (str): The LenoreChore release version.
+        python_version (str): The running Python version.
+        django_version (str): The installed Django version.
+        packages (Dict[str, str]): Map of key package name to installed version.
+    """
+
+    app_version: str
+    python_version: str
+    django_version: str
+    packages: Dict[str, str]
+
+
+class NotificationPrefsIn(Schema):
+    """
+    Schema to update a user's daily reminder preferences.
+
+    Attributes:
+        notify_enabled (bool): Whether daily reminders are enabled.
+        notify_time (time): Local wall-clock time to send the reminder.
+        notify_timezone (str): IANA timezone the time is interpreted in
+            (e.g. "America/New_York"). Empty falls back to the server tz.
+    """
+
+    notify_enabled: bool
+    notify_time: time
+    notify_timezone: str = ""
+
+
+class NotificationPrefsOut(Schema):
+    """
+    Schema reporting a user's daily reminder preferences.
+
+    Attributes:
+        notify_enabled (bool): Whether daily reminders are enabled.
+        notify_time (time): Local wall-clock time to send the reminder.
+        notify_timezone (str): IANA timezone the time is interpreted in.
+    """
+
+    notify_enabled: bool
+    notify_time: time
+    notify_timezone: str
+
+
+class PushSubscriptionIn(Schema):
+    """
+    Schema to register a Web Push subscription.
+
+    Attributes:
+        endpoint (str): The push service endpoint URL.
+        p256dh (str): The client public key for payload encryption.
+        auth (str): The client auth secret for payload encryption.
+    """
+
+    endpoint: str
+    p256dh: str
+    auth: str
+
+
+class PushUnsubscribeIn(Schema):
+    """
+    Schema to remove a Web Push subscription.
+
+    Attributes:
+        endpoint (str): The push service endpoint URL to remove.
+    """
+
+    endpoint: str
+
+
+class VapidKeyOut(Schema):
+    """
+    Schema reporting the public VAPID key for Web Push subscription.
+
+    Attributes:
+        public_key (str): The application server public VAPID key.
+    """
+
+    public_key: str
 
 
 class LoginUserSchema(Schema):
@@ -80,7 +173,7 @@ class LoginUserSchema(Schema):
     """
 
     email: str
-    profile_picture: str = None
+    profile_picture: Optional[str] = None
     male: bool
     user_color: str
     first_name: str
@@ -112,7 +205,7 @@ class CustomUserSchema(Schema):
 
     id: int
     email: str
-    profile_picture: str = None
+    profile_picture: Optional[str] = None
     male: bool
     user_color: str
     first_name: str
@@ -122,11 +215,17 @@ class CustomUserSchema(Schema):
     is_staff: bool
     is_active: bool
     groups: List[int]
+    notify_enabled: bool
+    notify_time: time
 
     @staticmethod
     def resolve_groups(obj):
         """
         Resolve the groups field to a list of group IDs.
+
+        Handles both a CustomUser model (groups is a related manager) and an
+        already-serialized value (a list of ids), so the schema survives
+        re-validation when used as a nested field (e.g. ChoreOut.assignee).
 
         Args:
             obj (CustomUser): The user instance being serialized.
@@ -134,7 +233,12 @@ class CustomUserSchema(Schema):
         Returns:
             List[int]: List of group IDs the user belongs to.
         """
-        return [group.id for group in obj.groups.all()]
+        groups = getattr(obj, "groups", None)
+        if groups is None:
+            return []
+        if hasattr(groups, "all"):
+            return [group.id for group in groups.all()]
+        return list(groups)
 
 
 class AreaGroupIn(Schema):
@@ -241,16 +345,16 @@ class ChoreIn(Schema):
         status (int): ID of the status. Optional.
     """
 
-    chore_name: Optional[str]
-    area_id: Optional[int]
-    intervalNumber: Optional[int]
-    unit: Optional[str]
-    active_months: Optional[List[int]]
-    effort: Optional[int]
-    nextDue: Optional[date]
-    lastCompleted: Optional[date]
-    assignee_id: Optional[int]
-    status: Optional[int]
+    chore_name: Optional[str] = None
+    area_id: Optional[int] = None
+    intervalNumber: Optional[int] = None
+    unit: Optional[str] = None
+    active_months: Optional[List[int]] = None
+    effort: Optional[int] = None
+    nextDue: Optional[date] = None
+    lastCompleted: Optional[date] = None
+    assignee_id: Optional[int] = None
+    status: Optional[int] = None
 
 
 class TogglActive(Schema):
@@ -296,7 +400,7 @@ class ClaimChore(Schema):
         assignee_id (int): ID of a user to assign to chore. Optional.
     """
 
-    assignee_id: Optional[int]
+    assignee_id: Optional[int] = None
 
 
 class LastHistoryItem(Schema):
@@ -345,8 +449,8 @@ class ChoreOut(Schema):
     intervalNumber: int
     unit: str
     active_months: List[int]
-    assignee_id: Optional[int]
-    assignee: CustomUserSchema = None
+    assignee_id: Optional[int] = None
+    assignee: Optional[CustomUserSchema] = None
     effort: int
     vacationPause: int
     expand: bool
@@ -389,8 +493,8 @@ class ChoreOutFull(Schema):
     intervalNumber: int
     unit: str
     active_months: List[MonthOut]
-    assignee_id: Optional[int]
-    assignee: CustomUserSchema = None
+    assignee_id: Optional[int] = None
+    assignee: Optional[CustomUserSchema] = None
     effort: int
     vacationPause: int
     expand: bool
@@ -491,9 +595,9 @@ class DatasetObject(Schema):
         label (str): Label for the gaph dataset.
     """
 
-    backgroundColor: Optional[str]
-    data: Optional[List[int]]
-    label: Optional[str]
+    backgroundColor: Optional[str] = None
+    data: Optional[List[int]] = None
+    label: Optional[str] = None
 
 
 # The class GraphData is a schema representing a graph data object.
@@ -513,7 +617,7 @@ class GraphData(Schema):
 
 
 @api.get("/weeklytotals", response=GraphData)
-def get_weeklytotals(request, week: Optional[int] = 0):
+def get_weeklytotals(request, week: int = 0):
     """
     The function `get_weeklytotals` retrieves the weekly totals.
 
@@ -654,6 +758,9 @@ def toggle_vacation(request):
             chore.save()
     invalidate("options")
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("options")
+    notify("chores")
     return {"success": True}
 
 
@@ -673,8 +780,9 @@ def create_areagroup(request, payload: AreaGroupIn):
     Returns:
         (int): The ID of the newly created AreaGroup object.
     """
-    areagroup = AreaGroup.objects.create(**payload.dict())
+    areagroup = AreaGroup.objects.create(**payload.model_dump())
     invalidate("areagroups")
+    notify("areagroups")
     return {"id": areagroup.id}
 
 
@@ -694,8 +802,9 @@ def create_area(request, payload: AreaIn):
     Returns:
         (int): ID of the newly created Area object.
     """
-    area = Area.objects.create(**payload.dict())
+    area = Area.objects.create(**payload.model_dump())
     invalidate("areas", "areagroups")
+    notify("areas")
     return {"id": area.id}
 
 
@@ -731,6 +840,8 @@ def create_chore(request, payload: ChoreIn):
     chore.active_months.set(active_months)
 
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"id": chore.id}
 
 
@@ -758,6 +869,8 @@ def create_historyitem(request, payload: HistoryItemIn):
         chore_id=payload.chore_id,
     )
     invalidate_pattern("chores:*", "weeklytotals:*")
+    notify("chores")
+    notify("history")
     return {"id": historyitem.id}
 
 
@@ -911,9 +1024,9 @@ def list_areas(request):
 def list_chores(
     request,
     inactive: bool = False,
-    timeframe: int = None,
-    assignee_id: int = None,
-    area_id: int = None,
+    timeframe: Optional[int] = None,
+    assignee_id: Optional[int] = None,
+    area_id: Optional[int] = None,
 ):
     """
     The function `list_chores` retrieves a list of Chore objects.
@@ -1015,8 +1128,8 @@ def calculate_duedays(next_due):
 @api.get("/historyitems", response=PaginatedHistoryItems)
 def list_historyitems(
     request,
-    page: Optional[int] = Query(1),
-    page_size: Optional[int] = Query(60),
+    page: int = 1,
+    page_size: int = 60,
 ):
     """
     The function `list_historyitems` retrieves a list of HistoryItem objects.
@@ -1120,6 +1233,7 @@ def update_areagroup(request, areagroup_id: int, payload: AreaGroupIn):
     areagroup.group_color = payload.group_color
     areagroup.save()
     invalidate("areagroups")
+    notify("areagroups")
     return {"success": True}
 
 
@@ -1146,6 +1260,7 @@ def update_area(request, area_id: int, payload: AreaIn):
     area.group_id = payload.group_id
     area.save()
     invalidate("areas", "areagroups")
+    notify("areas")
     return {"success": True}
 
 
@@ -1179,6 +1294,8 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
     chore.effort = payload.effort
     chore.save()
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"success": True}
 
 
@@ -1203,6 +1320,8 @@ def toggle_chore(request, chore_id: int, payload: TogglActive):
     chore.status = payload.status
     chore.save()
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"success": True}
 
 
@@ -1227,6 +1346,8 @@ def snooze_chore(request, chore_id: int, payload: SnoozeChore):
     chore.nextDue = payload.nextDue
     chore.save()
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"success": True}
 
 
@@ -1251,6 +1372,7 @@ def claim_chore(request, chore_id: int, payload: ClaimChore):
     chore.assignee_id = payload.assignee_id
     chore.save()
     invalidate_pattern("chores:*")
+    notify("chores")
     return {"success": True}
 
 
@@ -1297,6 +1419,9 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
         chore=chore,
     )
     invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate("areas")
+    notify("chores")
+    notify("history")
     return {"success": True}
 
 
@@ -1323,6 +1448,8 @@ def update_historyitem(request, historyitem_id: int, payload: HistoryItemIn):
     historyitem.chore_id = payload.chore_id
     historyitem.save()
     invalidate_pattern("chores:*", "weeklytotals:*")
+    notify("chores")
+    notify("history")
     return {"success": True}
 
 
@@ -1349,6 +1476,7 @@ def update_option(request, option_id: int, payload: OptionIn):
     option.high_thresh = payload.high_thresh
     option.save()
     invalidate("options")
+    notify("options")
     return {"success": True}
 
 
@@ -1371,6 +1499,7 @@ def delete_areagroup(request, areagroup_id: int):
     areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
     areagroup.delete()
     invalidate("areagroups")
+    notify("areagroups")
     return {"success": True}
 
 
@@ -1393,6 +1522,7 @@ def delete_area(request, area_id: int):
     area = get_object_or_404(Area, id=area_id)
     area.delete()
     invalidate("areas", "areagroups")
+    notify("areas")
     return {"success": True}
 
 
@@ -1415,6 +1545,8 @@ def delete_chore(request, chore_id: int):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.delete()
     invalidate_pattern("chores:*")
+    invalidate("areas")
+    notify("chores")
     return {"success": True}
 
 
@@ -1437,11 +1569,13 @@ def delete_historyitem(request, historyitem_id: int):
     historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
     historyitem.delete()
     invalidate_pattern("chores:*", "weeklytotals:*")
+    notify("chores")
+    notify("history")
     return {"success": True}
 
 
 @api.get("/version/list", response=VersionOut, auth=None)
-def list_version(request):
+def list_version(request) -> VersionOut:
     """
     The function `list_version` retrieves the app version number
     from the backend.
@@ -1462,6 +1596,198 @@ def list_version(request):
         return qs
     except Exception as e:
         raise HttpError(500, f"Record retrieval error: {str(e)}")
+
+
+# Packages reported by /version/details. Add or remove names here as needed.
+VERSION_DETAIL_PACKAGES = [
+    "django-ninja",
+    "djangorestframework",
+    "django-redis",
+    "django-q2",
+    "django-allauth",
+    "django-filter",
+    "gunicorn",
+    "gevent",
+    "pillow",
+    "arrow",
+    "setuptools",
+    "wheel",
+]
+
+
+@api.get("/version/details", response=VersionDetailsOut)
+def version_details(request):
+    """
+    The function `version_details` reports the app version alongside the
+    running Python/Django versions and a set of key installed package
+    versions, so a deployment's full stack can be confirmed from one call.
+
+    Authentication is required, so exact dependency versions are not exposed
+    publicly. The unauthenticated `/version/list` endpoint (used by the UI
+    update check) is unchanged.
+
+    Endpoint:
+        - **Path**: `/api/v2/version/details`
+        - **Method**: `GET`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        (VersionDetailsOut): App, Python, Django, and package versions.
+    """
+    packages = {}
+    for name in VERSION_DETAIL_PACKAGES:
+        try:
+            packages[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            packages[name] = "not installed"
+
+    version_obj = Version.objects.filter(id=1).first()
+    return VersionDetailsOut(
+        app_version=version_obj.version_number if version_obj else "unknown",
+        python_version=platform.python_version(),
+        django_version=django.get_version(),
+        packages=packages,
+    )
+
+
+@api.get("/me/notifications", response=NotificationPrefsOut)
+def get_notification_prefs(request):
+    """
+    The function `get_notification_prefs` returns the current user's daily
+    reminder preferences.
+
+    Endpoint:
+        - **Path**: `/api/v2/me/notifications`
+        - **Method**: `GET`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        (NotificationPrefsOut): The user's notify_enabled and notify_time.
+    """
+    return request.user
+
+
+@api.put("/me/notifications", response=NotificationPrefsOut)
+def update_notification_prefs(request, payload: NotificationPrefsIn):
+    """
+    The function `update_notification_prefs` updates the current user's daily
+    reminder preferences.
+
+    Endpoint:
+        - **Path**: `/api/v2/me/notifications`
+        - **Method**: `PUT`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (NotificationPrefsIn): The new preferences.
+
+    Returns:
+        (NotificationPrefsOut): The updated preferences.
+    """
+    user = request.user
+    user.notify_enabled = payload.notify_enabled
+    user.notify_time = payload.notify_time
+    # Only store a valid IANA timezone; otherwise fall back (empty = server tz).
+    tz = payload.notify_timezone or ""
+    if tz:
+        try:
+            ZoneInfo(tz)
+        except (ZoneInfoNotFoundError, ValueError):
+            tz = ""
+    user.notify_timezone = tz
+
+    # If the chosen time is still ahead today (in the user's timezone), clear
+    # today's dedup so moving the reminder to a later time fires today rather
+    # than waiting until tomorrow.
+    tz_obj = ZoneInfo(tz) if tz else ZoneInfo(settings.TIME_ZONE)
+    local_now = timezone.now().astimezone(tz_obj)
+    if payload.notify_enabled and payload.notify_time > local_now.time():
+        user.last_notified_date = None
+
+    user.save(
+        update_fields=[
+            "notify_enabled",
+            "notify_time",
+            "notify_timezone",
+            "last_notified_date",
+        ]
+    )
+    return user
+
+
+@api.get("/push/vapid-key", response=VapidKeyOut)
+def push_vapid_key(request):
+    """
+    The function `push_vapid_key` returns the public VAPID key used by the
+    browser to create a push subscription.
+
+    Endpoint:
+        - **Path**: `/api/v2/push/vapid-key`
+        - **Method**: `GET`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        (VapidKeyOut): The public VAPID key (empty string if push is not
+        configured on this deployment).
+    """
+    return {"public_key": settings.VAPID_PUBLIC_KEY}
+
+
+@api.post("/push/subscribe")
+def push_subscribe(request, payload: PushSubscriptionIn):
+    """
+    The function `push_subscribe` registers a Web Push subscription for the
+    current user (one per browser/device).
+
+    Endpoint:
+        - **Path**: `/api/v2/push/subscribe`
+        - **Method**: `POST`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (PushSubscriptionIn): The browser push subscription details.
+
+    Returns:
+        (str): Returns `success` if successful.
+    """
+    PushSubscription.objects.update_or_create(
+        endpoint=payload.endpoint,
+        defaults={
+            "user": request.user,
+            "p256dh": payload.p256dh,
+            "auth": payload.auth,
+        },
+    )
+    return {"success": True}
+
+
+@api.post("/push/unsubscribe")
+def push_unsubscribe(request, payload: PushUnsubscribeIn):
+    """
+    The function `push_unsubscribe` removes a Web Push subscription belonging
+    to the current user.
+
+    Endpoint:
+        - **Path**: `/api/v2/push/unsubscribe`
+        - **Method**: `POST`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (PushUnsubscribeIn): The endpoint to remove.
+
+    Returns:
+        (str): Returns `success` if successful.
+    """
+    PushSubscription.objects.filter(
+        endpoint=payload.endpoint, user=request.user
+    ).delete()
+    return {"success": True}
 
 
 api.add_router("/auth", router)

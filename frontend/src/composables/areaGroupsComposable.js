@@ -66,7 +66,6 @@ export function useAreaGroups() {
   const createAreaGroupMutation = useMutation({
     mutationFn: createAreaGroupFunction,
     onSuccess: () => {
-      console.log("Success adding area group");
       queryClient.invalidateQueries({ queryKey: ["areagroups"] });
     },
   });
@@ -74,7 +73,6 @@ export function useAreaGroups() {
   const updateAreaGroupMutation = useMutation({
     mutationFn: updateAreaGroupFunction,
     onSuccess: () => {
-      console.log("Success updating area group");
       queryClient.invalidateQueries({ queryKey: ["areagroups"] });
     },
   });
@@ -82,7 +80,6 @@ export function useAreaGroups() {
   const deleteAreaGroupMutation = useMutation({
     mutationFn: deleteAreaGroupFunction,
     onSuccess: () => {
-      console.log("Success deleting area group");
       queryClient.invalidateQueries({ queryKey: ["areagroups"] });
     },
   });

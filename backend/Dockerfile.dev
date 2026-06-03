@@ -5,7 +5,7 @@ FROM python:3.11.4-slim-bookworm AS develop-stage
 WORKDIR /usr/src/app
 
 # install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends gcc
+RUN apt-get update && apt-get install -y --no-install-recommends gcc curl
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -13,7 +13,7 @@ ENV PYTHONUNBUFFERED=1
 
 # install python dependencies
 COPY ./requirements.txt .
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install MkDocs

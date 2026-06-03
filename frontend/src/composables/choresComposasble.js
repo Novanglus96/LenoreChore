@@ -132,7 +132,6 @@ export function useChores() {
   const createChoreMutation = useMutation({
     mutationFn: createChoreFunction,
     onSuccess: () => {
-      console.log("Success adding chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
@@ -141,7 +140,6 @@ export function useChores() {
   const updateChoreMutation = useMutation({
     mutationFn: updateChoreFunction,
     onSuccess: () => {
-      console.log("Success updating chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
@@ -170,7 +168,6 @@ export function useChores() {
       }
     },
     onSuccess: () => {
-      console.log("Success completing chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
       queryClient.invalidateQueries({ queryKey: ["historyitems"] });
@@ -205,7 +202,6 @@ export function useChores() {
       }
     },
     onSuccess: () => {
-      console.log("Success snoozing chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
@@ -248,7 +244,6 @@ export function useChores() {
       }
     },
     onSuccess: () => {
-      console.log("Success claiming chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
@@ -281,7 +276,6 @@ export function useChores() {
       }
     },
     onSuccess: () => {
-      console.log("Success toggling chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
@@ -290,7 +284,6 @@ export function useChores() {
   const deleteChoreMutation = useMutation({
     mutationFn: deleteChoreFunction,
     onSuccess: () => {
-      console.log("Success deleting chore");
       queryClient.invalidateQueries({ queryKey: ["chores"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },

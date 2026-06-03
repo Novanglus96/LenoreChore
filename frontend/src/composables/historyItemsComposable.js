@@ -51,7 +51,6 @@ export function useHistoryItems() {
   const createHistoryItemMutation = useMutation({
     mutationFn: createHistoryItemFunction,
     onSuccess: () => {
-      console.log("Success adding history item");
       queryClient.invalidateQueries({ queryKey: ["historyitems"] });
     },
   });
