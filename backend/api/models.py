@@ -167,8 +167,10 @@ class Area(models.Model):
         total_chores = self.chore_set.filter(status=0).count()
 
         if total_chores > 0:
-            # Calculate the percentage if there are chores
-            percentage = total_dirtiness / total_chores
+            # Calculate the percentage if there are chores. Round to an int:
+            # the API schema (AreaOut.dirtiness) is an int, and Pydantic v2
+            # rejects floats with a fractional part.
+            percentage = round(total_dirtiness / total_chores)
         else:
             # Handle the case when there are no chores
             percentage = 0
