@@ -1,3 +1,10 @@
+# [1.4.0-alpha.16](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.15...v1.4.0-alpha.16) (2026-06-03)
+
+
+### Bug Fixes
+
+* profile name fields — pre-fill values and move labels above inputs ([#75](https://github.com/Novanglus96/LenoreChore/issues/75)) ([937bce9](https://github.com/Novanglus96/LenoreChore/commit/937bce9b7f45648be8a32515c25c454286ec3cd7))
+
 # [1.4.0-alpha.15](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.14...v1.4.0-alpha.15) (2026-06-03)
 
 
