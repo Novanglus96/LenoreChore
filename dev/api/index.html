@@ -2829,10 +2829,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1190</span>
-<span class="normal">1191</span>
-<span class="normal">1192</span>
-<span class="normal">1193</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1193</span>
 <span class="normal">1194</span>
 <span class="normal">1195</span>
 <span class="normal">1196</span>
@@ -2849,7 +2846,10 @@
 <span class="normal">1207</span>
 <span class="normal">1208</span>
 <span class="normal">1209</span>
-<span class="normal">1210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/users&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">CustomUserSchema</span><span class="p">])</span>
+<span class="normal">1210</span>
+<span class="normal">1211</span>
+<span class="normal">1212</span>
+<span class="normal">1213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/users&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">CustomUserSchema</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_users</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `list_users` retrieves a list of CustomUser objects.</span>
@@ -4041,10 +4041,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1213</span>
-<span class="normal">1214</span>
-<span class="normal">1215</span>
-<span class="normal">1216</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1216</span>
 <span class="normal">1217</span>
 <span class="normal">1218</span>
 <span class="normal">1219</span>
@@ -4065,7 +4062,10 @@
 <span class="normal">1234</span>
 <span class="normal">1235</span>
 <span class="normal">1236</span>
-<span class="normal">1237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1237</span>
+<span class="normal">1238</span>
+<span class="normal">1239</span>
+<span class="normal">1240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_areagroup</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">areagroup_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">AreaGroupIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `update_areagroup` updates a given AreaGroup object.</span>
@@ -4190,10 +4190,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1483</span>
-<span class="normal">1484</span>
-<span class="normal">1485</span>
-<span class="normal">1486</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1486</span>
 <span class="normal">1487</span>
 <span class="normal">1488</span>
 <span class="normal">1489</span>
@@ -4210,7 +4207,10 @@
 <span class="normal">1500</span>
 <span class="normal">1501</span>
 <span class="normal">1502</span>
-<span class="normal">1503</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1503</span>
+<span class="normal">1504</span>
+<span class="normal">1505</span>
+<span class="normal">1506</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_areagroup</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">areagroup_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `delete_areagroup` deletes a given AreaGroup object.</span>
@@ -5008,10 +5008,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1240</span>
-<span class="normal">1241</span>
-<span class="normal">1242</span>
-<span class="normal">1243</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1243</span>
 <span class="normal">1244</span>
 <span class="normal">1245</span>
 <span class="normal">1246</span>
@@ -5032,7 +5029,10 @@
 <span class="normal">1261</span>
 <span class="normal">1262</span>
 <span class="normal">1263</span>
-<span class="normal">1264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/areas/</span><span class="si">{area_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1264</span>
+<span class="normal">1265</span>
+<span class="normal">1266</span>
+<span class="normal">1267</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/areas/</span><span class="si">{area_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_area</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">area_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">AreaIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `update_area` updates a given Area object.</span>
@@ -5157,10 +5157,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1506</span>
-<span class="normal">1507</span>
-<span class="normal">1508</span>
-<span class="normal">1509</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1509</span>
 <span class="normal">1510</span>
 <span class="normal">1511</span>
 <span class="normal">1512</span>
@@ -5177,7 +5174,10 @@
 <span class="normal">1523</span>
 <span class="normal">1524</span>
 <span class="normal">1525</span>
-<span class="normal">1526</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/areas/</span><span class="si">{area_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1526</span>
+<span class="normal">1527</span>
+<span class="normal">1528</span>
+<span class="normal">1529</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/areas/</span><span class="si">{area_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_area</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">area_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `delete_area` deletes a given Area object.</span>
@@ -6185,7 +6185,10 @@
 <span class="normal">1108</span>
 <span class="normal">1109</span>
 <span class="normal">1110</span>
-<span class="normal">1111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/chores&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">ChoreOut</span><span class="p">])</span>
+<span class="normal">1111</span>
+<span class="normal">1112</span>
+<span class="normal">1113</span>
+<span class="normal">1114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/chores&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">ChoreOut</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_chores</span><span class="p">(</span>
     <span class="n">request</span><span class="p">,</span>
     <span class="n">inactive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -6241,7 +6244,10 @@
         <span class="n">last_three</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">last_three_query</span><span class="p">:</span>
             <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span><span class="o">.</span><span class="n">fullname</span> <span class="o">==</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># completed_by is SET_NULL on user delete; don&#39;t crash on it.</span>
+                <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Unknown&quot;</span>
+            <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span><span class="o">.</span><span class="n">fullname</span> <span class="o">==</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
                 <span class="n">display_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span><span class="o">.</span><span class="n">email</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">display_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span><span class="o">.</span><span class="n">fullname</span>
@@ -6390,10 +6396,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1267</span>
-<span class="normal">1268</span>
-<span class="normal">1269</span>
-<span class="normal">1270</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1270</span>
 <span class="normal">1271</span>
 <span class="normal">1272</span>
 <span class="normal">1273</span>
@@ -6422,7 +6425,10 @@
 <span class="normal">1296</span>
 <span class="normal">1297</span>
 <span class="normal">1298</span>
-<span class="normal">1299</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/chores/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1299</span>
+<span class="normal">1300</span>
+<span class="normal">1301</span>
+<span class="normal">1302</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/chores/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">ChoreIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `update_chore` updates a given Chore object.</span>
@@ -6555,10 +6561,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1529</span>
-<span class="normal">1530</span>
-<span class="normal">1531</span>
-<span class="normal">1532</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1532</span>
 <span class="normal">1533</span>
 <span class="normal">1534</span>
 <span class="normal">1535</span>
@@ -6576,7 +6579,10 @@
 <span class="normal">1547</span>
 <span class="normal">1548</span>
 <span class="normal">1549</span>
-<span class="normal">1550</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/chores/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1550</span>
+<span class="normal">1551</span>
+<span class="normal">1552</span>
+<span class="normal">1553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/chores/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `delete_chore` deletes a given Chore object.</span>
@@ -6674,10 +6680,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1114</span>
-<span class="normal">1115</span>
-<span class="normal">1116</span>
-<span class="normal">1117</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1117</span>
 <span class="normal">1118</span>
 <span class="normal">1119</span>
 <span class="normal">1120</span>
@@ -6685,7 +6688,10 @@
 <span class="normal">1122</span>
 <span class="normal">1123</span>
 <span class="normal">1124</span>
-<span class="normal">1125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">calculate_duedays</span><span class="p">(</span><span class="n">next_due</span><span class="p">):</span>
+<span class="normal">1125</span>
+<span class="normal">1126</span>
+<span class="normal">1127</span>
+<span class="normal">1128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">calculate_duedays</span><span class="p">(</span><span class="n">next_due</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `calculate_duedays` calculates the days until due based on a given date.</span>
 
@@ -6813,10 +6819,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1302</span>
-<span class="normal">1303</span>
-<span class="normal">1304</span>
-<span class="normal">1305</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1305</span>
 <span class="normal">1306</span>
 <span class="normal">1307</span>
 <span class="normal">1308</span>
@@ -6836,7 +6839,10 @@
 <span class="normal">1322</span>
 <span class="normal">1323</span>
 <span class="normal">1324</span>
-<span class="normal">1325</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/togglechore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1325</span>
+<span class="normal">1326</span>
+<span class="normal">1327</span>
+<span class="normal">1328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/togglechore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">toggle_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">TogglActive</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `toggle_chore` toggles wether a Chore is active/inactive.</span>
@@ -6976,10 +6982,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1328</span>
-<span class="normal">1329</span>
-<span class="normal">1330</span>
-<span class="normal">1331</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1331</span>
 <span class="normal">1332</span>
 <span class="normal">1333</span>
 <span class="normal">1334</span>
@@ -6999,7 +7002,10 @@
 <span class="normal">1348</span>
 <span class="normal">1349</span>
 <span class="normal">1350</span>
-<span class="normal">1351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/snoozechore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1351</span>
+<span class="normal">1352</span>
+<span class="normal">1353</span>
+<span class="normal">1354</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/snoozechore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">snooze_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">SnoozeChore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `snooze_chore` updates a given Chore object&#39;s next due date.</span>
@@ -7139,10 +7145,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1354</span>
-<span class="normal">1355</span>
-<span class="normal">1356</span>
-<span class="normal">1357</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1357</span>
 <span class="normal">1358</span>
 <span class="normal">1359</span>
 <span class="normal">1360</span>
@@ -7161,7 +7164,10 @@
 <span class="normal">1373</span>
 <span class="normal">1374</span>
 <span class="normal">1375</span>
-<span class="normal">1376</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/claimchore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1376</span>
+<span class="normal">1377</span>
+<span class="normal">1378</span>
+<span class="normal">1379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/claimchore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">claim_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">ClaimChore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `claim_chore` assigns a given Chore object to a user.</span>
@@ -7300,10 +7306,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1379</span>
-<span class="normal">1380</span>
-<span class="normal">1381</span>
-<span class="normal">1382</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1382</span>
 <span class="normal">1383</span>
 <span class="normal">1384</span>
 <span class="normal">1385</span>
@@ -7346,7 +7349,10 @@
 <span class="normal">1422</span>
 <span class="normal">1423</span>
 <span class="normal">1424</span>
-<span class="normal">1425</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/completechore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1425</span>
+<span class="normal">1426</span>
+<span class="normal">1427</span>
+<span class="normal">1428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/completechore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">complete_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">CompleteChore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `complete_chore` completes a given Chore object.</span>
@@ -9076,10 +9082,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1128</span>
-<span class="normal">1129</span>
-<span class="normal">1130</span>
-<span class="normal">1131</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1131</span>
 <span class="normal">1132</span>
 <span class="normal">1133</span>
 <span class="normal">1134</span>
@@ -9112,7 +9115,10 @@
 <span class="normal">1161</span>
 <span class="normal">1162</span>
 <span class="normal">1163</span>
-<span class="normal">1164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/historyitems&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">PaginatedHistoryItems</span><span class="p">)</span>
+<span class="normal">1164</span>
+<span class="normal">1165</span>
+<span class="normal">1166</span>
+<span class="normal">1167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/historyitems&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">PaginatedHistoryItems</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_historyitems</span><span class="p">(</span>
     <span class="n">request</span><span class="p">,</span>
     <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -9265,10 +9271,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1428</span>
-<span class="normal">1429</span>
-<span class="normal">1430</span>
-<span class="normal">1431</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1431</span>
 <span class="normal">1432</span>
 <span class="normal">1433</span>
 <span class="normal">1434</span>
@@ -9290,7 +9293,10 @@
 <span class="normal">1450</span>
 <span class="normal">1451</span>
 <span class="normal">1452</span>
-<span class="normal">1453</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1453</span>
+<span class="normal">1454</span>
+<span class="normal">1455</span>
+<span class="normal">1456</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_historyitem</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">historyitem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">HistoryItemIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `update_historyitem` updates a given HistoryItem object.</span>
@@ -9416,10 +9422,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1553</span>
-<span class="normal">1554</span>
-<span class="normal">1555</span>
-<span class="normal">1556</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1556</span>
 <span class="normal">1557</span>
 <span class="normal">1558</span>
 <span class="normal">1559</span>
@@ -9437,7 +9440,10 @@
 <span class="normal">1571</span>
 <span class="normal">1572</span>
 <span class="normal">1573</span>
-<span class="normal">1574</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1574</span>
+<span class="normal">1575</span>
+<span class="normal">1576</span>
+<span class="normal">1577</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_historyitem</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">historyitem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `delete_historyitem` deletes a given HistoryItem object.</span>
@@ -9699,7 +9705,7 @@
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">completed_date</span><span class="p">:</span> <span class="n">date</span>
-    <span class="n">completed_by</span><span class="p">:</span> <span class="n">CustomUserSchema</span>
+    <span class="n">completed_by</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CustomUserSchema</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">chore</span><span class="p">:</span> <span class="n">ChoreOutFull</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -10184,10 +10190,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1167</span>
-<span class="normal">1168</span>
-<span class="normal">1169</span>
-<span class="normal">1170</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1170</span>
 <span class="normal">1171</span>
 <span class="normal">1172</span>
 <span class="normal">1173</span>
@@ -10204,7 +10207,10 @@
 <span class="normal">1184</span>
 <span class="normal">1185</span>
 <span class="normal">1186</span>
-<span class="normal">1187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/options&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">OptionOut</span><span class="p">])</span>
+<span class="normal">1187</span>
+<span class="normal">1188</span>
+<span class="normal">1189</span>
+<span class="normal">1190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/options&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">OptionOut</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_options</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `list_options` retrieves a list of Option objects.</span>
@@ -10341,10 +10347,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1456</span>
-<span class="normal">1457</span>
-<span class="normal">1458</span>
-<span class="normal">1459</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1459</span>
 <span class="normal">1460</span>
 <span class="normal">1461</span>
 <span class="normal">1462</span>
@@ -10365,7 +10368,10 @@
 <span class="normal">1477</span>
 <span class="normal">1478</span>
 <span class="normal">1479</span>
-<span class="normal">1480</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/options/</span><span class="si">{option_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1480</span>
+<span class="normal">1481</span>
+<span class="normal">1482</span>
+<span class="normal">1483</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/options/</span><span class="si">{option_id}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_option</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">option_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">OptionIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `update_option` updates a given Option object.</span>
@@ -10902,10 +10908,7 @@ from the backend.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1577</span>
-<span class="normal">1578</span>
-<span class="normal">1579</span>
-<span class="normal">1580</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1580</span>
 <span class="normal">1581</span>
 <span class="normal">1582</span>
 <span class="normal">1583</span>
@@ -10923,7 +10926,10 @@ from the backend.</p>
 <span class="normal">1595</span>
 <span class="normal">1596</span>
 <span class="normal">1597</span>
-<span class="normal">1598</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/version/list&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">VersionOut</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="normal">1598</span>
+<span class="normal">1599</span>
+<span class="normal">1600</span>
+<span class="normal">1601</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/version/list&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">VersionOut</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_version</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VersionOut</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The function `list_version` retrieves the app version number</span>
