@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG")))
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ") + ["localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -163,23 +163,16 @@ CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 
-if os.environ.get("REDIS_URL"):
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": os.environ.get("REDIS_URL"),
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            },
-            "KEY_PREFIX": "lc",
-        }
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.environ.get("REDIS_URL", "redis://localhost:6379/0"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "KEY_PREFIX": "lc",
     }
-else:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
-        }
-    }
+}
 
 CORS_ORIGIN_WHITELIST = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 
@@ -241,11 +234,16 @@ AUTHENTICATION_BACKENDS = [
 
 ACCOUNT_LOGIN_BY_CODE_ENABLED = False
 ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 HEADLESS_ONLY = True
 HEADLESS_FRONTEND_URLS = {}
+
+# Web Push (VAPID) — daily chore reminder notifications. Generate a key pair
+# once and supply via env; when unset, push notifications are simply disabled.
+VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY", "")
+VAPID_PRIVATE_KEY = os.environ.get("VAPID_PRIVATE_KEY", "")
+VAPID_SUBJECT = os.environ.get("VAPID_SUBJECT", "mailto:admin@example.com")
 
 JAZZMIN_SETTINGS = {
     "show_ui_builder": False,
@@ -271,7 +269,8 @@ JAZZMIN_SETTINGS = {
     "copyright": "John Adams",
     # List of model admins to search from the search bar, search bar omitted if excluded
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
-    "user_avatar": "profile_picture",
+    # Omitted: jazzmin falls back to an AdminLTE stock photo for users without
+    # a picture; without this setting it shows a neutral user-circle icon instead.
     ############
     # Top Menu #
     ############
@@ -281,6 +280,15 @@ JAZZMIN_SETTINGS = {
         {
             "name": "Back to Site",
             "url": "/",
+            "new_window": False,
+        },
+    ],
+    # Links in the user profile dropdown — visible on both desktop and mobile
+    "usermenu_links": [
+        {
+            "name": "Back to Site",
+            "url": "/",
+            "icon": "fas fa-home",
             "new_window": False,
         },
     ],

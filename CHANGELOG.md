@@ -1,3 +1,232 @@
+# [1.4.0-alpha.21](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.20...v1.4.0-alpha.21) (2026-06-03)
+
+
+### Bug Fixes
+
+* chore list 500 when a chore has an assignee (groups resolver) ([#80](https://github.com/Novanglus96/LenoreChore/issues/80)) ([bd38046](https://github.com/Novanglus96/LenoreChore/commit/bd3804608ae5dd5c724f931b7a454c6de52486ab))
+
+# [1.4.0-alpha.20](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.19...v1.4.0-alpha.20) (2026-06-03)
+
+
+### Bug Fixes
+
+* profile header layout, avatar preview, and overflow menu closing ([#79](https://github.com/Novanglus96/LenoreChore/issues/79)) ([c668519](https://github.com/Novanglus96/LenoreChore/commit/c668519e506ce17aa5ff80a170934a9edc76e2c7))
+
+# [1.4.0-alpha.19](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.18...v1.4.0-alpha.19) (2026-06-03)
+
+
+### Features
+
+* suppress daily reminders while vacation mode is active ([#78](https://github.com/Novanglus96/LenoreChore/issues/78)) ([79e7704](https://github.com/Novanglus96/LenoreChore/commit/79e7704a91b9eb061fa56c441b5b1a026bb5c9f7))
+
+# [1.4.0-alpha.18](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.17...v1.4.0-alpha.18) (2026-06-03)
+
+
+### Features
+
+* re-arm today's reminder when the time is moved to later today ([#77](https://github.com/Novanglus96/LenoreChore/issues/77)) ([d5d3830](https://github.com/Novanglus96/LenoreChore/commit/d5d3830a2e4af801f657d71e786a30239afec62c))
+
+# [1.4.0-alpha.17](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.16...v1.4.0-alpha.17) (2026-06-03)
+
+
+### Bug Fixes
+
+* scheduletasks crash left the notification schedule uncreated ([#76](https://github.com/Novanglus96/LenoreChore/issues/76)) ([98556a8](https://github.com/Novanglus96/LenoreChore/commit/98556a832ab2f5a4b97550d2476d9edca471ec50))
+
+# [1.4.0-alpha.16](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.15...v1.4.0-alpha.16) (2026-06-03)
+
+
+### Bug Fixes
+
+* profile name fields — pre-fill values and move labels above inputs ([#75](https://github.com/Novanglus96/LenoreChore/issues/75)) ([937bce9](https://github.com/Novanglus96/LenoreChore/commit/937bce9b7f45648be8a32515c25c454286ec3cd7))
+
+# [1.4.0-alpha.15](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.14...v1.4.0-alpha.15) (2026-06-03)
+
+
+### Bug Fixes
+
+* reposition daily reminders above Save and teleport the time picker ([#74](https://github.com/Novanglus96/LenoreChore/issues/74)) ([82e6baf](https://github.com/Novanglus96/LenoreChore/commit/82e6baf0b63284783323fe5d41fc1ba33430448b))
+
+# [1.4.0-alpha.14](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.13...v1.4.0-alpha.14) (2026-06-02)
+
+
+### Bug Fixes
+
+* add Profile link to the nav overflow menu ([#73](https://github.com/Novanglus96/LenoreChore/issues/73)) ([bc044cb](https://github.com/Novanglus96/LenoreChore/commit/bc044cb2024e30f034399273caf21883b544b958))
+
+# [1.4.0-alpha.13](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.12...v1.4.0-alpha.13) (2026-06-02)
+
+
+### Features
+
+* push notification frontend + per-user timezone handling ([#72](https://github.com/Novanglus96/LenoreChore/issues/72)) ([ec56c2e](https://github.com/Novanglus96/LenoreChore/commit/ec56c2e57b3f819320744237848e472a215ff827))
+
+# [1.4.0-alpha.12](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.11...v1.4.0-alpha.12) (2026-06-02)
+
+
+### Features
+
+* push notification backend (daily due/overdue rollup) ([#70](https://github.com/Novanglus96/LenoreChore/issues/70)) ([0f3dcd0](https://github.com/Novanglus96/LenoreChore/commit/0f3dcd0d784eed12df731f29b611d6f5286649ba))
+
+# [1.4.0-alpha.11](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.10...v1.4.0-alpha.11) (2026-06-02)
+
+
+### Features
+
+* version/details endpoint + About page ([#69](https://github.com/Novanglus96/LenoreChore/issues/69)) ([75c94e2](https://github.com/Novanglus96/LenoreChore/commit/75c94e2779738e7dc6307c5e004623b1db6123aa))
+
+# [1.4.0-alpha.10](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.9...v1.4.0-alpha.10) (2026-06-02)
+
+
+### Bug Fixes
+
+* sync dev/prod deps via npm ci + non-breaking security fixes ([#68](https://github.com/Novanglus96/LenoreChore/issues/68)) ([e4da76e](https://github.com/Novanglus96/LenoreChore/commit/e4da76ee6374e707551ae64a0f09fe7fc12628cd)), closes [#65](https://github.com/Novanglus96/LenoreChore/issues/65)
+
+# [1.4.0-alpha.9](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.8...v1.4.0-alpha.9) (2026-06-02)
+
+
+### Features
+
+* skip bundled Redis when an external REDIS_URL is configured ([#66](https://github.com/Novanglus96/LenoreChore/issues/66)) ([c6a11ce](https://github.com/Novanglus96/LenoreChore/commit/c6a11ced30f2e1bd11080243f5330f78dd0e6024))
+
+# [1.4.0-alpha.8](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.7...v1.4.0-alpha.8) (2026-06-02)
+
+
+### Bug Fixes
+
+* revert theme.change() to theme.global.name.value (prod crash) ([#65](https://github.com/Novanglus96/LenoreChore/issues/65)) ([9b50792](https://github.com/Novanglus96/LenoreChore/commit/9b5079208a091168c37abb7b38a42e8894579066))
+
+# [1.4.0-alpha.7](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.6...v1.4.0-alpha.7) (2026-06-02)
+
+
+### Bug Fixes
+
+* migrate to non-deprecated django-allauth account settings ([#64](https://github.com/Novanglus96/LenoreChore/issues/64)) ([9fb5b7c](https://github.com/Novanglus96/LenoreChore/commit/9fb5b7c6f16decbbf9ce10295fc669d033784139))
+
+# [1.4.0-alpha.6](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.5...v1.4.0-alpha.6) (2026-06-02)
+
+
+### Bug Fixes
+
+* add anonymous node_modules volume to frontend dev service ([1223071](https://github.com/Novanglus96/LenoreChore/commit/1223071d211590aeea5abfb2c268fd57d4af1099))
+* add explicit basename to chore-complete router registration ([b2da3ff](https://github.com/Novanglus96/LenoreChore/commit/b2da3ffdc4e45e6ae3a31503344ebea0cb59d149))
+* pass non-reactive clone to Chart.js to stop readonly proxy errors ([be5c1a5](https://github.com/Novanglus96/LenoreChore/commit/be5c1a521b83e1722932625c5e4b1823c4a31f43))
+* pin django-filter to 24.3 (25.2 requires Django>=5.2) ([0f7be1b](https://github.com/Novanglus96/LenoreChore/commit/0f7be1b5db6e6fba45e6f3be5c3365e2bd6414b4))
+* remove csrf=True from NinjaAPI (removed in django-ninja 1.x) ([6c949ff](https://github.com/Novanglus96/LenoreChore/commit/6c949ff1d3edecbd89be9fb3986fa481011dc0d5))
+* remove jazzmin user_avatar to drop AdminLTE stock photo fallback ([dbbe5b6](https://github.com/Novanglus96/LenoreChore/commit/dbbe5b6df23bd41cf2a3e97405d67903d1c210f5))
+* resolve Vuetify 3.x deprecations, prop types, and console noise ([e94d44a](https://github.com/Novanglus96/LenoreChore/commit/e94d44ab10021ef1108c531bdc26ff1e3f4b6dd7))
+
+# [1.4.0-alpha.5](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.4...v1.4.0-alpha.5) (2026-06-01)
+
+
+### Bug Fixes
+
+* always include localhost in ALLOWED_HOSTS for health checks ([#61](https://github.com/Novanglus96/LenoreChore/issues/61)) ([782278e](https://github.com/Novanglus96/LenoreChore/commit/782278eef66392e9d816a94f3c9ab4252b84d532))
+
+# [1.4.0-alpha.4](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.3...v1.4.0-alpha.4) (2026-06-01)
+
+
+### Features
+
+* add Docker health checks to all services and containers ([#60](https://github.com/Novanglus96/LenoreChore/issues/60)) ([332fa47](https://github.com/Novanglus96/LenoreChore/commit/332fa47b1822b2195809b680fb566c18e3a04da0))
+
+# [1.4.0-alpha.3](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.2...v1.4.0-alpha.3) (2026-06-01)
+
+
+### Bug Fixes
+
+* make area dirtiness progress bar reactive to prop updates ([#59](https://github.com/Novanglus96/LenoreChore/issues/59)) ([3691bf0](https://github.com/Novanglus96/LenoreChore/commit/3691bf053d0e6b30f921aa6a82c857de2dee4f97))
+
+# [1.4.0-alpha.2](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.1...v1.4.0-alpha.2) (2026-06-01)
+
+
+### Features
+
+* bundle redis-server in single-container image for SSE and caching ([#58](https://github.com/Novanglus96/LenoreChore/issues/58)) ([f3e1f06](https://github.com/Novanglus96/LenoreChore/commit/f3e1f06f5ac85b5ccbc56b317f4d00703884bb5f))
+
+# [1.4.0-alpha.1](https://github.com/Novanglus96/LenoreChore/compare/v1.3.4...v1.4.0-alpha.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* invalidate areas cache and query on chore mutations for SSE sync ([f718413](https://github.com/Novanglus96/LenoreChore/commit/f718413ba2fff410bc1b504bb18d38509086f8c9))
+
+
+### Features
+
+* add SSE real-time sync for multi-user invalidation ([fe02bf2](https://github.com/Novanglus96/LenoreChore/commit/fe02bf26e29a7909220f42b603d9dab5fd5cc46e))
+
+## [1.3.4](https://github.com/Novanglus96/LenoreChore/compare/v1.3.3...v1.3.4) (2026-04-13)
+
+
+### Bug Fixes
+
+* add Back to Site to admin usermenu for mobile visibility ([7bfe314](https://github.com/Novanglus96/LenoreChore/commit/7bfe314a6f238978b2dfe65bf32abd3ee45bc0e7))
+* add Back to Site to admin usermenu so it's visible on mobile ([6200c20](https://github.com/Novanglus96/LenoreChore/commit/6200c2036ef7166e3e038f981ae66f9f0b75a13f))
+
+## [1.3.3](https://github.com/Novanglus96/LenoreChore/compare/v1.3.2...v1.3.3) (2026-04-13)
+
+
+### Bug Fixes
+
+* clear SW and TanStack Query caches on version-mismatch reload ([97ae267](https://github.com/Novanglus96/LenoreChore/commit/97ae26707c2a926181bcc464e715c5a32c694299))
+* clear SW and TanStack Query caches on version-mismatch reload ([fee6e55](https://github.com/Novanglus96/LenoreChore/commit/fee6e55ce0a3b23d923ca604e4d75f1842e314d5))
+
+## [1.3.2](https://github.com/Novanglus96/LenoreChore/compare/v1.3.1...v1.3.2) (2026-04-13)
+
+
+### Bug Fixes
+
+* use canonical /admin/ URL for Django admin link ([9a5d8b0](https://github.com/Novanglus96/LenoreChore/commit/9a5d8b0164e729fd4ed0debafbe26d7268c05271))
+* use canonical /admin/ URL for Django admin link ([de072bb](https://github.com/Novanglus96/LenoreChore/commit/de072bb8518cf2c5bff823b7ddf6d3f5f13d56ce))
+
+## [1.3.1](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0...v1.3.1) (2026-04-13)
+
+
+### Bug Fixes
+
+* exclude /admin from SW navigateFallback without trailing slash ([436757e](https://github.com/Novanglus96/LenoreChore/commit/436757e14d87a0138dd98736c3f377de7cafe8cb))
+* exclude /admin from SW navigateFallback without trailing slash ([b673563](https://github.com/Novanglus96/LenoreChore/commit/b6735631f064819d98df9aaac9f3b69a3ef1b1e9))
+
+# [1.3.0](https://github.com/Novanglus96/LenoreChore/compare/v1.2.24...v1.3.0) (2026-04-13)
+
+
+### Bug Fixes
+
+* add missing blank line after invalidate_pattern (E305) ([#21](https://github.com/Novanglus96/LenoreChore/issues/21)) ([d06183a](https://github.com/Novanglus96/LenoreChore/commit/d06183a7ab82f5d28d27de3740cd2a11adb97caa))
+* always fetch allauth session on mount to initialize CSRF cookie ([#19](https://github.com/Novanglus96/LenoreChore/issues/19)) ([5c2851d](https://github.com/Novanglus96/LenoreChore/commit/5c2851d1340efc751fccce783186b056c9be1c00))
+* dynamically read frontend version from package.json ([#15](https://github.com/Novanglus96/LenoreChore/issues/15)) ([b337e96](https://github.com/Novanglus96/LenoreChore/commit/b337e96a74f4764d580714578be38edcf6d292ac))
+* expand header inspection endpoint with additional proxy diagnostics ([#40](https://github.com/Novanglus96/LenoreChore/issues/40)) ([3a0b2ba](https://github.com/Novanglus96/LenoreChore/commit/3a0b2ba3fea5586feafb8d2811a3616f2c59caa5))
+* forward X-Forwarded-Proto through nginx to resolve mixed content ([#38](https://github.com/Novanglus96/LenoreChore/issues/38)) ([d25b963](https://github.com/Novanglus96/LenoreChore/commit/d25b9634062f02e39d11ea330404bf5c9ca954bb))
+* improve PWA offline UX ([#35](https://github.com/Novanglus96/LenoreChore/issues/35)) ([bded893](https://github.com/Novanglus96/LenoreChore/commit/bded893ef4a4957d0aca8777873a29815f7233d0))
+* increase version_number max_length from 10 to 20 ([#25](https://github.com/Novanglus96/LenoreChore/issues/25)) ([1a24d68](https://github.com/Novanglus96/LenoreChore/commit/1a24d68f454077da48a45895dd170d82e491279f))
+* persist SQLite data across container restarts ([#31](https://github.com/Novanglus96/LenoreChore/issues/31)) ([f0d9cd5](https://github.com/Novanglus96/LenoreChore/commit/f0d9cd5dfd11df7bc6e2a17063993fab4b8a1a74))
+* pre-release UI tweaks for 1.3 ([648ce46](https://github.com/Novanglus96/LenoreChore/commit/648ce46b27864a724f1c6c5a49085f9b42a96415))
+* pre-release UI tweaks for 1.3 ([f953038](https://github.com/Novanglus96/LenoreChore/commit/f9530384da0052f88077a872c31ea20606d259dc))
+* remove excess blank lines in api.py (E303) ([#14](https://github.com/Novanglus96/LenoreChore/issues/14)) ([f546c0d](https://github.com/Novanglus96/LenoreChore/commit/f546c0d69ddf6737c140b40ee330ec98c92429b0))
+* remove rounded corners on cards for mobile edge-to-edge layout ([#26](https://github.com/Novanglus96/LenoreChore/issues/26)) ([775d8ba](https://github.com/Novanglus96/LenoreChore/commit/775d8bacad807d64e781a946817d67f825e74552))
+* repair PWA install prompt and add dismissal suppression ([#42](https://github.com/Novanglus96/LenoreChore/issues/42)) ([a6bb039](https://github.com/Novanglus96/LenoreChore/commit/a6bb039abdd997566959b088ab5565567f10b58e))
+* resolve all ruff lint errors across backend ([#41](https://github.com/Novanglus96/LenoreChore/issues/41)) ([5c42256](https://github.com/Novanglus96/LenoreChore/commit/5c422562ad3493cd420e8df162d3352061c5202f))
+* resolve PWA manifest warnings ([#33](https://github.com/Novanglus96/LenoreChore/issues/33)) ([81c2800](https://github.com/Novanglus96/LenoreChore/commit/81c2800e7bd647ae7f2ffc99b3bbc2af41d6f001))
+* self-host Roboto font to eliminate mixed content on HTTPS ([#36](https://github.com/Novanglus96/LenoreChore/issues/36)) ([4cc30ef](https://github.com/Novanglus96/LenoreChore/commit/4cc30ef63741729e89a0d64eb53b5c66d9d27569))
+* trust X-Forwarded-Proto header from reverse proxy ([#37](https://github.com/Novanglus96/LenoreChore/issues/37)) ([f547972](https://github.com/Novanglus96/LenoreChore/commit/f5479729a930c1b8b632851d3c5d03b0b51fd9f9))
+* update jsconfig.json to modern Vite-compatible TS compiler options ([a55b72b](https://github.com/Novanglus96/LenoreChore/commit/a55b72b792dc04683a5d5b12d71e778a7ec93261))
+* use DummyCache instead of LocMemCache when Redis is unavailable ([#30](https://github.com/Novanglus96/LenoreChore/issues/30)) ([a0c051e](https://github.com/Novanglus96/LenoreChore/commit/a0c051e398c56a52581291d390561cea695f8744))
+* use relative path in jsconfig paths to satisfy bundler moduleResolution ([3bc4755](https://github.com/Novanglus96/LenoreChore/commit/3bc475553c533283fd0eb7839d5b4f01e135329c))
+
+
+### Features
+
+* add dark/light theme toggle to app bar ([#23](https://github.com/Novanglus96/LenoreChore/issues/23)) ([c69f348](https://github.com/Novanglus96/LenoreChore/commit/c69f34870fe1e6cd5cf436ac49accc43ddebca75))
+* add PWA support with offline queuing and background sync ([#32](https://github.com/Novanglus96/LenoreChore/issues/32)) ([a1d2f27](https://github.com/Novanglus96/LenoreChore/commit/a1d2f27addc00af8fa62854c6b817be605ad9fe2))
+* add redis caching with write-through invalidation ([#20](https://github.com/Novanglus96/LenoreChore/issues/20)) ([1bac528](https://github.com/Novanglus96/LenoreChore/commit/1bac5282ec47fd52d13f1036031c692eec03add7))
+* add vee-validate form validation to all forms ([#22](https://github.com/Novanglus96/LenoreChore/issues/22)) ([6d6595d](https://github.com/Novanglus96/LenoreChore/commit/6d6595da77e657573b28286e8351911d693e0db9))
+* added demo data on fist load ([#6](https://github.com/Novanglus96/LenoreChore/issues/6)) ([#11](https://github.com/Novanglus96/LenoreChore/issues/11)) ([81ef344](https://github.com/Novanglus96/LenoreChore/commit/81ef344f87daafb8a46a8e1197b3e3344e09030e))
+* consolidate to single container using supervisord ([#28](https://github.com/Novanglus96/LenoreChore/issues/28)) ([014f09e](https://github.com/Novanglus96/LenoreChore/commit/014f09ea12ac02f511790736f76adb85b1d19eab))
+* migrate authentication to django-allauth headless ([#8](https://github.com/Novanglus96/LenoreChore/issues/8)) ([6ab8b88](https://github.com/Novanglus96/LenoreChore/commit/6ab8b8815310e12c93aa98a819af1f9678c328b6))
+* mobile UI improvements ([#24](https://github.com/Novanglus96/LenoreChore/issues/24)) ([f7dfc2f](https://github.com/Novanglus96/LenoreChore/commit/f7dfc2fdfe9f0b236edf4fac791fc9423871c30e))
+* offline data pre-caching and optimistic UI updates ([#34](https://github.com/Novanglus96/LenoreChore/issues/34)) ([0074806](https://github.com/Novanglus96/LenoreChore/commit/0074806fd200685a695a76df85943042c88e4987))
+
 # [1.3.0-rc.26](https://github.com/Novanglus96/LenoreChore/compare/v1.3.0-rc.25...v1.3.0-rc.26) (2026-04-13)
 
 

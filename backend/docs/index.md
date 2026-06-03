@@ -100,9 +100,12 @@ Make sure you have the following installed on your system:
 <!-- INSTALLATION -->
 ### Step 1: Create a `.env` File
 
-Create a `.env` file in the root directory of the project. PostgreSQL and Redis are both **optional** — if omitted, LenoreChore will use SQLite and an in-memory cache automatically.
+Create a `.env` file in the root directory of the project.
 
-**Minimal setup** (SQLite + in-memory cache):
+- **PostgreSQL is optional** — if the `SQL_*` variables are omitted, LenoreChore falls back to SQLite automatically.
+- **Redis is bundled** into the container and used automatically for caching and real-time sync — no configuration required. To use your own Redis server instead, set `REDIS_URL` (see [Using an external Redis](#using-an-external-redis)); the bundled instance is then skipped.
+
+**Minimal setup** (SQLite + bundled Redis):
 
 ```env
 DEBUG=0
@@ -115,7 +118,7 @@ DJANGO_SUPERUSER_USERNAME=supervisor
 TIMEZONE=America/New_York
 ```
 
-**Full setup** (PostgreSQL + Redis):
+**Full setup** (PostgreSQL + external Redis):
 
 ```env
 DEBUG=0
@@ -136,6 +139,26 @@ REDIS_URL=redis://redis:6379/0
 ```
 
 Adjust these values according to your environment and application requirements.
+
+#### Using an external Redis
+
+`REDIS_URL` is **optional**. When it is unset (or points at `localhost` /
+`127.0.0.1`), LenoreChore uses the Redis bundled inside the container. To use
+your own Redis server instead, set `REDIS_URL` to point at it — the bundled
+instance is then skipped automatically, so no redundant Redis runs.
+
+Format: `redis://[:password@]host:port/db`
+
+| Scenario | `REDIS_URL` |
+|---|---|
+| Bundled Redis (default) | _unset_ |
+| Redis running as a Compose service named `redis` | `redis://redis:6379/0` |
+| External host by address | `redis://10.1.10.50:6379/0` |
+| Password-protected | `redis://:yourpassword@redis.internal:6379/0` |
+| TLS | `rediss://redis.internal:6380/0` |
+
+Redis is used only for ephemeral caching and SSE pub/sub, so no persistence is
+required on the external server.
 
 ### Step 2: Create a `docker-compose.yml` File
 
@@ -234,6 +257,30 @@ proxy_set_header X-Forwarded-Proto $scheme;
 ```
 
 > **Note:** If you previously accessed the site while it had a certificate error and clicked "Proceed anyway" in your browser, Chrome may remember that exception and block PWA installation. To fix this, go to **Chrome Settings → Privacy and Security → Site Settings**, find your site, and click **Reset permissions** — then reload the page.
+
+### Push Notifications (optional)
+
+LenoreChore can send each user a **daily Web Push** summarizing what's due and overdue, at a time they choose. Users opt in (and pick a time) on their **Profile** page.
+
+To enable it on the server, generate a VAPID key pair once and add it to your `.env`:
+
+```bash
+docker compose exec app python manage.py generate_vapid_keys
+```
+
+Copy the printed values into `.env`:
+
+```env
+VAPID_PUBLIC_KEY=...
+VAPID_PRIVATE_KEY=...
+VAPID_SUBJECT=mailto:you@example.com
+```
+
+Restart the container. If these are unset, push notifications are simply disabled (the rest of the app is unaffected).
+
+**Caveats:**
+- Web Push requires **HTTPS via a reverse proxy** — the same requirement as the PWA features above.
+- On **iOS/iPadOS (16.4+)**, the user must first **install the app to their home screen**; Safari does not deliver Web Push to a regular browser tab.
 
 Enjoy using LenoreChore!
 

@@ -27,6 +27,28 @@ async function getVersionFunction() {
   }
 }
 
+async function getVersionDetailsFunction() {
+  try {
+    const response = await apiClient.get("/version/details");
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "Version details not fetched: ");
+  }
+}
+
+export function useVersionDetails() {
+  const { data: versionDetails, isLoading } = useQuery({
+    queryKey: ["versionDetails"],
+    queryFn: () => getVersionDetailsFunction(),
+    select: response => response,
+  });
+
+  return {
+    isLoading,
+    versionDetails,
+  };
+}
+
 export function useVersion() {
   const queryClient = useQueryClient();
   const { data: version, isLoading } = useQuery({

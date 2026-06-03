@@ -17,10 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .api import api
+from .sse import sse_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v2/', api.urls),
+    path('api/v2/events/', sse_view),
     path('api/', include('api.urls')),
     path('_allauth/', include('allauth.headless.urls')),
 ]
