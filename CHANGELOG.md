@@ -1,3 +1,10 @@
+# [1.4.0-alpha.18](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.17...v1.4.0-alpha.18) (2026-06-03)
+
+
+### Features
+
+* re-arm today's reminder when the time is moved to later today ([#77](https://github.com/Novanglus96/LenoreChore/issues/77)) ([d5d3830](https://github.com/Novanglus96/LenoreChore/commit/d5d3830a2e4af801f657d71e786a30239afec62c))
+
 # [1.4.0-alpha.17](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.16...v1.4.0-alpha.17) (2026-06-03)
 
 
