@@ -1,3 +1,10 @@
+# [1.4.0-alpha.15](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.14...v1.4.0-alpha.15) (2026-06-03)
+
+
+### Bug Fixes
+
+* reposition daily reminders above Save and teleport the time picker ([#74](https://github.com/Novanglus96/LenoreChore/issues/74)) ([82e6baf](https://github.com/Novanglus96/LenoreChore/commit/82e6baf0b63284783323fe5d41fc1ba33430448b))
+
 # [1.4.0-alpha.14](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0-alpha.13...v1.4.0-alpha.14) (2026-06-02)
 
 
