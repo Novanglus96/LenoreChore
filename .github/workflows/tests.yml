@@ -7,9 +7,17 @@ on:
 jobs:
   backend:
     if: github.repository != 'Novanglus96/LenoreTemplate'
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Pinned so the hosted runner's default interpreter cannot silently
+      # change what the suite runs against. Matches the 3.11 already used by
+      # deploy-docs-release.yml in this repo.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
       - name: Install dependencies
         working-directory: backend
@@ -23,7 +31,7 @@ jobs:
 
   frontend:
     if: github.repository != 'Novanglus96/LenoreTemplate'
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
