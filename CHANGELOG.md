@@ -1,10 +1,3 @@
-## [1.4.2](https://github.com/Novanglus96/LenoreChore/compare/v1.4.1...v1.4.2) (2026-08-08)
-
-
-### Bug Fixes
-
-* pass --update-aliases when moving the latest docs alias ([d4aefa7](https://github.com/Novanglus96/LenoreChore/commit/d4aefa72292df8358a8c0771c36d70ad0ca3a6a3))
-
 ## [1.4.1](https://github.com/Novanglus96/LenoreChore/compare/v1.4.0...v1.4.1) (2026-06-03)
 
 

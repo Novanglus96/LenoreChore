@@ -1,0 +1,13 @@
+name: Tests
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  # LenoreChore is the only repo in the fleet with a test suite, so this stub is
+  # currently the only caller of lenore-ci's tests.yml. Every default matches
+  # this repo (backend/requirements-test.txt + pytest, frontend/ + vitest via
+  # `npm test`), so nothing needs overriding — if that stops being true, change
+  # the INPUT here rather than forking the workflow.
+  tests:
+    uses: lenore/lenore-ci/.forgejo/workflows/tests.yml@v1
+    secrets: inherit
