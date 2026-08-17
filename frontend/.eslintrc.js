@@ -4,6 +4,11 @@ module.exports = {
     node: true, // Enable Node.js global variables and scope
     browser: true, // Enable browser global variables
     es2021: true, // Enable modern JavaScript syntax
+    // Declares defineProps/defineEmits/defineExpose/withDefaults as globals.
+    // They are compiler macros: importing them from "vue" makes the SFC
+    // compiler warn on every build, but without this eslint reports them as
+    // no-undef. Both are only satisfiable together.
+    "vue/setup-compiler-macros": true,
   },
   extends: [
     "plugin:vue/vue3-essential", // Essential rules for Vue 3

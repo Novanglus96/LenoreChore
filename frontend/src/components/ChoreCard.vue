@@ -73,6 +73,19 @@
     <v-expand-transition>
       <div v-if="expand">
         <v-container class="bg-chorePanel">
+          <v-row v-if="remoteUpdatePending" dense>
+            <v-col>
+              <v-alert
+                type="warning"
+                variant="tonal"
+                density="compact"
+                role="status"
+                aria-live="polite"
+                text="Someone else changed this chore while you were editing.
+                      Saving keeps your version; reset loads theirs."
+              ></v-alert>
+            </v-col>
+          </v-row>
           <v-row dense class="bg-chorePanel">
             <v-col>
               <v-text-field
@@ -417,7 +430,9 @@
   </v-card>
 </template>
 <script setup>
-import { computed, defineProps, defineEmits, ref, watch, onMounted } from "vue";
+// defineProps/defineEmits are compiler macros — importing them warns on every
+// build and every test run.
+import { computed, ref, watch, onMounted } from "vue";
 import { useChoreStore } from "@/stores/chores";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -447,10 +462,26 @@ const localchore = ref({ ...props.chore });
 function deepCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
+
+// True when a newer version of this chore arrived from the server while the
+// user had unsaved edits, so we declined to apply it.
+const remoteUpdatePending = ref(false);
+
 watch(
   () => props.chore,
   updatedChore => {
+    // Never overwrite unsaved edits. Every write endpoint publishes an SSE
+    // event, so any other household member completing a chore invalidates
+    // ["chores"] and hands this component a new object identity. Before this
+    // guard that replaced the open edit panel's contents mid-typing -- and
+    // because saveEnabled stayed true, the next click of Save wrote the
+    // reverted values back over the server's copy.
+    if (saveEnabled.value) {
+      remoteUpdatePending.value = true;
+      return;
+    }
     localchore.value = deepCopy(updatedChore);
+    remoteUpdatePending.value = false;
   },
 );
 
@@ -458,17 +489,15 @@ onMounted(() => {
   localchore.value = deepCopy(props.chore);
 });
 
+// Reset means "discard my edits and show the server's current copy", so it
+// takes a full snapshot rather than restoring the nine fields it used to name
+// individually. That list omitted anything a remote change might have touched
+// (assignee and status among them), which mattered once the watch above began
+// holding updates back.
 const callResetChore = async () => {
-  localchore.value.dirtiness = props.chore.dirtiness;
-  localchore.value.duedays = props.chore.duedays;
-  localchore.value.unit = props.chore.unit;
-  localchore.value.intervalNumber = props.chore.intervalNumber;
-  localchore.value.active_months = deepCopy(props.chore.active_months);
-  localchore.value.nextDue = props.chore.nextDue;
-  localchore.value.lastCompleted = props.chore.lastCompleted;
-  localchore.value.effort = props.chore.effort;
-  localchore.value.chore_name = props.chore.chore_name;
+  localchore.value = deepCopy(props.chore);
   saveEnabled.value = false;
+  remoteUpdatePending.value = false;
 };
 const changeDetected = async recalcDirty => {
   if (recalcDirty) {
@@ -531,6 +560,9 @@ const callSnoozeChore = async (chore_id, next_due) => {
 const callSaveChore = async saveChore => {
   saveEnabled.value = false;
   expand.value = false;
+  // Clearing this explicitly rather than waiting for the post-save refetch to
+  // do it, so the flag cannot outlive the edit it belongs to.
+  remoteUpdatePending.value = false;
   emit("editChore", saveChore);
 };
 const callDeleteChore = async deleteChore => {
