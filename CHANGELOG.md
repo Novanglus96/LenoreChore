@@ -1,3 +1,10 @@
+## [1.4.3-alpha.4](https://github.com/Novanglus96/LenoreChore/compare/v1.4.3-alpha.3...v1.4.3-alpha.4) (2026-08-17)
+
+
+### Bug Fixes
+
+* stop remote updates discarding open edits in ChoreCard ([8f0db22](https://github.com/Novanglus96/LenoreChore/commit/8f0db22a8b9ab6d23233e22c6864d082da75732e))
+
 ## [1.4.3-alpha.3](https://github.com/Novanglus96/LenoreChore/compare/v1.4.3-alpha.2...v1.4.3-alpha.3) (2026-08-17)
 
 
