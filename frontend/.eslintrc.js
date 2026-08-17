@@ -4,11 +4,26 @@ module.exports = {
     node: true, // Enable Node.js global variables and scope
     browser: true, // Enable browser global variables
     es2021: true, // Enable modern JavaScript syntax
-    // Declares defineProps/defineEmits/defineExpose/withDefaults as globals.
-    // They are compiler macros: importing them from "vue" makes the SFC
-    // compiler warn on every build, but without this eslint reports them as
-    // no-undef. Both are only satisfiable together.
-    "vue/setup-compiler-macros": true,
+  },
+  // Compiler macros. Importing them from "vue" makes the SFC compiler warn on
+  // every build, but without declaring them eslint reports no-undef -- the two
+  // are only satisfiable together.
+  //
+  // Declared as explicit globals rather than via `env: vue/setup-compiler-macros`
+  // on purpose. That env key is contributed BY eslint-plugin-vue, so if any
+  // plugin in the config fails to resolve, the whole env block is dropped and
+  // these come back as errors -- which, because vite-plugin-eslint fails the
+  // dev transform on an error, takes the app off the air. That is exactly what
+  // happened when the dev container turned out not to have the accessibility
+  // plugin installed. Plain globals have no such dependency.
+  globals: {
+    defineProps: "readonly",
+    defineEmits: "readonly",
+    defineExpose: "readonly",
+    defineOptions: "readonly",
+    defineSlots: "readonly",
+    defineModel: "readonly",
+    withDefaults: "readonly",
   },
   extends: [
     "plugin:vue/vue3-essential", // Essential rules for Vue 3
