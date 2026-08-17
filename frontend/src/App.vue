@@ -1,9 +1,33 @@
 <template>
   <v-app>
     <VueQueryDevtools />
+
+    <!-- First focusable element on the page. Without it, reaching the content
+         means tabbing through the app bar's menus on EVERY navigation. Visible
+         only while focused. -->
+    <a href="#main-content" class="lc-skip-link">Skip to main content</a>
+
+    <!-- Mounted once for the life of the app and only ever re-texted. See
+         announcerComposable for why this is not aria-live on the snackbar. -->
+    <div class="lc-visually-hidden" role="status" aria-live="polite">
+      {{ politeMessage }}
+    </div>
+    <div class="lc-visually-hidden" role="alert" aria-live="assertive">
+      {{ assertiveMessage }}
+    </div>
+
     <AppNavigationVue />
     <v-main>
-      <v-container fluid :class="$vuetify.display.smAndDown ? 'pa-0' : 'pa-2'">
+      <!-- tabindex="-1" makes this programmatically focusable but keeps it out
+           of the tab order, which is what lets the router move focus here after
+           a navigation without adding a stop for everyone else. -->
+      <v-container
+        id="main-content"
+        ref="mainContent"
+        tabindex="-1"
+        fluid
+        :class="$vuetify.display.smAndDown ? 'pa-0' : 'pa-2'"
+      >
         <router-view />
       </v-container>
 
@@ -79,12 +103,13 @@ import { useChoreStore } from "@/stores/chores";
 import { useUserStore } from "@/stores/user";
 import { useThemeStore } from "@/stores/theme";
 import { useOfflineStore } from "@/stores/offline";
-import { onMounted, computed, ref, watch, onUnmounted } from "vue";
+import { onMounted, computed, ref, watch, onUnmounted, nextTick } from "vue";
 import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
 import { useVersion } from "@/composables/versionComposable";
 import { useSync } from "@/composables/syncComposable";
 import { usePrefetch } from "@/composables/prefetchComposable";
 import { useSSE } from "@/composables/sseComposable";
+import { useAnnouncer } from "@/composables/announcerComposable";
 import { useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
 import { useTheme } from "vuetify";
@@ -112,6 +137,9 @@ const reloadPage = async () => {
 
   window.location.reload();
 };
+
+const { politeMessage, assertiveMessage, announce } = useAnnouncer();
+const mainContent = ref(null);
 
 const chorestore = useChoreStore();
 const userstore = useUserStore();
@@ -301,6 +329,52 @@ onMounted(async () => {
     replayQueue();
   }
 });
+
+// ── Announce what the snackbar says ─────────────────────────────────────────
+// Watching the store rather than changing showSnackbar's signature, so every
+// existing call site is covered without touching any of them. Severity comes
+// from the colour the caller already passes: "error" interrupts, the rest wait.
+watch(
+  () => [chorestore.snackbar, chorestore.snackbarText],
+  ([open, text]) => {
+    if (!open || !text) return;
+    announce(text, chorestore.snackbarColor === "error" ? "assertive" : "polite");
+  }
+);
+
+// ── Route changes ───────────────────────────────────────────────────────────
+// An SPA swapping <router-view> produces no navigation a screen reader can
+// observe: focus stays wherever it was, nothing is announced, and the user has
+// no signal the page changed at all. Moving focus to the main region and
+// announcing the new view's name is what a full page load would have done for
+// free.
+watch(
+  () => router.currentRoute.value.fullPath,
+  async () => {
+    await nextTick();
+    const el = mainContent.value?.$el ?? mainContent.value;
+    // preventScroll: focusing the container would otherwise jump the viewport,
+    // fighting the router's own scroll behaviour.
+    el?.focus?.({ preventScroll: true });
+    announce(`${routeTitle(router.currentRoute.value)} page`);
+  }
+);
+
+// Route names are lowercase identifiers ("dash"), not something to read out.
+const ROUTE_TITLES = {
+  dash: "Dashboard",
+  list: "Chores",
+  graphs: "Graphs",
+  history: "History",
+  settings: "Settings",
+  profile: "Profile",
+  about: "About",
+  login: "Log in",
+  logout: "Log out",
+  NotFound: "Page not found",
+};
+
+const routeTitle = route => ROUTE_TITLES[route.name] ?? "Page";
 
 watch(checkVersion, (newValue) => {
   showBanner.value = newValue;

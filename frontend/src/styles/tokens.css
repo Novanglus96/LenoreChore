@@ -179,6 +179,30 @@
   border-radius: var(--lc-radius-sm);
 }
 
+/* ── Skip link ─────────────────────────────────────────────────────────────
+   Parked off-screen rather than display:none, because a hidden element is not
+   focusable and a skip link that cannot be focused is not a skip link. It flies
+   in on :focus-visible only, so pointer users never see it. */
+.lc-skip-link {
+  position: fixed;
+  top: var(--lc-space-2);
+  left: var(--lc-space-2);
+  z-index: 3000; /* above the app bar, which Vuetify puts at 1004 */
+  transform: translateY(-200%);
+  padding: var(--lc-space-2) var(--lc-space-4);
+  border-radius: var(--lc-radius-pill);
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: var(--lc-shadow-2);
+  transition: transform var(--lc-dur-base) var(--lc-ease-emphasized);
+}
+
+.lc-skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 /* ── Screen-reader-only utility ────────────────────────────────────────────
    For text that must be announced but not shown — the counterpart to giving
    icon-only controls an accessible name. */
