@@ -1,45 +1,105 @@
 <template>
-  <v-card :color="props.area.group.group_color" border elevation="3" :rounded="$vuetify.display.smAndDown ? 0 : undefined">
-    <v-card-title class="text-h5">
-      <v-icon :icon="props.area.area_icon" size="25" class="me-1 pb-1"></v-icon
-      >{{ props.area.area_name }}
-    </v-card-title>
-    <v-card-subtitle>{{ props.area.group.group_name }}</v-card-subtitle>
-    <v-card-text class="py-0">
-      <v-row align="center" no-gutters>
-        <v-col class="text-h9" cols="6">
-          <v-progress-linear
-            v-model="dirtiness"
-            :color="computedColor"
-            height="25"
-            striped
-            v-if="!options.vacation_mode"
-          >
-            <template v-slot:default="{ value }">
-              <strong>{{ Math.ceil(value) }}%</strong>
-            </template>
-          </v-progress-linear>
-          <span
-            v-if="options.vacation_mode"
-            class="text-error font-weight-bold text-h5"
-            ><v-icon icon="mdi-island"></v-icon> Vacation Mode Active</span
-          >
-        </v-col>
-        <v-col class="text-h9 text-center" cols="6">
-          <strong class="text-accent">{{ props.area.dueCount }}</strong> of
-          <strong class="text-accent">{{ props.area.totalCount }}</strong>
-          Chore(s) Due
-        </v-col>
-      </v-row>
-    </v-card-text>
+  <v-card
+    class="lc-area-card lc-lift"
+    :class="{ 'lc-area-card--idle': !expandcard }"
+    tag="article"
+    :aria-label="cardLabel"
+    :rounded="$vuetify.display.smAndDown ? 0 : 'lg'"
+    :elevation="0"
+    border
+  >
+    <!-- Group colour as identity, not as a surface. See ChoreCard. -->
+    <div
+      class="lc-area-card__stripe"
+      :class="`bg-${props.area.group.group_color}`"
+      aria-hidden="true"
+    ></div>
+
+    <div class="lc-area-card__body">
+      <div class="d-flex align-center ga-3">
+        <v-avatar
+          size="44"
+          class="lc-area-card__icon flex-shrink-0"
+          :class="`text-${props.area.group.group_color}`"
+          aria-hidden="true"
+        >
+          <v-icon :icon="props.area.area_icon" size="24"></v-icon>
+        </v-avatar>
+
+        <div class="flex-grow-1 min-width-0">
+          <h2 class="text-h6 lc-area-card__title">{{ props.area.area_name }}</h2>
+          <p class="text-caption text-medium-emphasis mb-0">
+            {{ props.area.group.group_name }}
+          </p>
+        </div>
+
+        <!-- The count is the headline number for an area, so it reads as one
+             rather than as a sentence. The full phrasing is kept for screen
+             readers, where "3 / 8" alone would be ambiguous. -->
+        <div class="text-right flex-shrink-0">
+          <div class="text-h6 font-weight-medium lh-1" aria-hidden="true">
+            {{ props.area.dueCount }}<span class="text-medium-emphasis text-body-2">
+              / {{ props.area.totalCount }}</span
+            >
+          </div>
+          <div class="text-caption text-medium-emphasis" aria-hidden="true">
+            due
+          </div>
+          <span class="lc-visually-hidden">
+            {{ props.area.dueCount }} of {{ props.area.totalCount }} chores due
+          </span>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <v-progress-linear
+          v-if="!options?.vacation_mode"
+          :model-value="dirtiness"
+          :color="dirtBand.color"
+          height="22"
+          rounded
+          :striped="dirtiness > 0"
+          :aria-label="`${Math.ceil(dirtiness)} percent dirty, ${dirtBand.label}`"
+        >
+          <span class="text-caption font-weight-medium">
+            {{ Math.ceil(dirtiness) }}% · {{ dirtBand.label }}
+          </span>
+        </v-progress-linear>
+
+        <v-alert
+          v-else
+          type="info"
+          density="compact"
+          icon="mdi-island"
+          text="Vacation mode — chores are paused."
+        ></v-alert>
+      </div>
+    </div>
     <v-expand-transition>
       <div v-if="expandcard">
         <v-container>
           <v-row dense>
             <v-col>
-              <v-dialog v-model="editcard" persistent :fullscreen="$vuetify.display.smAndDown" width="1024">
-                <template v-slot:activator="{ props }">
-                  <v-btn icon="mdi-note-edit-outline" v-bind="props"></v-btn>
+              <!-- The activator slot destructured `props`, shadowing this
+                   component's own `props` which the template uses throughout.
+                   It happened to work, but any reference to props.area inside
+                   the slot would have silently resolved to the activator
+                   bindings instead. -->
+              <v-dialog
+                v-model="editcard"
+                persistent
+                :fullscreen="$vuetify.display.smAndDown"
+                max-width="720"
+              >
+                <template v-slot:activator="{ props: activatorProps }">
+                  <v-btn
+                    v-bind="activatorProps"
+                    icon="mdi-note-edit-outline"
+                    :aria-label="`Edit ${props.area.area_name}`"
+                  >
+                    <v-icon icon="mdi-note-edit-outline"></v-icon>
+                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                  </v-btn>
                 </template>
                 <v-card>
                   <v-card-title>
@@ -55,18 +115,34 @@
                             v-model="editForm.area_name"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" sm="6" md="4">
+                        <v-col cols="12">
+                          <!-- Twenty chips, each previously containing only an
+                               icon: identical, nameless options to a screen
+                               reader, and the group itself had no label. Each
+                               chip now carries a name derived from its own MDI
+                               id, so the list cannot drift out of sync with
+                               the icons it describes. -->
+                          <div
+                            id="area-icon-label"
+                            class="text-body-2 mb-1"
+                          >
+                            Area icon
+                          </div>
                           <v-chip-group
                             v-model="editForm.area_icon"
-                            selected-class="text-deep-purple-accent-4"
+                            selected-class="text-primary"
+                            aria-labelledby="area-icon-label"
+                            column
                             mandatory
                           >
                             <v-chip
                               v-for="icon in chorestore.areaicons"
                               :key="icon"
                               :value="icon"
+                              :aria-label="iconLabel(icon)"
+                              :title="iconLabel(icon)"
                             >
-                              <v-icon>{{ icon }}</v-icon>
+                              <v-icon :icon="icon" aria-hidden="true"></v-icon>
                             </v-chip>
                           </v-chip-group>
                         </v-col>
@@ -105,12 +181,19 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
-              <v-dialog v-model="deletecard" persistent width="auto">
-                <template v-slot:activator="{ props }">
+              <v-dialog v-model="deletecard" persistent max-width="420">
+                <template v-slot:activator="{ props: activatorProps }">
                   <v-btn
+                    v-bind="activatorProps"
                     icon="mdi-delete-forever-outline"
-                    v-bind="props"
-                  ></v-btn>
+                    color="filthy"
+                    :aria-label="`Delete ${props.area.area_name}`"
+                  >
+                    <v-icon icon="mdi-delete-forever-outline"></v-icon>
+                    <v-tooltip activator="parent" location="top">
+                      Delete
+                    </v-tooltip>
+                  </v-btn>
                 </template>
                 <v-card>
                   <v-card-title class="text-h5">
@@ -151,25 +234,41 @@
         </v-container>
       </div>
     </v-expand-transition>
-    <v-card-actions>
+    <v-divider></v-divider>
+
+    <v-card-actions class="lc-area-card__actions">
       <v-btn
-        class="ms-2"
-        variant="outlined"
+        variant="tonal"
         size="small"
+        prepend-icon="mdi-format-list-checks"
+        :aria-label="`See chores in ${props.area.area_name}`"
         @click="setArea(props.area.id)"
       >
-        See Chores
+        See chores
       </v-btn>
+
+      <v-spacer></v-spacer>
+
       <v-btn
-        @click="expandcard = !expandcard"
         :icon="expandcard ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-      ></v-btn>
+        :aria-label="`${expandcard ? 'Close' : 'Open'} settings for ${props.area.area_name}`"
+        :aria-expanded="expandcard ? 'true' : 'false'"
+        @click="expandcard = !expandcard"
+      >
+        <v-icon
+          :icon="expandcard ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+        ></v-icon>
+        <v-tooltip activator="parent" location="top">
+          {{ expandcard ? "Close settings" : "Area settings" }}
+        </v-tooltip>
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, computed } from "vue";
+// defineProps/defineEmits are compiler macros; importing them warns on build.
+import { ref, computed } from "vue";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
 import { useChoreStore } from "@/stores/chores";
 import { useRouter } from "vue-router";
@@ -208,20 +307,86 @@ const callEditArea = async editArea => {
   editcard.value = false;
   emit("editArea", editArea);
 };
-const computedColor = computed(() => {
-  if (!options.value || !props) {
-    return "white";
-  }
-  if (props.area.dirtiness <= options.value.med_thresh) {
-    return "success";
-  } else if (
-    props.area.dirtiness > options.value.med_thresh &&
-    props.area.dirtiness <= options.value.high_thresh
-  ) {
-    return "warning";
-  } else if (props.area.dirtiness > options.value.high_thresh) {
-    return "error";
-  }
-  return "white";
+// Same bands as ChoreCard: a colour AND a word, so the meaning does not depend
+// on being able to tell the hues apart.
+const dirtBand = computed(() => {
+  const dirt = dirtiness.value;
+  const med = options.value?.med_thresh ?? 49;
+  const high = options.value?.high_thresh ?? 74;
+
+  if (dirt <= med) return { color: "clean", label: "clean-ish" };
+  if (dirt <= high) return { color: "soiled", label: "getting there" };
+  return { color: "filthy", label: "filthy" };
 });
+
+// Derives a readable name from the MDI id -- "mdi-tumble-dryer" becomes
+// "Tumble dryer". Deriving rather than keeping a parallel lookup means the
+// labels cannot fall out of step with the icon list they describe.
+const iconLabel = icon =>
+  String(icon)
+    .replace(/^mdi-/, "")
+    .replace(/-/g, " ")
+    .replace(/^./, c => c.toUpperCase());
+
+const cardLabel = computed(
+  () =>
+    `${props.area.area_name}, ${props.area.group.group_name}, ` +
+    `${props.area.dueCount} of ${props.area.totalCount} chores due, ` +
+    `${Math.ceil(dirtiness.value)} percent dirty`
+);
 </script>
+
+<style scoped>
+.lc-area-card {
+  position: relative;
+  overflow: hidden;
+  background: rgb(var(--v-theme-surface));
+}
+
+.lc-area-card__stripe {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 4px;
+}
+
+.lc-area-card__body {
+  padding: var(--lc-space-4) var(--lc-space-4) var(--lc-space-3)
+    calc(var(--lc-space-4) + 4px);
+}
+
+.lc-area-card__icon {
+  background: rgb(var(--v-theme-surface-variant));
+}
+
+.lc-area-card__title {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.lh-1 {
+  line-height: 1.1;
+}
+
+.min-width-0 {
+  min-width: 0;
+}
+
+/* No hover lift while the settings panel is open — see ChoreCard. */
+.lc-area-card:not(.lc-area-card--idle) {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 599px) {
+  .lc-area-card__body {
+    padding: var(--lc-space-3) var(--lc-space-3) var(--lc-space-2)
+      calc(var(--lc-space-3) + 4px);
+  }
+
+  .lc-area-card__actions :deep(.v-btn--icon) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+</style>

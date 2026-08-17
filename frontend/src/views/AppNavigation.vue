@@ -1,20 +1,34 @@
 <template>
-  <v-app-bar color="#c8f0ff" density="compact" app>
-    <v-menu v-if="store.isLoggedIn">
-      <template v-slot:activator="{ props }">
-        <v-btn icon="mdi-menu" v-bind="props"></v-btn>
+  <!-- The bar was hardcoded to #c8f0ff, so it stayed pale cyan in the dark
+       theme regardless. Using a theme colour lets each theme define it. -->
+  <v-app-bar color="surface" density="compact" border app>
+    <v-menu v-if="store.isLoggedIn" v-model="navMenu">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          v-bind="activatorProps"
+          icon="mdi-menu"
+          aria-label="Main menu"
+          :aria-expanded="navMenu ? 'true' : 'false'"
+        >
+          <v-icon icon="mdi-menu"></v-icon>
+        </v-btn>
       </template>
-      <v-list>
+      <v-list nav>
+        <!-- The v-for alias used to be named `menu`, which shadowed the ref
+             holding the overflow menu's open state -- so `@click="menu = false"`
+             assigned to the loop variable and the intended close never
+             happened. It only looked like it worked because navigating closes
+             the menu as a side effect. -->
         <v-list-item
-          v-for="(menu, i) in menus"
-          :key="i"
-          :to="menu.url"
-          @click="menu = false"
+          v-for="item in menus"
+          :key="item.url"
+          :to="item.url"
+          @click="navMenu = false"
         >
           <template v-slot:prepend>
-            <v-icon :icon="menu.icon"></v-icon>
+            <v-icon :icon="item.icon" aria-hidden="true"></v-icon>
           </template>
-          <v-list-item-title>{{ menu.title }}</v-list-item-title>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
       <v-divider></v-divider>
@@ -35,45 +49,66 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <v-img :width="208" aspect-ratio="1/1" src="logov2.png" inline></v-img>
+    <v-img
+      :width="180"
+      aspect-ratio="1/1"
+      src="logov2.png"
+      alt="LenoreChore"
+      inline
+    ></v-img>
     <v-spacer></v-spacer>
-    <v-tooltip
+
+    <!-- Offline is STATUS, not a control. It was a tooltip on an unlabelled
+         button, so the queue count was reachable only by hovering — which a
+         touch device cannot do and a screen reader never announced. It is now a
+         live region that speaks when connectivity changes. -->
+    <div
       v-if="!offlineStore.isOnline"
-      location="bottom"
-      max-width="260"
+      class="d-flex align-center"
+      role="status"
+      aria-live="polite"
     >
-      <template v-slot:activator="{ props }">
-        <v-btn
-          v-bind="props"
-          icon="mdi-wifi-off"
-          color="warning"
-          variant="text"
-        ></v-btn>
-      </template>
-      <span>
-        You are offline.
-        <template v-if="offlineStore.mutationQueue.length > 0">
-          {{ offlineStore.mutationQueue.length }}
-          change{{ offlineStore.mutationQueue.length !== 1 ? "s" : "" }}
-          saved locally and will sync automatically when reconnected.
-        </template>
-        <template v-else>
-          Changes you make will be saved locally and sync when reconnected.
-        </template>
-      </span>
-    </v-tooltip>
+      <v-chip
+        size="small"
+        color="soiled"
+        variant="tonal"
+        prepend-icon="mdi-wifi-off"
+      >
+        <span class="d-none d-sm-inline">{{ offlineLabel }}</span>
+        <span class="d-sm-none">Offline</span>
+      </v-chip>
+      <span class="lc-visually-hidden">{{ offlineLabel }}</span>
+    </div>
+
     <v-btn
       :icon="themeStore.isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+      :aria-label="
+        themeStore.isDark ? 'Switch to light theme' : 'Switch to dark theme'
+      "
+      :aria-pressed="themeStore.isDark ? 'true' : 'false'"
       @click="themeStore.toggle()"
-      variant="text"
-    ></v-btn>
+    >
+      <v-icon
+        :icon="themeStore.isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+      ></v-icon>
+      <v-tooltip activator="parent" location="bottom">
+        {{ themeStore.isDark ? "Light theme" : "Dark theme" }}
+      </v-tooltip>
+    </v-btn>
+
     <v-menu v-model="menu" location="end" v-if="store.isLoggedIn">
-      <template v-slot:activator="{ props }">
-        <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          v-bind="activatorProps"
+          icon="mdi-dots-vertical"
+          aria-label="Account and settings"
+          :aria-expanded="menu ? 'true' : 'false'"
+        >
+          <v-icon icon="mdi-dots-vertical"></v-icon>
+        </v-btn>
       </template>
       <v-list>
         <v-list-item
-          as="a"
           href="/admin/"
           v-if="store.isAdmin"
           prepend-icon="mdi-security"
@@ -83,7 +118,7 @@
         <v-list-item prepend-icon="mdi-island" @click="showVacationForm = true">
           <v-list-item-title>
             {{
-              options.vacation_mode == false
+              options?.vacation_mode !== true
                 ? "Enable Vacation"
                 : "Disable Vacation"
             }}
@@ -106,7 +141,7 @@
 </template>
 
 <script setup>
-  import { ref } from "vue";
+  import { ref, computed } from "vue";
   import { useUserStore } from "@/stores/user";
   import { useThemeStore } from "@/stores/theme";
   import { useOfflineStore } from "@/stores/offline";
@@ -132,6 +167,18 @@
   ];
 
   const menu = ref(false);
+  const navMenu = ref(false);
+
+  // Spelled out rather than assembled in the template, so the same wording
+  // reaches both the visible chip and the live region.
+  const offlineLabel = computed(() => {
+    const queued = offlineStore.mutationQueue.length;
+    if (queued === 0) {
+      return "Offline — changes will sync when you reconnect";
+    }
+    return `Offline — ${queued} change${queued === 1 ? "" : "s"} saved locally, will sync when you reconnect`;
+  });
+
   const updateVacationDialog = () => {
     showVacationForm.value = false;
   };
