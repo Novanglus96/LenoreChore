@@ -1,3 +1,10 @@
+# [1.5.0-alpha.1](https://github.com/Novanglus96/LenoreChore/compare/v1.4.3-alpha.4...v1.5.0-alpha.1) (2026-08-17)
+
+
+### Features
+
+* design foundation and rebuilt ChoreCard ([14f50a4](https://github.com/Novanglus96/LenoreChore/commit/14f50a44bc76c8c51a72ae4bb769aaccc1b036dc))
+
 ## [1.4.3-alpha.4](https://github.com/Novanglus96/LenoreChore/compare/v1.4.3-alpha.3...v1.4.3-alpha.4) (2026-08-17)
 
 
