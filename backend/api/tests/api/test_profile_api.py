@@ -156,12 +156,31 @@ def test_update_me_cannot_target_another_user(auth_client, django_user_model):
 
 @pytest.mark.django_db
 @pytest.mark.api
-def test_update_me_rejects_malformed_colour(auth_client, user):
-    response = _put(auth_client, {**PROFILE, "user_color": "red; DROP TABLE"})
-    assert response.status_code == 422
+@pytest.mark.parametrize(
+    "colour",
+    ["red; DROP TABLE", "#12345", "#GGGGGG", "3F51B5", "#3F51B5AA"],
+)
+def test_update_me_rejects_malformed_colour(auth_client, user, colour):
+    """`#3F51B5AA` is 8-digit "hexa" -- a valid colour, but not one a
+    default-format ColorField can store, so the API must refuse it rather than
+    let it fail at the database. The empty string is not here: it means "leave
+    unchanged" and has its own test below."""
+    assert _put(auth_client, {**PROFILE, "user_color": colour}).status_code == 422
 
     user.refresh_from_db()
     assert user.user_color == "#336699"
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+@pytest.mark.parametrize("colour", ["#3F51B5", "#abc", "#ABC", "#e91e63"])
+def test_update_me_accepts_every_form_the_field_can_store(auth_client, user, colour):
+    """ColorField's "hex" format accepts 6- and 3-digit values in either case.
+    The API validator is the library's own regex, so the two cannot disagree."""
+    assert _put(auth_client, {**PROFILE, "user_color": colour}).status_code == 200
+
+    user.refresh_from_db()
+    assert user.user_color == colour
 
 
 @pytest.mark.django_db
