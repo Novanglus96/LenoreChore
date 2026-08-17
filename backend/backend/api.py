@@ -24,6 +24,7 @@ from django.core.paginator import Paginator
 from django.core.cache import cache
 import importlib.metadata
 import platform
+import re
 import django
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -84,6 +85,29 @@ class VersionDetailsOut(Schema):
     python_version: str
     django_version: str
     packages: Dict[str, str]
+
+
+class ProfileIn(Schema):
+    """
+    Schema to update the logged-in user's own profile.
+
+    Deliberately narrow. The retired DRF `CustomUserSerializer` used
+    `fields = "__all__"`, which accepted `is_staff`, `is_superuser`,
+    `is_active`, `password` and `email` from the request body. Only the four
+    fields the profile form actually edits are settable here, and only ever on
+    `request.user` -- there is no user id in the payload or the path.
+
+    Attributes:
+        first_name (str): User first name.
+        last_name (str): User last name.
+        male (bool): Toggle if user is male (selects the avatar).
+        user_color (str): Hex colour used to represent the user.
+    """
+
+    first_name: str = ""
+    last_name: str = ""
+    male: bool = True
+    user_color: str = ""
 
 
 class NotificationPrefsIn(Schema):
@@ -719,6 +743,63 @@ def me(request):
     if not request.user.is_authenticated:
         raise HttpError(401, "Not authenticated")
     return request.user
+
+
+@api.put("/me", response=CustomUserSchema)
+def update_me(request, payload: ProfileIn):
+    """
+    The function `update_me` updates the logged in user's own profile.
+
+    Replaces the retired DRF `PATCH /api/users/{id}/`, which was unauthenticated
+    (no DEFAULT_PERMISSION_CLASSES, no permission_classes) and accepted every
+    model field including `is_superuser`. This endpoint takes no user id at all
+    -- it always writes to `request.user`, so one account can never edit
+    another's profile.
+
+    Endpoint:
+        - **Path**: `/api/v2/me`
+        - **Method**: `PUT`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (ProfileIn): The profile fields to update.
+
+    Returns:
+        (CustomUserSchema): The updated CustomUser object.
+    """
+    user = request.user
+
+    # AbstractUser caps both name fields at 150; without this a longer value
+    # reaches the database and surfaces as a 500 rather than a validation error.
+    for field, value in (
+        ("first name", payload.first_name),
+        ("last name", payload.last_name),
+    ):
+        if len(value) > 150:
+            raise HttpError(422, f"{field} must be 150 characters or fewer")
+
+    update_fields = ["first_name", "last_name", "male"]
+    user.first_name = payload.first_name
+    user.last_name = payload.last_name
+    user.male = payload.male
+
+    # An empty colour means "leave it alone" rather than "blank it", so a client
+    # that omits the field cannot silently reset the user's colour.
+    if payload.user_color:
+        if not re.fullmatch(r"#[0-9A-Fa-f]{6}", payload.user_color):
+            raise HttpError(422, "user_color must be a hex colour like #E91E63")
+        user.user_color = payload.user_color
+        update_fields.append("user_color")
+
+    user.save(update_fields=update_fields)
+
+    # The DRF endpoint this replaces did neither of these: other sessions never
+    # saw a profile change, and the cached user list kept serving the old name.
+    # `/users` caches under a literal "users" key, so delete rather than
+    # delete_pattern.
+    cache.delete("users")
+    notify("users")
+    return user
 
 
 @api.post("/toggle_vacation")

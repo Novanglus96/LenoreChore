@@ -249,12 +249,16 @@ const avatarPreview = computed(() => {
   return child ? "child_female_avatar.jpg" : "adult_female_avatar.jpg";
 });
 
-const submitForm = (values) => {
+// Must be async and must await: updateProfile is async, so the previous
+// non-awaited call could never be caught here and the success snackbar fired
+// unconditionally -- including on a failed save.
+const submitForm = async (values) => {
   try {
-    userstore.updateProfile({ ...formData.value, ...values });
+    await userstore.updateProfile({ ...formData.value, ...values });
     showSnackbar("Profile updated successfully!", "success");
   } catch (error) {
-    showSnackbar("Profile not updated!", "error");
+    const detail = error.response?.data?.detail;
+    showSnackbar(detail || "Profile not updated!", "error");
   }
 };
 

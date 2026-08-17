@@ -19,10 +19,14 @@ from django.urls import path, include
 from .api import api
 from .sse import sse_view
 
+# The legacy DRF router that used to sit at `api/` is gone. It had no
+# DEFAULT_PERMISSION_CLASSES and no permission_classes on any viewset, so it
+# fell back to AllowAny -- unauthenticated CRUD on chores, areas, options and
+# users, with CustomUserSerializer exposing every field. It also bypassed the
+# SSE notify() and cache invalidation that every /api/v2/ write performs.
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v2/', api.urls),
     path('api/v2/events/', sse_view),
-    path('api/', include('api.urls')),
     path('_allauth/', include('allauth.headless.urls')),
 ]
