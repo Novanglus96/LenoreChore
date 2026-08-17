@@ -24,8 +24,8 @@ from django.core.paginator import Paginator
 from django.core.cache import cache
 import importlib.metadata
 import platform
-import re
 import django
+from colorfield.validators import COLOR_HEX_RE
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 CACHE_TTL = 15 * 60  # 15 minutes
@@ -786,7 +786,13 @@ def update_me(request, payload: ProfileIn):
     # An empty colour means "leave it alone" rather than "blank it", so a client
     # that omits the field cannot silently reset the user's colour.
     if payload.user_color:
-        if not re.fullmatch(r"#[0-9A-Fa-f]{6}", payload.user_color):
+        # Reuse the field's own validator rather than restating it. CustomUser
+        # .user_color is a ColorField in the default "hex" format, which accepts
+        # 6- OR 3-digit values; the hand-written regex here only accepted 6, so
+        # a stored 3-digit colour round-tripped from the profile form would have
+        # been rejected on save. Importing the library's pattern means the two
+        # cannot drift if the field's format ever changes.
+        if not COLOR_HEX_RE.match(payload.user_color):
             raise HttpError(422, "user_color must be a hex colour like #E91E63")
         user.user_color = payload.user_color
         update_fields.append("user_color")
