@@ -1,3 +1,10 @@
+## [1.4.3-alpha.3](https://github.com/Novanglus96/LenoreChore/compare/v1.4.3-alpha.2...v1.4.3-alpha.3) (2026-08-17)
+
+
+### Bug Fixes
+
+* accept every colour the user_color field can actually store ([2864bf3](https://github.com/Novanglus96/LenoreChore/commit/2864bf373e213604dc85304ee0f2e30fed3ce891)), closes [#12345](https://github.com/Novanglus96/LenoreChore/issues/12345) [#3F51B5](https://github.com/Novanglus96/LenoreChore/issues/3F51B5) [#3F51B5](https://github.com/Novanglus96/LenoreChore/issues/3F51B5) [#e91e63](https://github.com/Novanglus96/LenoreChore/issues/e91e63)
+
 ## [1.4.3-alpha.2](https://github.com/Novanglus96/LenoreChore/compare/v1.4.3-alpha.1...v1.4.3-alpha.2) (2026-08-17)
 
 
