@@ -1,3 +1,11 @@
+## [1.4.3-alpha.2](https://github.com/Novanglus96/LenoreChore/compare/v1.4.3-alpha.1...v1.4.3-alpha.2) (2026-08-17)
+
+
+### Bug Fixes
+
+* break the api client -> router import cycle ([8b41040](https://github.com/Novanglus96/LenoreChore/commit/8b41040ea613784c4364c5b19be9659f8423f833))
+* retire the unauthenticated legacy DRF API ([8925b02](https://github.com/Novanglus96/LenoreChore/commit/8925b021393346d8a742fdfcbb20b567ff5a64c2))
+
 ## [1.4.3-alpha.1](https://github.com/Novanglus96/LenoreChore/compare/v1.4.2...v1.4.3-alpha.1) (2026-08-17)
 
 
