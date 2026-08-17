@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import axios from "axios";
+import apiClient from "@/api/client";
 
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
@@ -73,25 +73,39 @@ export const useUserStore = defineStore("user", {
       this.user_color = "";
       this.male = true;
     },
+    // Writes through /api/v2/me, which derives the user from the session and
+    // takes no id -- so this can only ever edit the logged-in user. The DRF
+    // endpoint it replaces (PATCH /api/users/{id}/) was unauthenticated and
+    // accepted every model field, is_superuser included.
+    //
+    // Errors are re-thrown, not swallowed. The previous version caught and
+    // discarded them, so ProfileForm reported success on every failed save.
     async updateProfile(user) {
-      try {
-        // Make a POST request to your API endpoint
-        const response = await axios.patch("/api/users/" + user.id + "/", user);
+      const response = await apiClient.put("/me", {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        male: user.male,
+        user_color: user.user_color,
+      });
 
-        // Add area to local storage
-        //this.areas.push(area);
-        this.loginUser(
-          user.first_name,
-          user.last_name,
-          user.email,
-          user.isAdmin,
-          user.male,
-          user.id,
-          user.user_color,
-        );
-      } catch (error) {
-        // Handle errors (e.g., show an error message)
-      }
+      // Re-seed from the server's response rather than the submitted form, so
+      // any server-side normalisation is reflected. `groups` is passed through:
+      // omitting it used to throw TypeError inside loginUser on
+      // `groups.includes(1)`, leaving isChild and avatar stale.
+      const me = response.data;
+      this.loginUser(
+        me.first_name,
+        me.last_name,
+        me.email,
+        // is_superuser, matching LoginView -- is_staff here would silently
+        // change the user's admin status on every profile save.
+        me.is_superuser,
+        me.male,
+        me.id,
+        me.user_color,
+        me.groups ?? [],
+      );
+      return me;
     },
   },
   persist: true,
