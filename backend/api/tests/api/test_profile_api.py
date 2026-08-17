@@ -72,7 +72,34 @@ def test_legacy_user_detail_cannot_be_written(api_client, user):
 @pytest.mark.django_db
 @pytest.mark.api
 def test_update_me_requires_auth(api_client):
+    """401 from ninja's auth layer.
+
+    The Django test client disables CSRF enforcement, so the request reaches
+    django_auth and is refused there. Against a real server CsrfViewMiddleware
+    rejects an unsafe method first and the response is 403 -- see
+    test_update_me_rejected_without_csrf_token. Both are refusals; this one pins
+    that the endpoint is not accidentally `auth=None`.
+    """
     assert _put(api_client, PROFILE).status_code == 401
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_update_me_rejected_without_csrf_token(db, user):
+    """What an unauthenticated caller actually gets from a running server.
+
+    Measured against the dev container: every unsafe method on /api/v2/ returns
+    403 unauthenticated (CSRF middleware runs before the auth check) and every
+    safe method returns 401. Asserting only the test-client 401 would leave the
+    real-world behaviour untested.
+    """
+    from django.test import Client
+
+    csrf_client = Client(enforce_csrf_checks=True)
+    assert _put(csrf_client, PROFILE).status_code == 403
+
+    user.refresh_from_db()
+    assert user.first_name == "Test"
 
 
 @pytest.mark.django_db
