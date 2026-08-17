@@ -1,0 +1,195 @@
+/* ===========================================================================
+   LenoreChore design tokens
+   ===========================================================================
+   Shape, motion and spacing. Colour lives in plugins/vuetify.js, because
+   Vuetify owns theme colours and duplicating them here would let the two
+   drift.
+
+   The motion tokens are the load-bearing part of this file. The design
+   direction puts the app's personality in HOW THINGS MOVE rather than in
+   illustration or ornament, so these durations and curves are the vocabulary
+   every component animates with. Use the tokens; do not hand-write timings.
+   =========================================================================== */
+
+:root {
+  /* ── Shape ───────────────────────────────────────────────────────────────
+     A deliberate scale rather than per-component values. `lg` is the card
+     radius and the one most likely to be reached for. */
+  --lc-radius-sm: 8px;
+  --lc-radius-md: 12px;
+  --lc-radius-lg: 18px;
+  --lc-radius-xl: 26px;
+  --lc-radius-pill: 999px;
+
+  /* ── Spacing ─────────────────────────────────────────────────────────────
+     4px base, matching the scale Vuetify's own padding and margin utilities
+     use, so custom CSS lines up with them. */
+  --lc-space-1: 4px;
+  --lc-space-2: 8px;
+  --lc-space-3: 12px;
+  --lc-space-4: 16px;
+  --lc-space-5: 24px;
+  --lc-space-6: 32px;
+
+  /* ── Motion: duration ────────────────────────────────────────────────────
+     quick     — state flips the user should barely notice (hover, focus)
+     base      — the default for anything entering or leaving
+     slow      — larger surfaces travelling further (panels, sheets)
+     celebrate — the completion moment, and only that. It is longer than a
+                 normal transition on purpose: this is the payoff beat of the
+                 whole app, and rushing it is what makes such moments feel
+                 cheap rather than satisfying. */
+  --lc-dur-quick: 120ms;
+  --lc-dur-base: 220ms;
+  --lc-dur-slow: 380ms;
+  --lc-dur-celebrate: 620ms;
+
+  /* ── Motion: easing ──────────────────────────────────────────────────────
+     standard   — Material's standard curve. Decelerates into place.
+     emphasized — for motion that should read as deliberate.
+     spring     — overshoots slightly then settles. Reserved for the
+                  completion moment; used everywhere it reads as jittery.
+     exit       — accelerates out. Things leaving should not linger. */
+  --lc-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --lc-ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --lc-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --lc-ease-exit: cubic-bezier(0.3, 0, 1, 1);
+
+  /* ── Elevation ───────────────────────────────────────────────────────────
+     Softer and more diffuse than Vuetify's defaults, which read as dated.
+     Tinted toward the primary hue rather than neutral black. */
+  --lc-shadow-1: 0 1px 2px rgba(0, 38, 45, 0.06),
+    0 1px 3px rgba(0, 38, 45, 0.08);
+  --lc-shadow-2: 0 2px 6px rgba(0, 38, 45, 0.07),
+    0 6px 14px rgba(0, 38, 45, 0.08);
+  --lc-shadow-3: 0 8px 20px rgba(0, 38, 45, 0.1),
+    0 16px 32px rgba(0, 38, 45, 0.1);
+}
+
+/* Dark theme shadows need far more opacity to register against a dark ground;
+   the light values are invisible there. */
+.v-theme--myCustomDarkTheme {
+  --lc-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --lc-shadow-2: 0 2px 6px rgba(0, 0, 0, 0.5), 0 6px 14px rgba(0, 0, 0, 0.45);
+  --lc-shadow-3: 0 8px 20px rgba(0, 0, 0, 0.55), 0 16px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────────
+   Honouring this is not optional, and for vestibular disorders it is a
+   genuine accessibility requirement rather than a preference.
+
+   Durations collapse to ~0 instead of animations being disabled outright,
+   because several components rely on transitionend/animationend firing to
+   clean up. A zeroed duration still fires those events; `animation: none`
+   does not, and would leave elements stuck mid-state.
+
+   Opacity fades are deliberately KEPT (at quick duration): they convey state
+   change without any implied movement, so they do not trigger the symptoms
+   this query exists to prevent. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --lc-dur-quick: 1ms;
+    --lc-dur-base: 1ms;
+    --lc-dur-slow: 1ms;
+    --lc-dur-celebrate: 1ms;
+    --lc-ease-spring: var(--lc-ease-standard);
+  }
+}
+
+/* ── Motion primitives ─────────────────────────────────────────────────────
+   Shared classes so components do not each invent their own keyframes. */
+
+/* The completion beat: lift, then away. Paired with the dirtiness bar
+   draining, this is the app's signature moment. */
+@keyframes lc-complete {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  30% {
+    transform: scale(1.02) translateY(-6px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.96) translateY(8px);
+    opacity: 0;
+  }
+}
+
+.lc-completing {
+  animation: lc-complete var(--lc-dur-celebrate) var(--lc-ease-spring) forwards;
+  /* The card is on its way out; further clicks would emit duplicate mutations. */
+  pointer-events: none;
+}
+
+/* Overdue chores breathe, very slowly. Slow enough to read as ambient rather
+   than as an alert that needs dismissing — it should draw the eye on a second
+   pass through the list, not demand attention on the first. */
+@keyframes lc-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+.lc-breathe {
+  animation: lc-breathe 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* A pulsing element is exactly what this query is for. Drop to a static
+     emphasis instead of animating faster. */
+  .lc-breathe {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Interactive lift. Applied to cards and tiles that respond to pointer. */
+.lc-lift {
+  transition: box-shadow var(--lc-dur-base) var(--lc-ease-standard),
+    transform var(--lc-dur-base) var(--lc-ease-standard);
+}
+
+@media (hover: hover) {
+  /* Guarded: on touch devices :hover sticks after a tap, leaving the card
+     visibly raised until something else is touched. */
+  .lc-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--lc-shadow-3);
+  }
+}
+
+.lc-lift:active {
+  transform: translateY(0) scale(0.995);
+  transition-duration: var(--lc-dur-quick);
+}
+
+/* ── Focus ─────────────────────────────────────────────────────────────────
+   Vuetify's default focus treatment is easy to lose against tinted surfaces.
+   A visible, consistent focus ring is a WCAG requirement and the thing
+   keyboard users navigate by, so it is defined once, globally, and uses
+   :focus-visible so pointer users never see it. */
+:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+  border-radius: var(--lc-radius-sm);
+}
+
+/* ── Screen-reader-only utility ────────────────────────────────────────────
+   For text that must be announced but not shown — the counterpart to giving
+   icon-only controls an accessible name. */
+.lc-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

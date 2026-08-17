@@ -1,78 +1,126 @@
 <template>
+  <!-- The card is an <article> with its own accessible name, so a screen
+       reader can navigate the list by chore instead of hearing an unbroken run
+       of unlabelled groups. -->
   <v-card
-    :color="localchore.status == 0 ? localchore.area.group.group_color : 'grey'"
+    class="lc-chore-card lc-lift"
+    :class="{ 'lc-completing': isCompleting, 'lc-chore-card--idle': isIdle }"
+    tag="article"
+    :aria-label="cardLabel"
+    :rounded="$vuetify.display.smAndDown ? 0 : 'lg'"
+    :elevation="0"
     border
-    elevation="3"
-    :rounded="$vuetify.display.smAndDown ? 0 : undefined"
   >
-    <v-card-item :title="localchore.chore_name">
-      <template v-slot:subtitle>
-        <v-icon
-          :icon="localchore.area.area_icon"
-          size="18"
-          class="me-1 pb-1"
-        ></v-icon>
+    <!-- The area group's colour, as identity rather than as a surface. Text
+         never sits on it, so its contrast is not load-bearing and users keep
+         whatever colour they picked. -->
+    <div
+      class="lc-chore-card__stripe"
+      :class="`bg-${localchore.area.group.group_color}`"
+      aria-hidden="true"
+    ></div>
 
-        {{ localchore.area.area_name }}
-      </template>
-    </v-card-item>
+    <div class="lc-chore-card__body">
+      <div class="d-flex align-start ga-3">
+        <v-avatar
+          size="40"
+          class="lc-chore-card__area-icon flex-shrink-0"
+          :class="`text-${localchore.area.group.group_color}`"
+          aria-hidden="true"
+        >
+          <v-icon :icon="localchore.area.area_icon" size="22"></v-icon>
+        </v-avatar>
 
-    <v-card-text class="py-0">
-      <v-row align="center" no-gutters v-if="localchore.status == 0">
-        <v-col class="text-h9" cols="6">
-          <v-progress-linear
-            v-model="localchore.dirtiness"
-            :color="computedColor"
-            height="25"
-            striped
+        <div class="flex-grow-1 min-width-0">
+          <h3 class="text-subtitle-1 font-weight-medium lc-chore-card__title">
+            {{ localchore.chore_name }}
+          </h3>
+          <p class="text-caption text-medium-emphasis mb-0">
+            {{ localchore.area.area_name }}
+            <span class="lc-visually-hidden">
+              in {{ localchore.area.group.group_name }}</span
+            >
+          </p>
+        </div>
+
+        <!-- Due state. Overdue is carried by the word "overdue", an icon and a
+             slow pulse -- not by red text alone, which is invisible to anyone
+             who cannot distinguish it. -->
+        <div v-if="localchore.status == 0" class="text-right flex-shrink-0">
+          <v-chip
+            size="small"
+            :color="localchore.isOverdue ? 'filthy' : undefined"
+            :variant="localchore.isOverdue ? 'flat' : 'tonal'"
+            :class="{ 'lc-breathe': localchore.isOverdue }"
           >
-            <template v-slot:default="{ value }">
-              <strong>{{ Math.ceil(value) }}% Dirty</strong>
-            </template>
-          </v-progress-linear>
-        </v-col>
+            <v-icon
+              start
+              size="14"
+              :icon="localchore.isOverdue ? 'mdi-alert-circle' : 'mdi-clock-outline'"
+              aria-hidden="true"
+            ></v-icon>
+            {{ dueLabel }}
+          </v-chip>
+        </div>
+      </div>
 
-        <v-col cols="6" class="text-right" v-if="localchore.status == 0">
-          <span :class="localchore.isOverdue ? 'text-red' : ''"
-            >Due in
-            <strong class="text-accent">{{ localchore.duedays }}</strong>
-            day(s)</span
-          >
-        </v-col>
-      </v-row>
-      <v-row align="center" no-gutters v-if="localchore.status == 3">
-        <v-col class="text-h9" cols="6"
-          ><span class="text-error text-body-1 font-weight-bold"
-            ><v-icon icon="mdi-island"></v-icon> Vacation Mode Active</span
-          ></v-col
-        ></v-row
-      >
-    </v-card-text>
+      <!-- Dirtiness. The percentage is spoken by the progressbar role, and the
+           band name ("filthy") is redundant text so the meaning does not depend
+           on the bar's colour. -->
+      <div v-if="localchore.status == 0" class="mt-3">
+        <v-progress-linear
+          :model-value="localchore.dirtiness"
+          :color="dirtBand.color"
+          height="22"
+          rounded
+          :striped="localchore.dirtiness > 0"
+          :aria-label="`${Math.ceil(localchore.dirtiness)} percent dirty, ${dirtBand.label}`"
+        >
+          <span class="text-caption font-weight-medium">
+            {{ Math.ceil(localchore.dirtiness) }}% · {{ dirtBand.label }}
+          </span>
+        </v-progress-linear>
+      </div>
 
-    <div class="d-flex py-3 justify-space-between">
-      <v-list-item
+      <v-alert
+        v-else-if="localchore.status == 3"
+        type="info"
         density="compact"
-        :prepend-icon="
-          localchore.assignee ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'
-        "
-      >
-        <v-list-item-subtitle>{{ computedAssignee }}</v-list-item-subtitle>
-      </v-list-item>
+        class="mt-3"
+        icon="mdi-island"
+        text="Vacation mode — this chore is paused."
+      ></v-alert>
 
-      <v-list-item density="compact">
-        <v-rating
-          v-model="localchore.effort"
-          :readonly="!expand"
-          length="3"
-          size="20"
-          @update:modelValue="changeDetected()"
-        ></v-rating>
-      </v-list-item>
+      <div class="d-flex align-center justify-space-between mt-3 ga-2">
+        <v-chip
+          size="small"
+          variant="tonal"
+          :prepend-icon="
+            localchore.assignee ? 'mdi-account-check' : 'mdi-account-outline'
+          "
+        >
+          {{ computedAssignee }}
+        </v-chip>
+
+        <div class="d-flex align-center ga-1">
+          <span class="lc-visually-hidden">Effort</span>
+          <v-rating
+            v-model="localchore.effort"
+            :readonly="!expand"
+            length="3"
+            size="18"
+            density="compact"
+            active-color="accent"
+            :item-aria-label="'Effort level {0} of 3'"
+            @update:modelValue="changeDetected()"
+          ></v-rating>
+        </div>
+      </div>
     </div>
 
     <v-expand-transition>
       <div v-if="expand">
-        <v-container class="bg-chorePanel">
+        <v-container class="bg-surface-variant">
           <v-row v-if="remoteUpdatePending" dense>
             <v-col>
               <v-alert
@@ -86,7 +134,7 @@
               ></v-alert>
             </v-col>
           </v-row>
-          <v-row dense class="bg-chorePanel">
+          <v-row dense class="bg-surface-variant">
             <v-col>
               <v-text-field
                 v-model="localchore.chore_name"
@@ -95,11 +143,11 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-row dense class="bg-chorePanel">
+          <v-row dense class="bg-surface-variant">
             <v-col>
               <VueDatePicker
                 v-model="localchore.lastCompleted"
-                timezone="America/New_York"
+                :timezone="userTimezone"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
                 auto-apply
@@ -110,7 +158,7 @@
             <v-col>
               <VueDatePicker
                 v-model="localchore.nextDue"
-                timezone="America/New_York"
+                :timezone="userTimezone"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
                 auto-apply
@@ -142,154 +190,62 @@
               ></v-select>
             </v-col>
           </v-row>
+          <!-- A real fieldset with a legend. These twelve controls previously
+               sat loose in the form, so each announced alone with nothing
+               tying it to "which months does this chore run in". -->
           <v-row dense>
             <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Jan"
-                color="primary"
-                hide-details
-                :value="1"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Feb"
-                color="primary"
-                hide-details
-                :value="2"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Mar"
-                color="primary"
-                hide-details
-                :value="3"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Apr"
-                color="primary"
-                hide-details
-                :value="4"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="May"
-                color="primary"
-                hide-details
-                :value="5"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Jun"
-                color="primary"
-                hide-details
-                :value="6"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Jul"
-                color="primary"
-                hide-details
-                :value="7"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Aug"
-                color="primary"
-                hide-details
-                :value="8"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Sep"
-                color="primary"
-                hide-details
-                :value="9"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Oct"
-                color="primary"
-                hide-details
-                :value="10"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Nov"
-                color="primary"
-                hide-details
-                :value="11"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-checkbox
-                v-model="localchore.active_months"
-                label="Dec"
-                color="primary"
-                hide-details
-                :value="12"
-                @update:modelValue="changeDetected()"
-              ></v-checkbox>
+              <fieldset class="lc-months">
+                <legend class="text-body-2 mb-1">Active months</legend>
+                <div class="lc-months__grid">
+                  <v-checkbox
+                    v-for="month in months"
+                    :key="month.value"
+                    v-model="localchore.active_months"
+                    :label="month.label"
+                    :value="month.value"
+                    color="primary"
+                    density="compact"
+                    hide-details
+                    @update:modelValue="changeDetected()"
+                  ></v-checkbox>
+                </div>
+              </fieldset>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col>
               <v-btn
-                @click="callSaveChore(localchore)"
                 icon="mdi-content-save-outline"
+                :aria-label="`Save changes to ${localchore.chore_name}`"
                 :disabled="!saveEnabled"
-              ></v-btn>
-              <v-btn
-                @click="callResetChore()"
-                icon="mdi-arrow-u-left-top-bold"
-                :disabled="!saveEnabled"
-              ></v-btn>
-              <v-dialog
-                v-model="deleteDialog"
-                persistent
-                width="auto"
+                @click="callSaveChore(localchore)"
               >
-                <template v-slot:activator="{ props }">
+                <v-icon icon="mdi-content-save-outline"></v-icon>
+                <v-tooltip activator="parent" location="top">Save</v-tooltip>
+              </v-btn>
+              <v-btn
+                icon="mdi-arrow-u-left-top-bold"
+                :aria-label="`Discard changes to ${localchore.chore_name}`"
+                :disabled="!saveEnabled"
+                @click="callResetChore()"
+              >
+                <v-icon icon="mdi-arrow-u-left-top-bold"></v-icon>
+                <v-tooltip activator="parent" location="top">Reset</v-tooltip>
+              </v-btn>
+              <v-dialog v-model="deleteDialog" persistent max-width="420px">
+                <template v-slot:activator="{ props: activatorProps }">
                   <v-btn
+                    v-bind="activatorProps"
                     icon="mdi-delete-forever-outline"
-                    v-bind="props"
-                  ></v-btn>
+                    color="filthy"
+                    :aria-label="`Delete ${localchore.chore_name}`"
+                  >
+                    <v-icon icon="mdi-delete-forever-outline"></v-icon>
+                    <v-tooltip activator="parent" location="top">
+                      Delete
+                    </v-tooltip>
+                  </v-btn>
                 </template>
                 <v-card>
                   <v-card-title class="text-h5">
@@ -332,10 +288,10 @@
     </v-expand-transition>
     <v-expand-transition>
       <div v-if="localchore.history">
-        <v-container class="bg-chorePanel">
+        <v-container class="bg-surface-variant">
           <v-row dense>
             <v-col>
-              <v-table class="bg-chorePanel">
+              <v-table class="bg-surface-variant">
                 <thead>
                   <tr>
                     <th class="text-left">Date</th>
@@ -346,7 +302,6 @@
                   <tr
                     v-for="item in localchore.last_three_history_items"
                     :key="item.id"
-                    :style="{ backgroundColor: secondary }"
                   >
                     <td>{{ item.completed_date }}</td>
                     <td>{{ item.completed_by }}</td>
@@ -359,73 +314,137 @@
       </div>
     </v-expand-transition>
 
-    <v-divider :thickness="2"></v-divider>
+    <v-divider></v-divider>
 
-    <v-card-actions>
+    <!-- Every control here was previously an icon with no accessible name, so
+         the whole action bar announced as "button, button, button…". Each now
+         states the action AND its object, and any label that changes with state
+         changes with it (claim/release, disable/enable). -->
+    <v-card-actions class="lc-chore-card__actions">
       <v-btn
-        @click="callCompleteChore(localchore.id, getID)"
         icon="mdi-check"
-        :disabled="localchore.status > 0 || expand"
-      ></v-btn>
-      <v-dialog v-model="snooze" scrollable max-width="300px">
-        <template v-slot:activator="{ props }">
+        :aria-label="`Mark ${localchore.chore_name} complete`"
+        :disabled="localchore.status > 0 || expand || isCompleting"
+        @click="callCompleteChore(localchore.id, getID)"
+      >
+        <v-icon icon="mdi-check"></v-icon>
+        <v-tooltip activator="parent" location="top">Complete</v-tooltip>
+      </v-btn>
+
+      <v-dialog v-model="snooze" scrollable max-width="420px">
+        <template v-slot:activator="{ props: activatorProps }">
           <v-btn
-            v-bind="props"
+            v-bind="activatorProps"
             icon="mdi-alarm-snooze"
+            :aria-label="`Snooze ${localchore.chore_name}`"
             :disabled="localchore.status > 0 || expand"
-          ></v-btn>
+          >
+            <v-icon icon="mdi-alarm-snooze"></v-icon>
+            <v-tooltip activator="parent" location="top">Snooze</v-tooltip>
+          </v-btn>
         </template>
         <v-card>
-          <v-card-title>Snooze Chore</v-card-title>
+          <v-card-title>Snooze {{ localchore.chore_name }}</v-card-title>
           <v-divider></v-divider>
-          <v-card-text style="height: 500px">
-            <VueDatePicker
-              v-model="localchore.nextDue"
-              timezone="America/New_York"
-              model-type="yyyy-MM-dd"
-              :enable-time-picker="false"
-              auto-apply
-              format="yyyy-MM-dd"
-            ></VueDatePicker>
+          <v-card-text>
+            <!-- VueDatePicker does not render an element carrying the id its
+                 `uid` prop implies, so a <label for> would point at nothing.
+                 Labelling the group is what actually reaches the control. -->
+            <div
+              id="snooze-date-label"
+              class="text-body-2 mb-2"
+              aria-hidden="true"
+            >
+              Push the due date to
+            </div>
+            <div role="group" aria-labelledby="snooze-date-label">
+              <VueDatePicker
+                v-model="localchore.nextDue"
+                :timezone="userTimezone"
+                model-type="yyyy-MM-dd"
+                :enable-time-picker="false"
+                :dark="theme.global.current.value.dark"
+                auto-apply
+                teleport
+                format="yyyy-MM-dd"
+              ></VueDatePicker>
+            </div>
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions>
-            <v-btn color="blue darken-1" text @click="snooze = !snooze">
-              Close
-            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn variant="text" @click="snooze = false">Cancel</v-btn>
             <v-btn
-              color="blue darken-1"
-              text
+              variant="flat"
+              color="primary"
               @click="callSnoozeChore(localchore.id, localchore.nextDue)"
             >
-              Save
+              Snooze
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+
       <v-btn
-        @click="callClaimChore(localchore.id, localchore.assignee_id)"
         icon="mdi-clipboard-account-outline"
+        :aria-label="claimLabel"
+        :aria-pressed="localchore.isAssigned ? 'true' : 'false'"
+        :color="localchore.isAssigned ? 'primary' : undefined"
         :disabled="localchore.status > 0 || expand"
-        :color="localchore.isAssigned ? 'red' : 'white'"
-      ></v-btn>
+        @click="callClaimChore(localchore.id, localchore.assignee_id)"
+      >
+        <v-icon
+          :icon="
+            localchore.isAssigned
+              ? 'mdi-clipboard-account'
+              : 'mdi-clipboard-account-outline'
+          "
+        ></v-icon>
+        <v-tooltip activator="parent" location="top">{{ claimLabel }}</v-tooltip>
+      </v-btn>
+
       <v-btn
-        @click="callToggleChore(localchore.id, localchore.status)"
         icon="mdi-circle-off-outline"
-        :color="localchore.status == 0 ? 'red' : 'white'"
+        :aria-label="toggleLabel"
+        :aria-pressed="localchore.status == 0 ? 'false' : 'true'"
+        :color="localchore.status == 0 ? undefined : 'accent'"
         :disabled="localchore.status == 3"
-      ></v-btn>
+        @click="callToggleChore(localchore.id, localchore.status)"
+      >
+        <v-icon
+          :icon="
+            localchore.status == 0 ? 'mdi-circle-off-outline' : 'mdi-circle-outline'
+          "
+        ></v-icon>
+        <v-tooltip activator="parent" location="top">{{ toggleLabel }}</v-tooltip>
+      </v-btn>
+
+      <v-spacer></v-spacer>
+
       <v-btn
-        @click="expand = !expand"
-        :icon="expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        :disabled="saveEnabled || localchore.status == 3"
-      ></v-btn>
-      <v-btn
-        @click="localchore.history = !localchore.history"
         icon="mdi-clipboard-text-clock-outline"
-        :color="!localchore.history ? 'white' : 'warning'"
+        :aria-label="`${localchore.history ? 'Hide' : 'Show'} history for ${localchore.chore_name}`"
+        :aria-expanded="localchore.history ? 'true' : 'false'"
+        :color="localchore.history ? 'primary' : undefined"
         :disabled="expand"
-      ></v-btn>
+        @click="localchore.history = !localchore.history"
+      >
+        <v-icon icon="mdi-clipboard-text-clock-outline"></v-icon>
+        <v-tooltip activator="parent" location="top">History</v-tooltip>
+      </v-btn>
+
+      <v-btn
+        :icon="expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+        :aria-label="`${expand ? 'Close' : 'Open'} editor for ${localchore.chore_name}`"
+        :aria-expanded="expand ? 'true' : 'false'"
+        :disabled="saveEnabled || localchore.status == 3"
+        @click="expand = !expand"
+      >
+        <v-icon :icon="expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-icon>
+        <v-tooltip activator="parent" location="top">
+          {{ expand ? "Close editor" : "Edit" }}
+        </v-tooltip>
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -438,6 +457,32 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useUserStore } from "@/stores/user";
 import { useOptions } from "@/composables/optionsComposable";
+import { useTheme } from "vuetify";
+
+const theme = useTheme();
+
+// Was hardcoded to "America/New_York" on all three pickers, so every date this
+// card wrote was interpreted in Eastern time regardless of where the user
+// actually is -- while the backend has stored a per-user notify_timezone since
+// the reminders feature shipped. Falls back to the browser's own zone.
+const userTimezone =
+  Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
+
+// Was twelve near-identical hand-written v-checkbox blocks, ~10 lines each.
+const months = [
+  { value: 1, label: "Jan" },
+  { value: 2, label: "Feb" },
+  { value: 3, label: "Mar" },
+  { value: 4, label: "Apr" },
+  { value: 5, label: "May" },
+  { value: 6, label: "Jun" },
+  { value: 7, label: "Jul" },
+  { value: 8, label: "Aug" },
+  { value: 9, label: "Sep" },
+  { value: 10, label: "Oct" },
+  { value: 11, label: "Nov" },
+  { value: 12, label: "Dec" },
+];
 
 const { options } = useOptions();
 const expand = ref(false);
@@ -569,7 +614,35 @@ const callDeleteChore = async deleteChore => {
   emit("removeChore", deleteChore);
   deleteDialog.value = !deleteDialog.value;
 };
+// ── The completion moment ───────────────────────────────────────────────────
+// The payoff beat of the app. The card lifts, springs away and fades while the
+// dirtiness bar drains, and only then does the mutation fire.
+//
+// Ordering it that way is deliberate. The parent's optimistic update removes
+// this chore from the list the instant the mutation starts, which unmounts the
+// component -- so emitting first means the animation never renders at all.
+// Waiting ~620ms before a chore completion costs nothing and is what makes the
+// moment land rather than feel like a spinner.
+//
+// Under prefers-reduced-motion the wait collapses to zero along with the
+// animation, so nobody who has asked for less motion pays a delay for it.
+const isCompleting = ref(false);
+
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const callCompleteChore = async (chore_id, user_id) => {
+  if (isCompleting.value) return; // a second click would emit twice
+  isCompleting.value = true;
+
+  // Drain the bar in step with the card leaving.
+  localchore.value.dirtiness = 0;
+
+  const beat = prefersReducedMotion() ? 0 : 620; // keep in step with --lc-dur-celebrate
+  if (beat) await new Promise(resolve => setTimeout(resolve, beat));
+
   emit("completeChore", chore_id, user_id);
 };
 const callClaimChore = async (chore_id, user_id) => {
@@ -584,22 +657,57 @@ const callClaimChore = async (chore_id, user_id) => {
 const callToggleChore = async (chore_id, active) => {
   emit("toggleActivation", chore_id, active);
 };
-const computedColor = computed(() => {
-  if (!options.value || !localchore.value) {
-    return "white";
-  }
-  if (localchore.value.dirtiness <= options.value.med_thresh) {
-    return "success";
-  } else if (
-    localchore.value.dirtiness > options.value.med_thresh &&
-    localchore.value.dirtiness <= options.value.high_thresh
-  ) {
-    return "warning";
-  } else if (localchore.value.dirtiness > options.value.high_thresh) {
-    return "error";
-  }
-  return "white";
+// The dirtiness band, carrying BOTH a colour and a word. Colour alone was the
+// only signal before, which fails for anyone who cannot distinguish the hues --
+// and the thresholds are user-configurable, so the word is also the only thing
+// that explains why a given percentage is "filthy" in this household.
+const dirtBand = computed(() => {
+  const dirt = localchore.value?.dirtiness ?? 0;
+  const med = options.value?.med_thresh ?? 49;
+  const high = options.value?.high_thresh ?? 74;
+
+  if (dirt <= med) return { color: "clean", label: "clean-ish" };
+  if (dirt <= high) return { color: "soiled", label: "getting there" };
+  return { color: "filthy", label: "filthy" };
 });
+
+const dueLabel = computed(() => {
+  const days = localchore.value?.duedays ?? 0;
+  if (days < 0) {
+    const overdue = Math.abs(days);
+    return `${overdue} day${overdue === 1 ? "" : "s"} overdue`;
+  }
+  if (days === 0) return "Due today";
+  if (days === 1) return "Due tomorrow";
+  return `Due in ${days} days`;
+});
+
+// State-dependent labels, so what a screen reader announces changes with the
+// control rather than describing only its resting state.
+const claimLabel = computed(() =>
+  localchore.value?.isAssigned
+    ? `Release ${localchore.value.chore_name}`
+    : `Claim ${localchore.value?.chore_name}`
+);
+
+const toggleLabel = computed(() =>
+  localchore.value?.status == 0
+    ? `Disable ${localchore.value.chore_name}`
+    : `Enable ${localchore.value?.chore_name}`
+);
+
+// The card's own accessible name, so the list can be navigated chore by chore.
+const cardLabel = computed(() => {
+  const c = localchore.value;
+  if (!c) return "Chore";
+  return `${c.chore_name}, ${c.area?.area_name}, ${Math.ceil(
+    c.dirtiness
+  )} percent dirty, ${dueLabel.value}`;
+});
+
+// Idle = nothing pending, nothing open. Used only to allow the hover lift,
+// which would be distracting while the editor is open.
+const isIdle = computed(() => !expand.value && !localchore.value?.history);
 const computedAssignee = computed(() => {
   if (!localchore.value) {
     return "";
@@ -619,7 +727,83 @@ const computedAssignee = computed(() => {
 });
 </script>
 <style scoped>
-.centered-text {
-  text-align: center; /* Center-align the text */
+.lc-chore-card {
+  position: relative;
+  overflow: hidden;
+  background: rgb(var(--v-theme-surface));
+}
+
+/* The area group's colour. 4px is enough to identify at a glance in a scrolling
+   list without becoming a block of colour competing with the content. */
+.lc-chore-card__stripe {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 4px;
+}
+
+.lc-chore-card__body {
+  /* Clears the stripe so text never sits against it. */
+  padding: var(--lc-space-4) var(--lc-space-4) var(--lc-space-3)
+    calc(var(--lc-space-4) + 4px);
+}
+
+.lc-chore-card__area-icon {
+  background: rgb(var(--v-theme-surface-variant));
+}
+
+/* Long chore names wrap rather than pushing the due chip off the card. */
+.lc-chore-card__title {
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.min-width-0 {
+  /* Flex children default to min-width:auto, which stops them shrinking below
+     their content and is what lets a long word overflow the card. */
+  min-width: 0;
+}
+
+/* The lift is for cards at rest. While the editor or history panel is open the
+   card is a working surface, and having it rise under the pointer is noise. */
+.lc-chore-card:not(.lc-chore-card--idle) {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.lc-chore-card__actions {
+  padding-inline: var(--lc-space-2);
+}
+
+/* A fieldset carries a default border and padding that would draw a box around
+   the months; the legend is kept (it is what makes the group announce) and only
+   the chrome is removed. */
+.lc-months {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+}
+
+/* Fills the available width instead of a fixed 4-across grid, so the months
+   reflow to 2 or 3 columns on a narrow phone rather than being squeezed. */
+.lc-months__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 0 var(--lc-space-2);
+}
+
+@media (max-width: 599px) {
+  .lc-chore-card__body {
+    padding: var(--lc-space-3) var(--lc-space-3) var(--lc-space-2)
+      calc(var(--lc-space-3) + 4px);
+  }
+
+  /* Vuetify's default icon-button hit area dips under the 44px that both
+     WCAG 2.5.8 and the platform HIGs ask for on touch. */
+  .lc-chore-card__actions :deep(.v-btn--icon) {
+    min-width: 44px;
+    min-height: 44px;
+  }
 }
 </style>
