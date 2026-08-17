@@ -2304,7 +2304,7 @@
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">invalidate</span><span class="p">(</span><span class="o">*</span><span class="n">keys</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete one or more exact cache keys.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Delete one or more exact cache keys."""</span>
     <span class="n">cache</span><span class="o">.</span><span class="n">delete_many</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2340,13 +2340,13 @@
 <span class="normal">46</span>
 <span class="normal">47</span>
 <span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">invalidate_pattern</span><span class="p">(</span><span class="o">*</span><span class="n">patterns</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete all cache keys matching the given patterns.</span>
+<span class="w">    </span><span class="sd">"""Delete all cache keys matching the given patterns.</span>
 
 <span class="sd">    Uses django-redis ``delete_pattern`` when available. Falls back to</span>
 <span class="sd">    ``cache.clear()`` for non-Redis backends (e.g. LocMemCache).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s2">&quot;delete_pattern&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="s2">"delete_pattern"</span><span class="p">):</span>
             <span class="n">cache</span><span class="o">.</span><span class="n">delete_pattern</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -2455,9 +2455,9 @@
 <span class="normal">1210</span>
 <span class="normal">1211</span>
 <span class="normal">1212</span>
-<span class="normal">1213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/users&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">CustomUserSchema</span><span class="p">])</span>
+<span class="normal">1213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/users"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">CustomUserSchema</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_users</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_users` retrieves a list of CustomUser objects.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -2469,12 +2469,12 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (List[CustomUserSchema]): List of CustomUser objects.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;users&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cached</span>
     <span class="n">qs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">CustomUser</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
-    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="n">qs</span><span class="p">,</span> <span class="n">CACHE_TTL</span><span class="p">)</span>
+    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"users"</span><span class="p">,</span> <span class="n">qs</span><span class="p">,</span> <span class="n">CACHE_TTL</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">qs</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2576,9 +2576,9 @@
 <span class="normal">718</span>
 <span class="normal">719</span>
 <span class="normal">720</span>
-<span class="normal">721</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/me&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">CustomUserSchema</span><span class="p">)</span>
+<span class="normal">721</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/me"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">CustomUserSchema</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">me</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `me` retrieves the CustomUser object of the logged in user.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -2590,9 +2590,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (CustomUserSchema): The CustomUser object of the logged in user.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HttpError</span><span class="p">(</span><span class="mi">401</span><span class="p">,</span> <span class="s2">&quot;Not authenticated&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HttpError</span><span class="p">(</span><span class="mi">401</span><span class="p">,</span> <span class="s2">"Not authenticated"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2788,7 +2788,7 @@
 <span class="normal">183</span>
 <span class="normal">184</span>
 <span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LoginUserSchema</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a LoginUserSchema.</span>
 
 <span class="sd">    Attributes:</span>
@@ -2803,7 +2803,7 @@
 <span class="sd">        is_staff (bool): Toggle if user is staff.</span>
 <span class="sd">        is_active (bool): Toggle if user is active.</span>
 <span class="sd">        groups (List[int]): List of group ids user belongs to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">email</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">profile_picture</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -3051,7 +3051,7 @@
 <span class="normal">239</span>
 <span class="normal">240</span>
 <span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CustomUserSchema</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a CustomUserSchema.</span>
 
 <span class="sd">    Attributes:</span>
@@ -3066,7 +3066,7 @@
 <span class="sd">        is_superuser (bool): Toggle if user is superuser.</span>
 <span class="sd">        is_staff (bool): Toggle if user is staff.</span>
 <span class="sd">        is_active (bool): Toggle if user is active.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">email</span><span class="p">:</span> <span class="nb">str</span>
@@ -3085,7 +3085,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">resolve_groups</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Resolve the groups field to a list of group IDs.</span>
 
 <span class="sd">        Handles both a CustomUser model (groups is a related manager) and an</span>
@@ -3097,11 +3097,11 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[int]: List of group IDs the user belongs to.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">groups</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"groups"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">groups</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="s2">"all"</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">group</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -3241,9 +3241,9 @@
 <span class="normal">783</span>
 <span class="normal">784</span>
 <span class="normal">785</span>
-<span class="normal">786</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/areagroups&quot;</span><span class="p">)</span>
+<span class="normal">786</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/areagroups"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_areagroup</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">AreaGroupIn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `create_areagroup` creates an AreaGroup object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -3256,11 +3256,11 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (int): The ID of the newly created AreaGroup object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">areagroup</span> <span class="o">=</span> <span class="n">AreaGroup</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">areagroup</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areagroups"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"areagroups"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">areagroup</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3377,9 +3377,9 @@
 <span class="normal">891</span>
 <span class="normal">892</span>
 <span class="normal">893</span>
-<span class="normal">894</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">AreaGroupOut</span><span class="p">)</span>
+<span class="normal">894</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">AreaGroupOut</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_areagroup</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">areagroup_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `get_areagroup` retrieves an AreaGroup object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -3392,7 +3392,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (AreaGroupOut): The AreaGroup object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">areagroup</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">AreaGroup</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">areagroup_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">areagroup</span>
 </code></pre></div></td></tr></table></div>
@@ -3498,9 +3498,9 @@
 <span class="normal">994</span>
 <span class="normal">995</span>
 <span class="normal">996</span>
-<span class="normal">997</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/areagroups&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">AreaGroupOut</span><span class="p">])</span>
+<span class="normal">997</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/areagroups"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">AreaGroupOut</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_areagroups</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_areagroups` retrieves a list of AreaGroup objects.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -3512,12 +3512,12 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (List[AreaGroupOut]): List of AreaGroup objects.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"areagroups"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cached</span>
     <span class="n">qs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">AreaGroup</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
-    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">,</span> <span class="n">qs</span><span class="p">,</span> <span class="n">CACHE_TTL</span><span class="p">)</span>
+    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"areagroups"</span><span class="p">,</span> <span class="n">qs</span><span class="p">,</span> <span class="n">CACHE_TTL</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">qs</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3658,9 +3658,9 @@
 <span class="normal">1237</span>
 <span class="normal">1238</span>
 <span class="normal">1239</span>
-<span class="normal">1240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_areagroup</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">areagroup_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">AreaGroupIn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_areagroup` updates a given AreaGroup object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -3674,15 +3674,15 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">areagroup</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">AreaGroup</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">areagroup_id</span><span class="p">)</span>
     <span class="n">areagroup</span><span class="o">.</span><span class="n">group_name</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">group_name</span>
     <span class="n">areagroup</span><span class="o">.</span><span class="n">group_order</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">group_order</span>
     <span class="n">areagroup</span><span class="o">.</span><span class="n">group_color</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">group_color</span>
     <span class="n">areagroup</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areagroups"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"areagroups"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3802,9 +3802,9 @@
 <span class="normal">1503</span>
 <span class="normal">1504</span>
 <span class="normal">1505</span>
-<span class="normal">1506</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1506</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_areagroup</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">areagroup_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `delete_areagroup` deletes a given AreaGroup object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -3817,12 +3817,12 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">areagroup</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">AreaGroup</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">areagroup_id</span><span class="p">)</span>
     <span class="n">areagroup</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areagroups"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"areagroups"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3913,14 +3913,14 @@
 <span class="normal">254</span>
 <span class="normal">255</span>
 <span class="normal">256</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AreaGroupIn</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent an AreaGroupIn.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        group_name (str): Area group name.</span>
 <span class="sd">        group_order (int): Area group order index.</span>
 <span class="sd">        group_color (str): Hex value of area group color.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">group_order</span><span class="p">:</span> <span class="nb">int</span>
@@ -4044,7 +4044,7 @@
 <span class="normal">271</span>
 <span class="normal">272</span>
 <span class="normal">273</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AreaGroupOut</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent an AreaGroupOut.</span>
 
 <span class="sd">    Attributes:</span>
@@ -4052,7 +4052,7 @@
 <span class="sd">        group_name (str): Area group name.</span>
 <span class="sd">        group_order (int): Area group order index.</span>
 <span class="sd">        group_color (str): Hex value of area group color.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span>
@@ -4195,9 +4195,9 @@
 <span class="normal">805</span>
 <span class="normal">806</span>
 <span class="normal">807</span>
-<span class="normal">808</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/areas&quot;</span><span class="p">)</span>
+<span class="normal">808</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/areas"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_area</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">AreaIn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `create_area` creates an Area object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -4210,11 +4210,11 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (int): ID of the newly created Area object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">area</span> <span class="o">=</span> <span class="n">Area</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">,</span> <span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">area</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">,</span> <span class="s2">"areagroups"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">area</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4331,9 +4331,9 @@
 <span class="normal">911</span>
 <span class="normal">912</span>
 <span class="normal">913</span>
-<span class="normal">914</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/areas/</span><span class="si">{area_id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">AreaOut</span><span class="p">)</span>
+<span class="normal">914</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/areas/</span><span class="si">{area_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">AreaOut</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_area</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">area_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `get_area` retrieves an Area object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -4346,7 +4346,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (AreaOut): The Area object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">area</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Area</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">area_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">area</span>
 </code></pre></div></td></tr></table></div>
@@ -4452,9 +4452,9 @@
 <span class="normal">1017</span>
 <span class="normal">1018</span>
 <span class="normal">1019</span>
-<span class="normal">1020</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/areas&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">AreaOut</span><span class="p">])</span>
+<span class="normal">1020</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/areas"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">AreaOut</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_areas</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_areas` retrieves a list of Area objects.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -4466,12 +4466,12 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (List[AreaOut]): List of Area objects.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cached</span>
-    <span class="n">qs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Area</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;group__group_order&quot;</span><span class="p">,</span> <span class="s2">&quot;area_name&quot;</span><span class="p">))</span>
-    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">,</span> <span class="n">qs</span><span class="p">,</span> <span class="n">CACHE_TTL</span><span class="p">)</span>
+    <span class="n">qs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Area</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">"group__group_order"</span><span class="p">,</span> <span class="s2">"area_name"</span><span class="p">))</span>
+    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">,</span> <span class="n">qs</span><span class="p">,</span> <span class="n">CACHE_TTL</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">qs</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4612,9 +4612,9 @@
 <span class="normal">1264</span>
 <span class="normal">1265</span>
 <span class="normal">1266</span>
-<span class="normal">1267</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/areas/</span><span class="si">{area_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1267</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/areas/</span><span class="si">{area_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_area</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">area_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">AreaIn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_area` updates a given Area object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -4628,15 +4628,15 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">area</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Area</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">area_id</span><span class="p">)</span>
     <span class="n">area</span><span class="o">.</span><span class="n">area_name</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">area_name</span>
     <span class="n">area</span><span class="o">.</span><span class="n">area_icon</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">area_icon</span>
     <span class="n">area</span><span class="o">.</span><span class="n">group_id</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">group_id</span>
     <span class="n">area</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">,</span> <span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">,</span> <span class="s2">"areagroups"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4756,9 +4756,9 @@
 <span class="normal">1526</span>
 <span class="normal">1527</span>
 <span class="normal">1528</span>
-<span class="normal">1529</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/areas/</span><span class="si">{area_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1529</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/areas/</span><span class="si">{area_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_area</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">area_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `delete_area` deletes a given Area object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -4771,12 +4771,12 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">area</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Area</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">area_id</span><span class="p">)</span>
     <span class="n">area</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">,</span> <span class="s2">&quot;areagroups&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">,</span> <span class="s2">"areagroups"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4867,14 +4867,14 @@
 <span class="normal">286</span>
 <span class="normal">287</span>
 <span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AreaIn</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent an AreaIn.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        area_name (str): Area name.</span>
 <span class="sd">        area_icon (str): Name of area icon.</span>
 <span class="sd">        group_id (int): ID of group object area belongs to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">area_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">area_icon</span><span class="p">:</span> <span class="nb">str</span>
@@ -5063,7 +5063,7 @@
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AreaOut</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent an AreaOut.</span>
 
 <span class="sd">    Attributes:</span>
@@ -5076,7 +5076,7 @@
 <span class="sd">        dueCount (int): Number of chores due for the area.</span>
 <span class="sd">        totalCount (int): Total number of chores for the area.</span>
 <span class="sd">        total_dirtiness (int): Total dirtiness of the area.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">area_name</span><span class="p">:</span> <span class="nb">str</span>
@@ -5183,13 +5183,13 @@
 <span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MonthOut</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a Month.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        id (int): ID of the month.</span>
 <span class="sd">        name (str): Name of the month.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
@@ -5345,9 +5345,9 @@
 <span class="normal">842</span>
 <span class="normal">843</span>
 <span class="normal">844</span>
-<span class="normal">845</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/chores&quot;</span><span class="p">)</span>
+<span class="normal">845</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/chores"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">ChoreIn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `create_chore` creates a new Chore object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -5360,7 +5360,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (int): ID of the newly created Chore object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Convert active_months IDs into Month instances</span>
     <span class="n">active_months</span> <span class="o">=</span> <span class="n">Month</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">active_months</span><span class="p">)</span>
 
@@ -5376,10 +5376,10 @@
     <span class="c1"># Set the active_months field</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">active_months</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">active_months</span><span class="p">)</span>
 
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">)</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">chore</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">)</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">chore</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5496,9 +5496,9 @@
 <span class="normal">931</span>
 <span class="normal">932</span>
 <span class="normal">933</span>
-<span class="normal">934</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/chores/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">ChoreOut</span><span class="p">)</span>
+<span class="normal">934</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/chores/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">ChoreOut</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `get_chore` retrieves an Chore object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -5511,7 +5511,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (ChoreOut): The Chore object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">chore</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Chore</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">chore_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">chore</span>
 </code></pre></div></td></tr></table></div>
@@ -5752,7 +5752,7 @@
 <span class="normal">1111</span>
 <span class="normal">1112</span>
 <span class="normal">1113</span>
-<span class="normal">1114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/chores&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">ChoreOut</span><span class="p">])</span>
+<span class="normal">1114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/chores"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">ChoreOut</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_chores</span><span class="p">(</span>
     <span class="n">request</span><span class="p">,</span>
     <span class="n">inactive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -5760,7 +5760,7 @@
     <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">area_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_chores` retrieves a list of Chore objects.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -5776,14 +5776,14 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (List[ChoreOut]): List of Chore objects.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cache_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;chores:</span><span class="si">{</span><span class="n">inactive</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">timeframe</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">assignee_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">area_id</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">cache_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"chores:</span><span class="si">{</span><span class="n">inactive</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">timeframe</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">assignee_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">area_id</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cached</span>
 
     <span class="n">qs</span> <span class="o">=</span> <span class="n">Chore</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span>
-        <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;nextDue&quot;</span><span class="p">,</span> <span class="s2">&quot;lastCompleted&quot;</span><span class="p">,</span> <span class="s2">&quot;effort&quot;</span><span class="p">,</span> <span class="s2">&quot;chore_name&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span>
+        <span class="s2">"status"</span><span class="p">,</span> <span class="s2">"nextDue"</span><span class="p">,</span> <span class="s2">"lastCompleted"</span><span class="p">,</span> <span class="s2">"effort"</span><span class="p">,</span> <span class="s2">"chore_name"</span><span class="p">,</span> <span class="s2">"id"</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">inactive</span><span class="p">:</span>
         <span class="n">qs</span> <span class="o">=</span> <span class="n">qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -5803,15 +5803,15 @@
         <span class="n">active_months</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chore</span><span class="o">.</span><span class="n">active_months</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
         <span class="n">active_month_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">month</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="n">active_months</span><span class="p">]</span>
         <span class="n">last_three_query</span> <span class="o">=</span> <span class="n">HistoryItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">chore</span><span class="o">=</span><span class="n">chore</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span>
-            <span class="s2">&quot;-completed_date&quot;</span>
+            <span class="s2">"-completed_date"</span>
         <span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
         <span class="n">last_three</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">last_three_query</span><span class="p">:</span>
-            <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">display_name</span> <span class="o">=</span> <span class="s2">""</span>
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="c1"># completed_by is SET_NULL on user delete; don&#39;t crash on it.</span>
-                <span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Unknown&quot;</span>
-            <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span><span class="o">.</span><span class="n">fullname</span> <span class="o">==</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>
+                <span class="c1"># completed_by is SET_NULL on user delete; don't crash on it.</span>
+                <span class="n">display_name</span> <span class="o">=</span> <span class="s2">"Unknown"</span>
+            <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span><span class="o">.</span><span class="n">fullname</span> <span class="o">==</span> <span class="s2">" "</span><span class="p">:</span>
                 <span class="n">display_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span><span class="o">.</span><span class="n">email</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">display_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">completed_by</span><span class="o">.</span><span class="n">fullname</span>
@@ -5991,9 +5991,9 @@
 <span class="normal">1299</span>
 <span class="normal">1300</span>
 <span class="normal">1301</span>
-<span class="normal">1302</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/chores/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1302</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/chores/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">ChoreIn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_chore` updates a given Chore object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -6007,7 +6007,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">chore</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Chore</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">chore_id</span><span class="p">)</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">chore_name</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">chore_name</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">area_id</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">area_id</span>
@@ -6020,10 +6020,10 @@
     <span class="n">chore</span><span class="o">.</span><span class="n">assignee_id</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">assignee_id</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">effort</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">effort</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">)</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">)</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6144,9 +6144,9 @@
 <span class="normal">1550</span>
 <span class="normal">1551</span>
 <span class="normal">1552</span>
-<span class="normal">1553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/chores/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/chores/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `delete_chore` deletes a given Chore object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -6159,13 +6159,13 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">chore</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Chore</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">chore_id</span><span class="p">)</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">)</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">)</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6253,7 +6253,7 @@
 <span class="normal">1126</span>
 <span class="normal">1127</span>
 <span class="normal">1128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">calculate_duedays</span><span class="p">(</span><span class="n">next_due</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `calculate_duedays` calculates the days until due based on a given date.</span>
 
 <span class="sd">    Args:</span>
@@ -6261,7 +6261,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (int): The number of days until due date.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">delta</span> <span class="o">=</span> <span class="n">next_due</span> <span class="o">-</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">delta</span><span class="o">.</span><span class="n">days</span>
 </code></pre></div></td></tr></table></div>
@@ -6402,9 +6402,9 @@
 <span class="normal">1325</span>
 <span class="normal">1326</span>
 <span class="normal">1327</span>
-<span class="normal">1328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/togglechore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/togglechore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">toggle_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">TogglActive</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `toggle_chore` toggles wether a Chore is active/inactive.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -6418,14 +6418,14 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">chore</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Chore</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">chore_id</span><span class="p">)</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">status</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">)</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">)</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6564,10 +6564,10 @@
 <span class="normal">1351</span>
 <span class="normal">1352</span>
 <span class="normal">1353</span>
-<span class="normal">1354</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/snoozechore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1354</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/snoozechore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">snooze_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">SnoozeChore</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The function `snooze_chore` updates a given Chore object&#39;s next due date.</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The function `snooze_chore` updates a given Chore object's next due date.</span>
 
 <span class="sd">    Endpoint:</span>
 <span class="sd">        - **Path**: `/api/v2/chores/snoozechore/{chore_id}`</span>
@@ -6580,14 +6580,14 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">chore</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Chore</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">chore_id</span><span class="p">)</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">nextDue</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">nextDue</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">)</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">)</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6725,9 +6725,9 @@
 <span class="normal">1376</span>
 <span class="normal">1377</span>
 <span class="normal">1378</span>
-<span class="normal">1379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/claimchore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/claimchore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">claim_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">ClaimChore</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `claim_chore` assigns a given Chore object to a user.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -6741,13 +6741,13 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">chore</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Chore</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">chore_id</span><span class="p">)</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">assignee_id</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">assignee_id</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6909,9 +6909,9 @@
 <span class="normal">1425</span>
 <span class="normal">1426</span>
 <span class="normal">1427</span>
-<span class="normal">1428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;/chores/completechore/</span><span class="si">{chore_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/completechore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">complete_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">CompleteChore</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `complete_chore` completes a given Chore object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -6925,22 +6925,22 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">chore</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Chore</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">chore_id</span><span class="p">)</span>
     <span class="n">chore</span><span class="o">.</span><span class="n">lastCompleted</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">lastCompleted</span>
-    <span class="k">if</span> <span class="n">chore</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;day(s)&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">chore</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="s2">"day(s)"</span><span class="p">:</span>
         <span class="n">chore</span><span class="o">.</span><span class="n">nextDue</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">lastCompleted</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span>
             <span class="n">days</span><span class="o">=</span><span class="n">chore</span><span class="o">.</span><span class="n">intervalNumber</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">chore</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;week(s)&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">chore</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="s2">"week(s)"</span><span class="p">:</span>
         <span class="n">chore</span><span class="o">.</span><span class="n">nextDue</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">lastCompleted</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span>
             <span class="n">weeks</span><span class="o">=</span><span class="n">chore</span><span class="o">.</span><span class="n">intervalNumber</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">chore</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;month(s)&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">chore</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="s2">"month(s)"</span><span class="p">:</span>
         <span class="n">chore</span><span class="o">.</span><span class="n">nextDue</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">lastCompleted</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span>
             <span class="n">months</span><span class="o">=</span><span class="n">chore</span><span class="o">.</span><span class="n">intervalNumber</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">chore</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;year(s)&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">chore</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="s2">"year(s)"</span><span class="p">:</span>
         <span class="n">chore</span><span class="o">.</span><span class="n">nextDue</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">lastCompleted</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span>
             <span class="n">years</span><span class="o">=</span><span class="n">chore</span><span class="o">.</span><span class="n">intervalNumber</span>
         <span class="p">)</span>
@@ -6951,11 +6951,11 @@
         <span class="n">completed_by_id</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">completed_by_id</span><span class="p">,</span>
         <span class="n">chore</span><span class="o">=</span><span class="n">chore</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">,</span> <span class="s2">&quot;weeklytotals:*&quot;</span><span class="p">)</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">,</span> <span class="s2">"weeklytotals:*"</span><span class="p">)</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"history"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7137,7 +7137,7 @@
 <span class="normal">355</span>
 <span class="normal">356</span>
 <span class="normal">357</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ChoreIn</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a Chore.</span>
 
 <span class="sd">    Attributes:</span>
@@ -7151,7 +7151,7 @@
 <span class="sd">        lastCompleted (date): The date chore was last completed. Optional.</span>
 <span class="sd">        assignee_id (int): ID of the assigned user. Optional.</span>
 <span class="sd">        status (int): ID of the status. Optional.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">chore_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">area_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -7452,7 +7452,7 @@
 <span class="normal">458</span>
 <span class="normal">459</span>
 <span class="normal">460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ChoreOut</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a Chore.</span>
 
 <span class="sd">    Attributes:</span>
@@ -7473,7 +7473,7 @@
 <span class="sd">        duedays (int): Days until chore is due.</span>
 <span class="sd">        last_three_history_items (List[LastHistoryItem]): List of 3 last history items of the chore.</span>
 <span class="sd">        status (int): Status ID of the chore.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">chore_name</span><span class="p">:</span> <span class="nb">str</span>
@@ -7781,7 +7781,7 @@
 <span class="normal">501</span>
 <span class="normal">502</span>
 <span class="normal">503</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ChoreOutFull</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a Chore with full Assigned User and no History.</span>
 
 <span class="sd">    Attributes:</span>
@@ -7802,7 +7802,7 @@
 <span class="sd">        dirtiness (int): Percentage dirty of the chore.</span>
 <span class="sd">        duedays (int): Days until chore is due.</span>
 <span class="sd">        status (int): Status ID of the chore.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">chore_name</span><span class="p">:</span> <span class="nb">str</span>
@@ -7901,12 +7901,12 @@
 <span class="normal">366</span>
 <span class="normal">367</span>
 <span class="normal">368</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TogglActive</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to toggle a Chore status.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        status (int): ID of a status object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">status</span><span class="p">:</span> <span class="nb">int</span>
 </code></pre></div></td></tr></table></div>
@@ -8002,13 +8002,13 @@
 <span class="normal">379</span>
 <span class="normal">380</span>
 <span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CompleteChore</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to complete a Chore object.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        lastCompleted (date): Date chore was completed.</span>
 <span class="sd">        completed_by_id (int): ID of the user who completed chore.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">lastCompleted</span><span class="p">:</span> <span class="n">date</span>
     <span class="n">completed_by_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -8092,12 +8092,12 @@
 <span class="normal">390</span>
 <span class="normal">391</span>
 <span class="normal">392</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SnoozeChore</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to snooze a chore object.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        nextDue (date): Date to set nextDue to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">nextDue</span><span class="p">:</span> <span class="n">date</span>
 </code></pre></div></td></tr></table></div>
@@ -8180,12 +8180,12 @@
 <span class="normal">401</span>
 <span class="normal">402</span>
 <span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ClaimChore</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to claim a Chore.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        assignee_id (int): ID of a user to assign to chore. Optional.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
@@ -8332,9 +8332,9 @@
 <span class="normal">871</span>
 <span class="normal">872</span>
 <span class="normal">873</span>
-<span class="normal">874</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/historyitems&quot;</span><span class="p">)</span>
+<span class="normal">874</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/historyitems"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_historyitem</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">HistoryItemIn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `create_historyitem` creates a new HistoryItem object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -8347,7 +8347,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (int): ID of the newly created HistoryItem object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">completed_by_id</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">completed_by</span>
     <span class="n">completed_by_object</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">CustomUser</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">completed_by_id</span><span class="p">)</span>
     <span class="n">historyitem</span> <span class="o">=</span> <span class="n">HistoryItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
@@ -8355,10 +8355,10 @@
         <span class="n">completed_by</span><span class="o">=</span><span class="n">completed_by_object</span><span class="p">,</span>
         <span class="n">chore_id</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">chore_id</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">,</span> <span class="s2">&quot;weeklytotals:*&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">historyitem</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">,</span> <span class="s2">"weeklytotals:*"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"history"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">historyitem</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8475,9 +8475,9 @@
 <span class="normal">951</span>
 <span class="normal">952</span>
 <span class="normal">953</span>
-<span class="normal">954</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">HistoryItemOut</span><span class="p">)</span>
+<span class="normal">954</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">HistoryItemOut</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_historyitem</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">historyitem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `get_historyitem` retrieves an HistoryItem object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -8490,7 +8490,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (HistoryItemOut): The HistoryItem object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">historyitem</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">HistoryItem</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">historyitem_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">historyitem</span>
 </code></pre></div></td></tr></table></div>
@@ -8644,13 +8644,13 @@
 <span class="normal">1164</span>
 <span class="normal">1165</span>
 <span class="normal">1166</span>
-<span class="normal">1167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/historyitems&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">PaginatedHistoryItems</span><span class="p">)</span>
+<span class="normal">1167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/historyitems"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">PaginatedHistoryItems</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_historyitems</span><span class="p">(</span>
     <span class="n">request</span><span class="p">,</span>
     <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_historyitems` retrieves a list of HistoryItem objects.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -8664,8 +8664,8 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (PaginatedHistoryItems): Paginated List of HistoryItem objects.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">qs</span> <span class="o">=</span> <span class="n">HistoryItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-completed_date&quot;</span><span class="p">,</span> <span class="s2">&quot;-id&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">qs</span> <span class="o">=</span> <span class="n">HistoryItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">"-completed_date"</span><span class="p">,</span> <span class="s2">"-id"</span><span class="p">)</span>
     <span class="n">total_pages</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">item_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">qs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -8821,9 +8821,9 @@
 <span class="normal">1453</span>
 <span class="normal">1454</span>
 <span class="normal">1455</span>
-<span class="normal">1456</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1456</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_historyitem</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">historyitem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">HistoryItemIn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_historyitem` updates a given HistoryItem object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -8837,16 +8837,16 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">historyitem</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">HistoryItem</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">historyitem_id</span><span class="p">)</span>
     <span class="n">historyitem</span><span class="o">.</span><span class="n">completed_date</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">completed_date</span>
     <span class="n">historyitem</span><span class="o">.</span><span class="n">completed_by</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">completed_by</span>
     <span class="n">historyitem</span><span class="o">.</span><span class="n">chore_id</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">chore_id</span>
     <span class="n">historyitem</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">,</span> <span class="s2">&quot;weeklytotals:*&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">,</span> <span class="s2">"weeklytotals:*"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"history"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8967,9 +8967,9 @@
 <span class="normal">1574</span>
 <span class="normal">1575</span>
 <span class="normal">1576</span>
-<span class="normal">1577</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1577</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_historyitem</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">historyitem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `delete_historyitem` deletes a given HistoryItem object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -8982,13 +8982,13 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">historyitem</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">HistoryItem</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">historyitem_id</span><span class="p">)</span>
     <span class="n">historyitem</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">,</span> <span class="s2">&quot;weeklytotals:*&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">,</span> <span class="s2">"weeklytotals:*"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"history"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9079,14 +9079,14 @@
 <span class="normal">516</span>
 <span class="normal">517</span>
 <span class="normal">518</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">HistoryItemIn</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a HistoryItem.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        completed_date (date): The date the chore was completed.</span>
 <span class="sd">        completed_by (str): A name of the user who completed the chore.</span>
 <span class="sd">        chore_id (int): ID of the chore completed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">completed_date</span><span class="p">:</span> <span class="n">date</span>
     <span class="n">completed_by</span><span class="p">:</span> <span class="nb">int</span>
@@ -9210,7 +9210,7 @@
 <span class="normal">533</span>
 <span class="normal">534</span>
 <span class="normal">535</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">HistoryItemOut</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a HistoryItem.</span>
 
 <span class="sd">    Attributes:</span>
@@ -9218,7 +9218,7 @@
 <span class="sd">        completed_date (date): The date the chore was completed.</span>
 <span class="sd">        completed_by (CustomUserSchema): Object of the user who completed chore.</span>
 <span class="sd">        chore (ChoreOutFull): Object of the chore completed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">completed_date</span><span class="p">:</span> <span class="n">date</span>
@@ -9317,13 +9317,13 @@
 <span class="normal">414</span>
 <span class="normal">415</span>
 <span class="normal">416</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LastHistoryItem</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent the last History Item for a chore.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        completed_date (date): The date the chore was completed.</span>
 <span class="sd">        completed_by (str): A name of the user who completed the chore.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">completed_date</span><span class="p">:</span> <span class="n">date</span>
     <span class="n">completed_by</span><span class="p">:</span> <span class="nb">str</span>
@@ -9446,7 +9446,7 @@
 <span class="normal">550</span>
 <span class="normal">551</span>
 <span class="normal">552</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PaginatedHistoryItems</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a paginated list of HistoryItems.</span>
 
 <span class="sd">    Attributes:</span>
@@ -9454,7 +9454,7 @@
 <span class="sd">        current_page (int): Page number of current record set.</span>
 <span class="sd">        total_pages (int): Total number of pages.</span>
 <span class="sd">        total_records (int): Total numboer of HistoryItems.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">HistoryItemOut</span><span class="p">]</span>
     <span class="n">current_page</span><span class="p">:</span> <span class="nb">int</span>
@@ -9595,9 +9595,9 @@
 <span class="normal">971</span>
 <span class="normal">972</span>
 <span class="normal">973</span>
-<span class="normal">974</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/options/</span><span class="si">{option_id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">OptionOut</span><span class="p">)</span>
+<span class="normal">974</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/options/</span><span class="si">{option_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">OptionOut</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_option</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">option_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `get_option` retrieves an Option object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -9610,7 +9610,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (OptionOut): The Option object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">option</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Option</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">option_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">option</span>
 </code></pre></div></td></tr></table></div>
@@ -9716,9 +9716,9 @@
 <span class="normal">1187</span>
 <span class="normal">1188</span>
 <span class="normal">1189</span>
-<span class="normal">1190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/options&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">OptionOut</span><span class="p">])</span>
+<span class="normal">1190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/options"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">OptionOut</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_options</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_options` retrieves a list of Option objects.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -9730,12 +9730,12 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (List[OptionOut]): List of Option objects.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"options"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cached</span>
     <span class="n">qs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Option</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
-    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">,</span> <span class="n">qs</span><span class="p">,</span> <span class="n">CACHE_TTL</span><span class="p">)</span>
+    <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"options"</span><span class="p">,</span> <span class="n">qs</span><span class="p">,</span> <span class="n">CACHE_TTL</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">qs</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9876,9 +9876,9 @@
 <span class="normal">1480</span>
 <span class="normal">1481</span>
 <span class="normal">1482</span>
-<span class="normal">1483</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/options/</span><span class="si">{option_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="normal">1483</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/options/</span><span class="si">{option_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_option</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">option_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">OptionIn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_option` updates a given Option object.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -9892,15 +9892,15 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns `success` if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">option</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Option</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">option_id</span><span class="p">)</span>
     <span class="n">option</span><span class="o">.</span><span class="n">vacation_mode</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">vacation_mode</span>
     <span class="n">option</span><span class="o">.</span><span class="n">med_thresh</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">med_thresh</span>
     <span class="n">option</span><span class="o">.</span><span class="n">high_thresh</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">high_thresh</span>
     <span class="n">option</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"options"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"options"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10024,9 +10024,9 @@
 <span class="normal">761</span>
 <span class="normal">762</span>
 <span class="normal">763</span>
-<span class="normal">764</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/toggle_vacation&quot;</span><span class="p">)</span>
+<span class="normal">764</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/toggle_vacation"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">toggle_vacation</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `toggle_vacation` toggles vacation mode.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -10038,7 +10038,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (str): Returns success if successful.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">enabling</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">option</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Option</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">option</span><span class="o">.</span><span class="n">vacation_mode</span><span class="p">:</span>
@@ -10059,12 +10059,12 @@
             <span class="n">chore</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">chore</span><span class="o">.</span><span class="n">nextDue</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">chore</span><span class="o">.</span><span class="n">vacationPause</span><span class="p">)</span>
             <span class="n">chore</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">)</span>
-    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">&quot;chores:*&quot;</span><span class="p">)</span>
-    <span class="n">invalidate</span><span class="p">(</span><span class="s2">&quot;areas&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">)</span>
-    <span class="n">notify</span><span class="p">(</span><span class="s2">&quot;chores&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"options"</span><span class="p">)</span>
+    <span class="n">invalidate_pattern</span><span class="p">(</span><span class="s2">"chores:*"</span><span class="p">)</span>
+    <span class="n">invalidate</span><span class="p">(</span><span class="s2">"areas"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"options"</span><span class="p">)</span>
+    <span class="n">notify</span><span class="p">(</span><span class="s2">"chores"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"success"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10155,14 +10155,14 @@
 <span class="normal">565</span>
 <span class="normal">566</span>
 <span class="normal">567</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OptionIn</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent an Option object.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        vacation_mode (bool): Toggle for vacation mode.</span>
 <span class="sd">        med_thresh (int): Medium dirtiness threshold.</span>
 <span class="sd">        high_thresh (int): High dirtiness threshold.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">vacation_mode</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">med_thresh</span><span class="p">:</span> <span class="nb">int</span>
@@ -10286,7 +10286,7 @@
 <span class="normal">582</span>
 <span class="normal">583</span>
 <span class="normal">584</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OptionOut</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent an Option object.</span>
 
 <span class="sd">    Attributes:</span>
@@ -10294,7 +10294,7 @@
 <span class="sd">        vacation_mode (bool): Toggle for vacation mode.</span>
 <span class="sd">        med_thresh (int): Medium dirtiness threshold.</span>
 <span class="sd">        high_thresh (int): High dirtiness threshold.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">vacation_mode</span><span class="p">:</span> <span class="nb">bool</span>
@@ -10424,9 +10424,9 @@ from the backend.</p>
 <span class="normal">1598</span>
 <span class="normal">1599</span>
 <span class="normal">1600</span>
-<span class="normal">1601</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/version/list&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">VersionOut</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="normal">1601</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/version/list"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">VersionOut</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_version</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VersionOut</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_version` retrieves the app version number</span>
 <span class="sd">    from the backend.</span>
 
@@ -10439,13 +10439,13 @@ from the backend.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        VersionOut: a version object</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">qs</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Version</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">qs</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HttpError</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Record retrieval error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HttpError</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Record retrieval error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10523,13 +10523,13 @@ from the backend.</p>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VersionOut</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a Version.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        id (int): ID integer. Unique.</span>
 <span class="sd">        version_number (str): The version of the app.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">version_number</span><span class="p">:</span> <span class="nb">str</span>
@@ -10733,9 +10733,9 @@ from the backend.</p>
 <span class="normal">698</span>
 <span class="normal">699</span>
 <span class="normal">700</span>
-<span class="normal">701</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/weeklytotals&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">GraphData</span><span class="p">)</span>
+<span class="normal">701</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/weeklytotals"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">GraphData</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_weeklytotals</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">week</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `get_weeklytotals` retrieves the weekly totals.</span>
 
 <span class="sd">    Endpoint:</span>
@@ -10748,13 +10748,13 @@ from the backend.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (GraphData): The graph data with labels and datasets.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cache_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;weeklytotals:</span><span class="si">{</span><span class="n">week</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">cache_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"weeklytotals:</span><span class="si">{</span><span class="n">week</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cached</span>
 
-    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Mon&quot;</span><span class="p">,</span> <span class="s2">&quot;Tue&quot;</span><span class="p">,</span> <span class="s2">&quot;Wed&quot;</span><span class="p">,</span> <span class="s2">&quot;Thu&quot;</span><span class="p">,</span> <span class="s2">&quot;Fri&quot;</span><span class="p">,</span> <span class="s2">&quot;Sat&quot;</span><span class="p">,</span> <span class="s2">&quot;Sun&quot;</span><span class="p">]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Mon"</span><span class="p">,</span> <span class="s2">"Tue"</span><span class="p">,</span> <span class="s2">"Wed"</span><span class="p">,</span> <span class="s2">"Thu"</span><span class="p">,</span> <span class="s2">"Fri"</span><span class="p">,</span> <span class="s2">"Sat"</span><span class="p">,</span> <span class="s2">"Sun"</span><span class="p">]</span>
     <span class="n">today</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
     <span class="n">days</span> <span class="o">=</span> <span class="n">week</span> <span class="o">*</span> <span class="mi">7</span>
     <span class="n">start_of_week</span> <span class="o">=</span> <span class="p">(</span>
@@ -10766,22 +10766,22 @@ from the backend.</p>
     <span class="n">users</span> <span class="o">=</span> <span class="n">CustomUser</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
         <span class="n">user_name</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">first_name</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">first_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">first_name</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">first_name</span> <span class="o">!=</span> <span class="s2">""</span><span class="p">:</span>
             <span class="n">user_name</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">first_name</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s2">&quot;@&quot;</span> <span class="ow">in</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">:</span>
-                    <span class="n">parts</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">"@"</span> <span class="ow">in</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">:</span>
+                    <span class="n">parts</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"@"</span><span class="p">)</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
-                        <span class="n">user_name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;@&quot;</span>
+                        <span class="n">user_name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"@"</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">user_name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">8</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;*@&quot;</span>
+                        <span class="n">user_name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">8</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"*@"</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
                         <span class="n">user_name</span> <span class="o">+=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">user_name</span> <span class="o">+=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span>
+                        <span class="n">user_name</span> <span class="o">+=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"*"</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">user_name</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">[:</span><span class="mi">14</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span>
+                    <span class="n">user_name</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">[:</span><span class="mi">14</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"*"</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">user_name</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span>
         <span class="c1"># Get records for this week or last week</span>
@@ -10792,8 +10792,8 @@ from the backend.</p>
         <span class="p">)</span>
 
         <span class="c1"># Aggregate counts by date</span>
-        <span class="n">daily_counts</span> <span class="o">=</span> <span class="n">records_this_week</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s2">&quot;completed_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
-            <span class="n">count</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+        <span class="n">daily_counts</span> <span class="o">=</span> <span class="n">records_this_week</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s2">"completed_date"</span><span class="p">)</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+            <span class="n">count</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># Initialize weekly counts with 0s</span>
@@ -10801,8 +10801,8 @@ from the backend.</p>
 
         <span class="c1"># Map counts to the correct day of the week</span>
         <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">daily_counts</span><span class="p">:</span>
-            <span class="n">day_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;completed_date&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">start_of_week</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
-            <span class="n">weekly_counts</span><span class="p">[</span><span class="n">day_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span>
+            <span class="n">day_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">"completed_date"</span><span class="p">]</span> <span class="o">-</span> <span class="n">start_of_week</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+            <span class="n">weekly_counts</span><span class="p">[</span><span class="n">day_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span>
 
         <span class="n">dataset_obj</span> <span class="o">=</span> <span class="n">DatasetObject</span><span class="p">(</span>
             <span class="n">backgroundColor</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">user_color</span><span class="p">,</span>
@@ -10811,7 +10811,7 @@ from the backend.</p>
         <span class="p">)</span>
         <span class="n">datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset_obj</span><span class="p">)</span>
     <span class="n">title</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">start_of_week</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; to &quot;</span> <span class="o">+</span> <span class="n">end_of_week</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">start_of_week</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%m/</span><span class="si">%d</span><span class="s2">"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" to "</span> <span class="o">+</span> <span class="n">end_of_week</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%m/</span><span class="si">%d</span><span class="s2">"</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">graph</span> <span class="o">=</span> <span class="n">GraphData</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">datasets</span><span class="o">=</span><span class="n">datasets</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
     <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">cache_key</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">CACHE_TTL</span><span class="p">)</span>
@@ -10906,14 +10906,14 @@ from the backend.</p>
 <span class="normal">598</span>
 <span class="normal">599</span>
 <span class="normal">600</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DatasetObject</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a graph DataSet object.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        backgroundColor (str): Hex value of the graph color. Optional.</span>
 <span class="sd">        data (List(int)): List of object IDs for the graph.</span>
 <span class="sd">        label (str): Label for the gaph dataset.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">backgroundColor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -11024,14 +11024,14 @@ from the backend.</p>
 <span class="normal">614</span>
 <span class="normal">615</span>
 <span class="normal">616</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">GraphData</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Schema to represent a GraphData object.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        labels (List[str]): List of labels for the graph data.</span>
 <span class="sd">        datasets (List[DatasetObject]): List of DataSetObject objects.</span>
 <span class="sd">        title (str): Title of the graph.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetObject</span><span class="p">]</span>

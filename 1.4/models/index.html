@@ -1197,29 +1197,29 @@ a second instance raises a ValidationError, and deletion is also blocked.</p>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SingletonModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Abstract base model that enforces a single instance.</span>
 
 <span class="sd">    Subclasses may only have one row in the database. Attempting to create</span>
 <span class="sd">    a second instance raises a ValidationError, and deletion is also blocked.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
         <span class="n">abstract</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Override save method to validate only one instance exists.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;There is already one instance of this model&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s2">"There is already one instance of this model"</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SingletonModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Override delete method to block deletes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;You cannot delete this object&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s2">"You cannot delete this object"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -1257,11 +1257,11 @@ a second instance raises a ValidationError, and deletion is also blocked.</p>
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Override save method to validate only one instance exists.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;There is already one instance of this model&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s2">"There is already one instance of this model"</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SingletonModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1289,10 +1289,10 @@ a second instance raises a ValidationError, and deletion is also blocked.</p>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Override delete method to block deletes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;You cannot delete this object&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s2">"You cannot delete this object"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1452,7 +1452,7 @@ picture.</p>
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CustomUser</span><span class="p">(</span><span class="n">AbstractUser</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Custom user object using AbstractUser.</span>
 
 <span class="sd">    Attributes:</span>
@@ -1462,47 +1462,47 @@ picture.</p>
 <span class="sd">            picture.</span>
 <span class="sd">        male (BooleanField): True if the user is male.</span>
 <span class="sd">        user_color (ColorField): A color used to represent the user.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">COLOR_PALETTE</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">(</span><span class="s2">&quot;#E91E63&quot;</span><span class="p">,</span> <span class="s2">&quot;Color1&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;#3F51B5&quot;</span><span class="p">,</span> <span class="s2">&quot;Color2&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;#009688&quot;</span><span class="p">,</span> <span class="s2">&quot;Color3&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;#CDDC39&quot;</span><span class="p">,</span> <span class="s2">&quot;Color4&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"#E91E63"</span><span class="p">,</span> <span class="s2">"Color1"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"#3F51B5"</span><span class="p">,</span> <span class="s2">"Color2"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"#009688"</span><span class="p">,</span> <span class="s2">"Color3"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"#CDDC39"</span><span class="p">,</span> <span class="s2">"Color4"</span><span class="p">),</span>
     <span class="p">]</span>
     <span class="n">username</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">EmailField</span><span class="p">(</span><span class="s2">&quot;email address&quot;</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">EmailField</span><span class="p">(</span><span class="s2">"email address"</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">profile_picture</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span>
         <span class="n">upload_to</span><span class="o">=</span><span class="n">user_profile_picture_upload</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
     <span class="n">male</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">user_color</span> <span class="o">=</span> <span class="n">ColorField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;#E91E63&quot;</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">COLOR_PALETTE</span><span class="p">)</span>
+    <span class="n">user_color</span> <span class="o">=</span> <span class="n">ColorField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"#E91E63"</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="n">COLOR_PALETTE</span><span class="p">)</span>
     <span class="n">notify_enabled</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">notify_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">time</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-    <span class="n">notify_timezone</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">notify_timezone</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
     <span class="n">last_notified_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="n">USERNAME_FIELD</span> <span class="o">=</span> <span class="s2">&quot;email&quot;</span>
+    <span class="n">USERNAME_FIELD</span> <span class="o">=</span> <span class="s2">"email"</span>
     <span class="n">REQUIRED_FIELDS</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">objects</span> <span class="o">=</span> <span class="n">CustomUserManager</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            (String): The user&#39;s email address.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            (String): The user's email address.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fullname</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the user&#39;s full name as a single string.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the user's full name as a single string.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: First name and last name joined by a space.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fullname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_name</span>
+<span class="sd">        """</span>
+        <span class="n">fullname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_name</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_name</span>
         <span class="k">return</span> <span class="n">fullname</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1662,24 +1662,24 @@ picture.</p>
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AreaGroup</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Model representing an area group.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        group_name (CharField): The name of the group. Max=254.</span>
 <span class="sd">        group_order (IntegerField): The order index of the group. Default=1.</span>
 <span class="sd">        group_color (CharField): A hex value of a color to represent the group. Max=12.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">group_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">254</span><span class="p">)</span>
     <span class="n">group_order</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">group_color</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            (String): The area group name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_name</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1739,10 +1739,10 @@ picture.</p>
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        (String): The area group name.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_name</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1919,7 +1919,7 @@ picture.</p>
 <span class="normal">209</span>
 <span class="normal">210</span>
 <span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Area</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Model representing an area.</span>
 
 <span class="sd">    Attributes:</span>
@@ -1927,7 +1927,7 @@ picture.</p>
 <span class="sd">        area_icon (CharField): The name of an icon to use. Max=254</span>
 <span class="sd">        group (AreaGroup): An area group object.</span>
 <span class="sd">        area_order (IntegerField): The order index of the area.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">area_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">254</span><span class="p">)</span>
     <span class="n">area_icon</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">254</span><span class="p">)</span>
@@ -1937,20 +1937,20 @@ picture.</p>
     <span class="n">area_order</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            (String): The Area Object name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">area_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">dirtiness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculates the dirtiness percentage of an area.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            percentage (integer): The dirtiness of an area as a percentage.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">total_dirtiness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_dirtiness</span><span class="p">()</span>
         <span class="n">total_chores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chore_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 
@@ -1967,32 +1967,32 @@ picture.</p>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">dueCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Determines the number of chores due for this area.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            count (integer): The count of chores due for this area.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">today</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
         <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chore_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nextDue__lte</span><span class="o">=</span><span class="n">today</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">count</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">totalCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculates the total chores in this area.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            count (integer): The total count of chores for this area.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chore_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">count</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">total_dirtiness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            total (integer): The total dirtiness of an area.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
             <span class="n">chore</span><span class="o">.</span><span class="n">dirtiness</span> <span class="k">for</span> <span class="n">chore</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chore_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="p">)</span>
@@ -2190,10 +2190,10 @@ picture.</p>
 <span class="normal">209</span>
 <span class="normal">210</span>
 <span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">total_dirtiness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        total (integer): The total dirtiness of an area.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
         <span class="n">chore</span><span class="o">.</span><span class="n">dirtiness</span> <span class="k">for</span> <span class="n">chore</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chore_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="p">)</span>
@@ -2277,20 +2277,20 @@ picture.</p>
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Month</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Model representing a month.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        name (CharField): The name of the month. Max=20</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            (String): The Month Object name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -2350,10 +2350,10 @@ picture.</p>
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        (String): The Month Object name.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2612,7 +2612,7 @@ picture.</p>
 <span class="normal">302</span>
 <span class="normal">303</span>
 <span class="normal">304</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Chore</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Model representing a chore.</span>
 
 <span class="sd">    Attributes:</span>
@@ -2621,21 +2621,21 @@ picture.</p>
 <span class="sd">        nextDue (DateField): The date chore is next due. Default=Today</span>
 <span class="sd">        lastCompleted (DateField): The date chore was last completed. Default=Today.</span>
 <span class="sd">        intervalNumber (integer): The repeat interval. Default=1.</span>
-<span class="sd">        unit (CharField): The unit of the repeat intervals. Default=&quot;day(s)&quot;.</span>
+<span class="sd">        unit (CharField): The unit of the repeat intervals. Default="day(s)".</span>
 <span class="sd">        active_months (Month): An array of Months chore is active.</span>
 <span class="sd">        assignee (CustomUser): A CustomUser object assigned to chore. Default=None.</span>
 <span class="sd">        effort (IntegerField): How difficult the task is. Default=0.</span>
 <span class="sd">        vacationPause (IntegerField): Default=0.</span>
 <span class="sd">        expand (BooleanField): Default=False.</span>
 <span class="sd">        status (IntegerField): The status of the chore. Default=0.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">chore_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">254</span><span class="p">)</span>
     <span class="n">area</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Area</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
     <span class="n">nextDue</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">)</span>
     <span class="n">lastCompleted</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">)</span>
     <span class="n">intervalNumber</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">unit</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;day(s)&quot;</span><span class="p">)</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"day(s)"</span><span class="p">)</span>
     <span class="n">active_months</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Month</span><span class="p">)</span>
     <span class="n">assignee</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
         <span class="n">CustomUser</span><span class="p">,</span>
@@ -2650,20 +2650,20 @@ picture.</p>
     <span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            (String): The Chore Object name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chore_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">dirtiness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculates how dirty the chore is.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dirtiness (integer): The dirtiness of the chore.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">timesincedone</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastCompleted</span> <span class="o">-</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
         <span class="n">timeperiod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastCompleted</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nextDue</span>
         <span class="k">if</span> <span class="n">timeperiod</span><span class="o">.</span><span class="n">days</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -2676,12 +2676,12 @@ picture.</p>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">duedays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculates the days until chore is due.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (integer): The days until chore is due.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nextDue</span> <span class="o">-</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">delta</span><span class="o">.</span><span class="n">days</span>
 </code></pre></div></td></tr></table></div>
@@ -2881,14 +2881,14 @@ picture.</p>
 <span class="normal">319</span>
 <span class="normal">320</span>
 <span class="normal">321</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">HistoryItem</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Model representing a history item for a chore.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        completed_date (DateField): The date a chore was completed. Default=Today.</span>
 <span class="sd">        completed_by (CustomUser): The user object who completed the chore.</span>
 <span class="sd">        chore (Chore): The chore object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">completed_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">)</span>
     <span class="n">completed_by</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
@@ -3019,34 +3019,34 @@ picture.</p>
 <span class="normal">351</span>
 <span class="normal">352</span>
 <span class="normal">353</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Option</span><span class="p">(</span><span class="n">SingletonModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Model representing an option.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        vacation_mode (BooleanField): Is vacation mode active or not. Default=False.</span>
 <span class="sd">        med_thresh (IntegerField): The medium threshold for dirtiness. Default=50.</span>
 <span class="sd">        high_thresh (IntegerField): The high threshold for dirtiness. Default=50.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">vacation_mode</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">med_thresh</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
     <span class="n">high_thresh</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            (String): The option object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;Options&quot;</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="s2">"Options"</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Option&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Option"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Load the singleton Option instance.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Option: The first (and only) Option object, or None if not yet created.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -3114,13 +3114,13 @@ picture.</p>
 <span class="normal">351</span>
 <span class="normal">352</span>
 <span class="normal">353</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Option&quot;</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Option"</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load the singleton Option instance.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Option: The first (and only) Option object, or None if not yet created.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3178,20 +3178,20 @@ picture.</p>
 <span class="normal">369</span>
 <span class="normal">370</span>
 <span class="normal">371</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Version</span><span class="p">(</span><span class="n">SingletonModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Model representing app version.</span>
 
 <span class="sd">    Fields:</span>
 <span class="sd">    - version_number (CharField): The current version of the app.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">version_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            (String): The app version number.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">version_number</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -3251,10 +3251,10 @@ picture.</p>
 <span class="normal">369</span>
 <span class="normal">370</span>
 <span class="normal">371</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        (String): The app version number.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">version_number</span>
 </code></pre></div></td></tr></table></div>
             </details>
