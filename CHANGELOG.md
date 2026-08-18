@@ -1,3 +1,10 @@
+# [1.5.0-alpha.4](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.3...v1.5.0-alpha.4) (2026-08-18)
+
+
+### Bug Fixes
+
+* make version stamping actually stamp, and fail when it cannot ([d83adda](https://github.com/Novanglus96/LenoreChore/commit/d83adda90ee3b1aff1314ff2ae755d76f59851f8))
+
 # [1.5.0-alpha.3](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.2...v1.5.0-alpha.3) (2026-08-18)
 
 
