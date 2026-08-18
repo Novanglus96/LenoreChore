@@ -68,53 +68,27 @@
                 </Field>
               </v-col>
             </v-row>
-            <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <span class="text-h9">Active Months</span>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Jan" color="primary" hide-details :value="1"></v-checkbox>
-              </v-col>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Feb" color="primary" hide-details :value="2"></v-checkbox>
-              </v-col>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Mar" color="primary" hide-details :value="3"></v-checkbox>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Apr" color="primary" hide-details :value="4"></v-checkbox>
-              </v-col>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="May" color="primary" hide-details :value="5"></v-checkbox>
-              </v-col>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Jun" color="primary" hide-details :value="6"></v-checkbox>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Jul" color="primary" hide-details :value="7"></v-checkbox>
-              </v-col>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Aug" color="primary" hide-details :value="8"></v-checkbox>
-              </v-col>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Sep" color="primary" hide-details :value="9"></v-checkbox>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Oct" color="primary" hide-details :value="10"></v-checkbox>
-              </v-col>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Nov" color="primary" hide-details :value="11"></v-checkbox>
-              </v-col>
-              <v-col cols="4" sm="6" md="4">
-                <v-checkbox v-model="formData.active_months" label="Dec" color="primary" hide-details :value="12"></v-checkbox>
+            <!-- Was a loose heading plus twelve hand-written v-checkbox
+                 blocks: each announced alone, with nothing tying it to "which
+                 months does this chore run in". Same fix as ChoreCard, sharing
+                 the same MONTHS list so the two cannot diverge. -->
+            <v-row dense>
+              <v-col cols="12">
+                <fieldset class="lc-fieldset">
+                  <legend class="text-body-2 mb-1">Active months</legend>
+                  <div class="lc-months__grid">
+                    <v-checkbox
+                      v-for="month in months"
+                      :key="month.value"
+                      v-model="formData.active_months"
+                      :label="month.label"
+                      :value="month.value"
+                      color="primary"
+                      density="compact"
+                      hide-details
+                    ></v-checkbox>
+                  </div>
+                </fieldset>
               </v-col>
             </v-row>
             <v-row>
@@ -150,6 +124,7 @@ import { ref, computed } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { useChoreStore } from "@/stores/chores";
+import { MONTHS as months } from "@/utils/labels";
 import { useAreas } from "@/composables/areasComposable";
 import { useChores } from "@/composables/choresComposasble";
 

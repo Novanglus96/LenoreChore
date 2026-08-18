@@ -444,14 +444,6 @@ const submitPassword = async () => {
   }
 }
 
-/* A fieldset carries a border and padding by default; the legend is what makes
-   the group announce, so only the chrome is removed. */
-.lc-fieldset {
-  border: 0;
-  padding: 0;
-  margin: 0;
-  min-inline-size: 0;
-}
 
 .min-width-0 {
   min-width: 0;

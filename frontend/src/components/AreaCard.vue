@@ -273,6 +273,7 @@ import { useAreaGroups } from "@/composables/areaGroupsComposable";
 import { useChoreStore } from "@/stores/chores";
 import { useRouter } from "vue-router";
 import { useOptions } from "@/composables/optionsComposable";
+import { iconLabel } from "@/utils/labels";
 
 const { options } = useOptions();
 const router = useRouter();
@@ -318,15 +319,6 @@ const dirtBand = computed(() => {
   if (dirt <= high) return { color: "soiled", label: "getting there" };
   return { color: "filthy", label: "filthy" };
 });
-
-// Derives a readable name from the MDI id -- "mdi-tumble-dryer" becomes
-// "Tumble dryer". Deriving rather than keeping a parallel lookup means the
-// labels cannot fall out of step with the icon list they describe.
-const iconLabel = icon =>
-  String(icon)
-    .replace(/^mdi-/, "")
-    .replace(/-/g, " ")
-    .replace(/^./, c => c.toUpperCase());
 
 const cardLabel = computed(
   () =>

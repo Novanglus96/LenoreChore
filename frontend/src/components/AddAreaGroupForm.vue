@@ -25,16 +25,36 @@
                   ></v-text-field>
                 </Field>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-chip-group v-model="formData.group_color" mandatory column>
+              <v-col cols="12">
+                <!-- The group had no label, so the chips announced with nothing
+                     saying what they were for. The names were also Color1..6,
+                     which told nobody anything; these match the hues those
+                     theme keys actually carry now. -->
+                <div id="add-group-colour-label" class="text-body-2 mb-1">
+                  Group colour
+                </div>
+                <v-chip-group
+                  v-model="formData.group_color"
+                  selected-class="text-primary"
+                  aria-labelledby="add-group-colour-label"
+                  mandatory
+                  column
+                >
                   <v-chip
                     v-for="color in colors"
-                    :key="color.name"
+                    :key="color.value"
                     :value="color.value"
+                    :aria-label="color.name"
                     filter
                   >
-                    <v-icon icon="mdi-square" :color="color.value"></v-icon
-                    >{{ color.name }}
+                    <v-icon
+                      icon="mdi-circle"
+                      size="14"
+                      :color="color.value"
+                      start
+                      aria-hidden="true"
+                    ></v-icon>
+                    {{ color.name }}
                   </v-chip>
                 </v-chip-group>
               </v-col>
@@ -61,15 +81,12 @@ import { ref } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
+import { AREA_GROUP_COLORS } from "@/utils/labels";
 
-const colors = ref([
-  { name: "Color1", value: "area1" },
-  { name: "Color2", value: "area2" },
-  { name: "Color3", value: "area3" },
-  { name: "Color4", value: "area4" },
-  { name: "Color5", value: "area5" },
-  { name: "Color6", value: "area6" },
-]);
+// Shared, because the VALUES are persisted -- AreaGroup.group_color stores the
+// literal "area1".."area6" and Vuetify resolves it as a theme colour at render
+// time. Keeping the list in one place stops a future edit renaming a value.
+const colors = ref(AREA_GROUP_COLORS);
 
 const schema = yup.object({
   group_name: yup.string().required("Group name is required"),

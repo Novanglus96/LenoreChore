@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" persistent :fullscreen="$vuetify.display.smAndDown" width="1024">
-    <template v-slot:activator="{ props }">
-      <v-list-item key="1" v-bind="props" @click="menu = false">
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-list-item key="1" v-bind="activatorProps">
         <template v-slot:prepend>
           <v-icon icon="mdi-plus-circle"></v-icon>
         </template>
@@ -25,18 +25,30 @@
                   ></v-text-field>
                 </Field>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12">
+                <!-- Same fix as AreaCard's editor: twenty chips containing only
+                     an icon are identical, nameless options to a screen reader,
+                     and the group had no label of its own. Note the LINTER
+                     REPORTS THIS FILE CLEAN -- its anchor-has-content rule is
+                     mapped onto VBtn, and v-chip has no equivalent rule. -->
+                <div id="add-area-icon-label" class="text-body-2 mb-1">
+                  Area icon
+                </div>
                 <v-chip-group
                   v-model="formData.area_icon"
-                  selected-class="text-deep-purple-accent-4"
+                  selected-class="text-primary"
+                  aria-labelledby="add-area-icon-label"
+                  column
                   mandatory
                 >
                   <v-chip
                     v-for="icon in chorestore.areaicons"
                     :key="icon"
                     :value="icon"
+                    :aria-label="iconLabel(icon)"
+                    :title="iconLabel(icon)"
                   >
-                    <v-icon>{{ icon }}</v-icon>
+                    <v-icon :icon="icon" aria-hidden="true"></v-icon>
                   </v-chip>
                 </v-chip-group>
               </v-col>
@@ -76,6 +88,7 @@ import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { useAreas } from "@/composables/areasComposable";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
+import { iconLabel } from "@/utils/labels";
 import { useChoreStore } from "@/stores/chores";
 
 const chorestore = useChoreStore();
