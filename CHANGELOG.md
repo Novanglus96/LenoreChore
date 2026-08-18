@@ -1,3 +1,10 @@
+# [1.5.0-alpha.5](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.4...v1.5.0-alpha.5) (2026-08-18)
+
+
+### Features
+
+* responsive card grids, empty states, and the last a11y warnings ([4d3a4ad](https://github.com/Novanglus96/LenoreChore/commit/4d3a4adbad6fc0df5e57f05b7f96282c62a19a86))
+
 # [1.5.0-alpha.4](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.3...v1.5.0-alpha.4) (2026-08-18)
 
 
