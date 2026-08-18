@@ -1,3 +1,10 @@
+# [1.5.0-alpha.3](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.2...v1.5.0-alpha.3) (2026-08-18)
+
+
+### Features
+
+* announce feedback and route changes to screen readers ([d365ae1](https://github.com/Novanglus96/LenoreChore/commit/d365ae194eaed4653505ef9cbaa085868943646a))
+
 # [1.5.0-alpha.2](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.1...v1.5.0-alpha.2) (2026-08-18)
 
 
