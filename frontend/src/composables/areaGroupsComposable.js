@@ -84,8 +84,16 @@ export function useAreaGroups() {
     },
   });
 
+  // mutateAsync, not mutate: the caller needs to know whether this actually
+  // succeeded. The form dialogs keep themselves open and disabled until it
+  // settles, and close only on success -- previously they closed synchronously
+  // on the next line, so a failed POST showed an error over a dialog that had
+  // already vanished with the user's input in it.
+  //
+  // mutationFn rejects on failure: every *Function above routes its catch
+  // through handleApiError, which rethrows on every branch.
   async function addAreaGroup(newAreaGroup) {
-    createAreaGroupMutation.mutate(newAreaGroup);
+    return createAreaGroupMutation.mutateAsync(newAreaGroup);
   }
 
   async function editAreaGroup(updatedAreaGroup) {
