@@ -41,13 +41,10 @@
         "assets": [
           "CHANGELOG.md",
           "scripts/version.txt",
-          "backend/Dockerfile",
-          "frontend/Dockerfile",
+          "Dockerfile",
           "backend/api/fixtures/version.json",
           "backend/backend/api.py",
-          "frontend/package.json",
-          "frontend/src/views/AppNavigation.vue",
-          "frontend/src/App.vue"
+          "frontend/package.json"
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]"
       }
