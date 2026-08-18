@@ -1,3 +1,10 @@
+# [1.5.0-alpha.2](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.1...v1.5.0-alpha.2) (2026-08-18)
+
+
+### Features
+
+* rebuild AreaCard and AppNavigation on the design foundation ([c58d666](https://github.com/Novanglus96/LenoreChore/commit/c58d666eddd376b1a568a4dfa065cd9716625718)), closes [#c8f0](https://github.com/Novanglus96/LenoreChore/issues/c8f0)
+
 # [1.5.0-alpha.1](https://github.com/Novanglus96/LenoreChore/compare/v1.4.3-alpha.4...v1.5.0-alpha.1) (2026-08-17)
 
 
