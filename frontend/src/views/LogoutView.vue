@@ -1,26 +1,17 @@
 <template>
-  <div class="logout">
-    <header class="bg-white shadow">
-      <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Logout</h1>
-      </div>
-    </header>
-    <main>
-      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <LogoutForm />
-      </div>
-    </main>
+  <!-- Same scaffold wrapper as LoginView, same fix: LogoutForm owns its card
+       and its heading, and this view just places it. -->
+  <div class="lc-logout-view">
+    <LogoutForm />
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
+<script setup>
 import LogoutForm from "@/components/LogoutForm.vue";
-
-export default {
-  name: "ListView",
-  components: {
-    LogoutForm,
-  },
-};
 </script>
+
+<style scoped>
+.lc-logout-view {
+  padding: var(--lc-space-6) var(--lc-space-4) var(--lc-space-5);
+}
+</style>
