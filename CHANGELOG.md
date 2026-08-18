@@ -1,3 +1,10 @@
+# [1.5.0-alpha.10](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.9...v1.5.0-alpha.10) (2026-08-18)
+
+
+### Bug Fixes
+
+* remove the Vue CLI scaffold that was still reaching production ([55141ab](https://github.com/Novanglus96/LenoreChore/commit/55141ab6bcbfce60a5ca1dfecc5ce4cdf0e1a9fa))
+
 # [1.5.0-alpha.9](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.8...v1.5.0-alpha.9) (2026-08-18)
 
 
