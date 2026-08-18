@@ -48,7 +48,6 @@
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]"
       }
-    ],
-    "@saithodev/semantic-release-gitea"
+    ]
   ]
 }
