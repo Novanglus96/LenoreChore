@@ -1,3 +1,10 @@
+# [1.5.0-alpha.8](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.7...v1.5.0-alpha.8) (2026-08-18)
+
+
+### Bug Fixes
+
+* null completer crashed the history table; rebuild graphs and history ([62451a1](https://github.com/Novanglus96/LenoreChore/commit/62451a149da8023204dadaeb18148b130ade4240)), closes [#333333](https://github.com/Novanglus96/LenoreChore/issues/333333)
+
 # [1.5.0-alpha.7](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.6...v1.5.0-alpha.7) (2026-08-18)
 
 
