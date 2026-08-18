@@ -59,3 +59,28 @@ export const MONTHS = [
   { value: 11, label: "Nov" },
   { value: 12, label: "Dec" },
 ];
+
+/**
+ * Effort levels, named.
+ *
+ * The 3-star rating was presented as a bolded word next to an unexplained
+ * widget: nothing said what one star meant versus three. The rating control
+ * stays -- it reads at a glance in a list -- but it now carries the word too,
+ * for the same reason the dirtiness bands do: so the meaning does not depend on
+ * counting glyphs.
+ *
+ * Keys are the values Chore.effort stores (1..3).
+ */
+export const EFFORT_LEVELS = {
+  1: "Quick",
+  2: "Some work",
+  3: "Big job",
+};
+
+/**
+ * @param {number} effort 1..3
+ * @returns {string} the level's name, or "" for anything unexpected
+ */
+export function effortLabel(effort) {
+  return EFFORT_LEVELS[effort] ?? "";
+}

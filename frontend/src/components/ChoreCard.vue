@@ -195,22 +195,14 @@
                tying it to "which months does this chore run in". -->
           <v-row dense>
             <v-col>
-              <fieldset class="lc-fieldset">
-                <legend class="text-body-2 mb-1">Active months</legend>
-                <div class="lc-months__grid">
-                  <v-checkbox
-                    v-for="month in months"
-                    :key="month.value"
-                    v-model="localchore.active_months"
-                    :label="month.label"
-                    :value="month.value"
-                    color="primary"
-                    density="compact"
-                    hide-details
-                    @update:modelValue="changeDetected()"
-                  ></v-checkbox>
-                </div>
-              </fieldset>
+              <!-- Twelve checkboxes were most of the scroll between the first
+                   field and the Save button on a phone, for a setting that is
+                   "all year" on nearly every chore. Shared with AddChoreForm so
+                   the two cannot drift. -->
+              <LcMonthPicker
+                v-model="localchore.active_months"
+                @update:modelValue="changeDetected()"
+              />
             </v-col>
           </v-row>
           <v-row dense>
@@ -233,7 +225,14 @@
                 <v-icon icon="mdi-arrow-u-left-top-bold"></v-icon>
                 <v-tooltip activator="parent" location="top">Reset</v-tooltip>
               </v-btn>
-              <v-dialog v-model="deleteDialog" persistent max-width="420px">
+              <LcConfirmDialog
+                v-model="deleteDialog"
+                title="Delete this chore?"
+                icon="mdi-delete-forever-outline"
+                confirm-label="Delete chore"
+                confirm-icon="mdi-delete-forever-outline"
+                @confirm="callDeleteChore(localchore)"
+              >
                 <template v-slot:activator="{ props: activatorProps }">
                   <v-btn
                     v-bind="activatorProps"
@@ -247,40 +246,11 @@
                     </v-tooltip>
                   </v-btn>
                 </template>
-                <v-card>
-                  <v-card-title class="text-h5">
-                    Delete this Chore?
-                  </v-card-title>
-                  <v-card-text
-                    >Are you sure you want to delete
-                    <span class="text-secondary">{{
-                      localchore.chore_name
-                    }}</span>
-                    from
-                    <span class="text-secondary">{{
-                      localchore.area.area_name
-                    }}</span
-                    >?</v-card-text
-                  >
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="primary-darken-1"
-                      variant="text"
-                      @click="deleteDialog = !deleteDialog"
-                    >
-                      Close
-                    </v-btn>
-                    <v-btn
-                      color="primary-darken-1"
-                      variant="text"
-                      @click="callDeleteChore(localchore)"
-                    >
-                      Delete
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
+
+                Deleting <strong>{{ localchore.chore_name }}</strong> from
+                <strong>{{ localchore.area.area_name }}</strong> also removes it
+                from the history. This cannot be undone.
+              </LcConfirmDialog>
             </v-col>
           </v-row>
         </v-container>
@@ -458,7 +428,8 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import { useUserStore } from "@/stores/user";
 import { useOptions } from "@/composables/optionsComposable";
 import { useTheme } from "vuetify";
-import { MONTHS as months } from "@/utils/labels";
+import LcMonthPicker from "@/components/LcMonthPicker.vue";
+import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
 
 const theme = useTheme();
 
@@ -598,7 +569,10 @@ const callSaveChore = async saveChore => {
 };
 const callDeleteChore = async deleteChore => {
   emit("removeChore", deleteChore);
-  deleteDialog.value = !deleteDialog.value;
+  // Explicit rather than a toggle: LcConfirmDialog leaves closing to the
+  // consumer, and a toggle here would reopen the dialog if it were ever called
+  // from anywhere but the open one.
+  deleteDialog.value = false;
 };
 // ── The completion moment ───────────────────────────────────────────────────
 // The payoff beat of the app. The card lifts, springs away and fades while the

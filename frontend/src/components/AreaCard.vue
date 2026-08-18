@@ -77,161 +77,111 @@
     </div>
     <v-expand-transition>
       <div v-if="expandcard">
-        <v-container>
-          <v-row dense>
-            <v-col>
-              <!-- The activator slot destructured `props`, shadowing this
-                   component's own `props` which the template uses throughout.
-                   It happened to work, but any reference to props.area inside
-                   the slot would have silently resolved to the activator
-                   bindings instead. -->
-              <v-dialog
-                v-model="editcard"
-                persistent
-                :fullscreen="$vuetify.display.smAndDown"
-                max-width="720"
+        <div class="lc-area-card__panel">
+          <!-- Both dialogs were hand-rolled copies of the same stock markup:
+               a v-container/v-row/v-col grid inside a width="720" surface,
+               color="blue-darken-1" buttons, and -- on the delete -- "Close"
+               and "Delete" BOTH rendered as primary-darken-1 text, so the
+               irreversible action looked exactly like the way out. They use the
+               shared shells now. -->
+          <LcFormDialog
+            v-model="editcard"
+            title="Edit area"
+            icon="mdi-note-edit-outline"
+            submit-label="Save changes"
+            submit-icon="mdi-content-save-outline"
+            :schema="editSchema"
+            :initial-values="{ area_name: props.area.area_name }"
+            @submit="callEditArea"
+          >
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-btn
+                v-bind="activatorProps"
+                icon="mdi-note-edit-outline"
+                :aria-label="`Edit ${props.area.area_name}`"
               >
-                <template v-slot:activator="{ props: activatorProps }">
-                  <v-btn
-                    v-bind="activatorProps"
-                    icon="mdi-note-edit-outline"
-                    :aria-label="`Edit ${props.area.area_name}`"
-                  >
-                    <v-icon icon="mdi-note-edit-outline"></v-icon>
-                    <v-tooltip activator="parent" location="top">Edit</v-tooltip>
-                  </v-btn>
-                </template>
-                <v-card>
-                  <v-card-title>
-                    <span class="text-h5">Edit Area</span>
-                  </v-card-title>
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-text-field
-                            label="Area name*"
-                            required
-                            v-model="editForm.area_name"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <!-- Twenty chips, each previously containing only an
-                               icon: identical, nameless options to a screen
-                               reader, and the group itself had no label. Each
-                               chip now carries a name derived from its own MDI
-                               id, so the list cannot drift out of sync with
-                               the icons it describes. -->
-                          <div
-                            id="area-icon-label"
-                            class="text-body-2 mb-1"
-                          >
-                            Area icon
-                          </div>
-                          <v-chip-group
-                            v-model="editForm.area_icon"
-                            selected-class="text-primary"
-                            aria-labelledby="area-icon-label"
-                            column
-                            mandatory
-                          >
-                            <v-chip
-                              v-for="icon in chorestore.areaicons"
-                              :key="icon"
-                              :value="icon"
-                              :aria-label="iconLabel(icon)"
-                              :title="iconLabel(icon)"
-                            >
-                              <v-icon :icon="icon" aria-hidden="true"></v-icon>
-                            </v-chip>
-                          </v-chip-group>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-select
-                            label="Area Group"
-                            :items="areagroups"
-                            item-title="group_name"
-                            item-value="id"
-                            v-model="editForm.group_id"
-                          >
-                          </v-select>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                    <small>*indicates required field</small>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="blue-darken-1"
-                      variant="text"
-                      @click="editcard = false"
-                    >
-                      Close
-                    </v-btn>
-                    <v-btn
-                      color="blue-darken-1"
-                      variant="text"
-                      @click="callEditArea(editForm)"
-                    >
-                      Save
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-              <v-dialog v-model="deletecard" persistent max-width="420">
-                <template v-slot:activator="{ props: activatorProps }">
-                  <v-btn
-                    v-bind="activatorProps"
-                    icon="mdi-delete-forever-outline"
-                    color="filthy"
-                    :aria-label="`Delete ${props.area.area_name}`"
-                  >
-                    <v-icon icon="mdi-delete-forever-outline"></v-icon>
-                    <v-tooltip activator="parent" location="top">
-                      Delete
-                    </v-tooltip>
-                  </v-btn>
-                </template>
-                <v-card>
-                  <v-card-title class="text-h5">
-                    Delete this Area?
-                  </v-card-title>
-                  <v-card-text
-                    >Are you sure you want to delete
-                    <span class="text-secondary">{{
-                      props.area.area_name
-                    }}</span
-                    >? This will also delete
-                    <span class="text-secondary">{{
-                      props.area.totalCount
-                    }}</span>
-                    chores!</v-card-text
-                  >
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="primary-darken-1"
-                      variant="text"
-                      @click="deletecard = false"
-                    >
-                      Close
-                    </v-btn>
-                    <v-btn
-                      color="primary-darken-1"
-                      variant="text"
-                      @click="callDeleteArea(area)"
-                    >
-                      Delete
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-col>
-          </v-row>
-        </v-container>
+                <v-icon icon="mdi-note-edit-outline"></v-icon>
+                <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+              </v-btn>
+            </template>
+
+            <fieldset class="lc-fieldset lc-form-group">
+              <legend class="lc-form-group__legend text-body-2">What</legend>
+
+              <!-- Was a plain v-model with `required` and no schema, so an
+                   empty area name saved happily. -->
+              <Field name="area_name" v-slot="{ field, errorMessage }">
+                <v-text-field
+                  v-bind="field"
+                  label="Area name"
+                  prepend-inner-icon="mdi-format-title"
+                  :error-messages="errorMessage"
+                ></v-text-field>
+              </Field>
+
+              <v-select
+                v-model="editForm.group_id"
+                label="Area group"
+                prepend-inner-icon="mdi-shape-outline"
+                :items="areagroups"
+                item-title="group_name"
+                item-value="id"
+              ></v-select>
+            </fieldset>
+
+            <v-divider class="my-4"></v-divider>
+
+            <fieldset class="lc-fieldset">
+              <!-- Each chip now carries a name derived from its own MDI id, so
+                   the list cannot drift out of sync with the icons it
+                   describes. -->
+              <legend class="lc-form-group__legend text-body-2">Area icon</legend>
+              <v-chip-group
+                v-model="editForm.area_icon"
+                selected-class="text-primary"
+                column
+                mandatory
+              >
+                <v-chip
+                  v-for="icon in chorestore.areaicons"
+                  :key="icon"
+                  :value="icon"
+                  :aria-label="iconLabel(icon)"
+                  :title="iconLabel(icon)"
+                >
+                  <v-icon :icon="icon" aria-hidden="true"></v-icon>
+                </v-chip>
+              </v-chip-group>
+            </fieldset>
+          </LcFormDialog>
+
+          <LcConfirmDialog
+            v-model="deletecard"
+            title="Delete this area?"
+            icon="mdi-delete-forever-outline"
+            confirm-label="Delete area"
+            confirm-icon="mdi-delete-forever-outline"
+            @confirm="callDeleteArea(props.area)"
+          >
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-btn
+                v-bind="activatorProps"
+                icon="mdi-delete-forever-outline"
+                color="filthy"
+                :aria-label="`Delete ${props.area.area_name}`"
+              >
+                <v-icon icon="mdi-delete-forever-outline"></v-icon>
+                <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+              </v-btn>
+            </template>
+
+            Deleting <strong>{{ props.area.area_name }}</strong> also deletes
+            the
+            <strong>{{ props.area.totalCount }}</strong>
+            {{ props.area.totalCount === 1 ? "chore" : "chores" }} in it. This
+            cannot be undone.
+          </LcConfirmDialog>
+        </div>
       </div>
     </v-expand-transition>
     <v-divider></v-divider>
@@ -269,11 +219,15 @@
 <script setup>
 // defineProps/defineEmits are compiler macros; importing them warns on build.
 import { ref, computed } from "vue";
+import { Field } from "vee-validate";
+import * as yup from "yup";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
 import { useChoreStore } from "@/stores/chores";
 import { useRouter } from "vue-router";
 import { useOptions } from "@/composables/optionsComposable";
 import { iconLabel } from "@/utils/labels";
+import LcFormDialog from "@/components/LcFormDialog.vue";
+import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
 
 const { options } = useOptions();
 const router = useRouter();
@@ -293,6 +247,13 @@ const editForm = ref({
   area_icon: props.area.area_icon || "",
 });
 
+// area_name is a vee-validate field now, so the dialog cannot save an empty
+// name -- it previously carried `required` (which does nothing on v-text-field
+// without a schema) and no validation at all.
+const editSchema = yup.object({
+  area_name: yup.string().required("Give the area a name"),
+});
+
 const { areagroups } = useAreaGroups();
 
 const setArea = async areaID => {
@@ -304,9 +265,17 @@ const callDeleteArea = async deletedArea => {
   deletecard.value = false;
   emit("removeArea", deletedArea);
 };
-const callEditArea = async editArea => {
+// `values` carries the validated area_name; the chip pickers are plain v-models
+// on editForm, so the two are merged here.
+//
+// NOTE: no pending state. The save goes out as an emit that DashView turns into
+// a mutation, so this component never sees the promise -- unlike the add forms,
+// which hold their own mutation and stay open until it resolves. Wiring that
+// through would mean changing who owns the mutation, which is a bigger change
+// than this PR is making.
+const callEditArea = async values => {
   editcard.value = false;
-  emit("editArea", editArea);
+  emit("editArea", { ...editForm.value, area_name: values.area_name });
 };
 // Same bands as ChoreCard: a colour AND a word, so the meaning does not depend
 // on being able to tell the hues apart.
@@ -349,6 +318,27 @@ const cardLabel = computed(
 
 .lc-area-card__icon {
   background: rgb(var(--v-theme-surface-variant));
+}
+
+/* The settings panel is now just the two dialog activators, so it needs a row
+   rather than the v-container/v-row/v-col scaffolding that used to hold them. */
+.lc-area-card__panel {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-1);
+  padding: var(--lc-space-2) var(--lc-space-3);
+  background: rgb(var(--v-theme-surface-variant));
+}
+
+.lc-form-group__legend {
+  color: rgb(var(--v-theme-on-surface));
+  margin-bottom: var(--lc-space-2);
+}
+
+.lc-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-1);
 }
 
 .lc-area-card__title {
