@@ -1,20 +1,18 @@
 <template>
-  <div class="login">
-    <header class="bg-white shadow">
-      <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Login</h1>
-      </div>
-    </header>
-    <main>
-      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <LoginForm @login-user="login" />
-      </div>
-    </main>
+  <!-- Was wrapped in <header class="bg-white shadow"> with Tailwind type
+       classes. Tailwind is not a dependency, so the type classes did nothing --
+       but bg-white and shadow ARE Vuetify utilities, so this screen painted a
+       literal white bar that stayed white in the dark theme. It is also the
+       first screen anyone sees.
+
+       The view is now a thin wrapper, matching ProfileView and GraphView:
+       LoginForm owns its own card, heading and spacing. -->
+  <div class="lc-login-view">
+    <LoginForm @login-user="login" />
   </div>
 </template>
 
 <script setup>
-// @ is an alias to /src
 import LoginForm from "@/components/LoginForm.vue";
 import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
@@ -38,3 +36,12 @@ const login = async credentials => {
   router.push("/");
 };
 </script>
+
+<style scoped>
+/* Breathing room above the card, so it does not sit jammed against the app bar
+   on a tall screen. Token-based rather than a Vuetify padding utility, because
+   the gap wanted is between two of the spacing steps. */
+.lc-login-view {
+  padding: var(--lc-space-6) var(--lc-space-4) var(--lc-space-5);
+}
+</style>

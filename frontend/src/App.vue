@@ -366,7 +366,6 @@ const ROUTE_TITLES = {
   list: "Chores",
   graphs: "Graphs",
   history: "History",
-  settings: "Settings",
   profile: "Profile",
   about: "About",
   login: "Log in",
