@@ -1,3 +1,10 @@
+# [1.5.0-alpha.11](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.10...v1.5.0-alpha.11) (2026-08-18)
+
+
+### Features
+
+* one form language for every add, edit and delete dialog ([5b25a6c](https://github.com/Novanglus96/LenoreChore/commit/5b25a6c25534ac1fc854dc1cce70928f202710a0))
+
 # [1.5.0-alpha.10](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.9...v1.5.0-alpha.10) (2026-08-18)
 
 
