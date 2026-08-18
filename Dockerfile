@@ -38,6 +38,11 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 FROM python:3.11.4-slim-bookworm
 
 LABEL maintainer="John Adams"
+# Stamped by scripts/update-version.sh during the semantic-release prepare step.
+# The single-container consolidation replaced backend/Dockerfile and
+# frontend/Dockerfile, each of which carried this label, and it was never
+# re-added here -- so published images have carried no version label since.
+LABEL version="0.0.0"
 
 # Install nginx, supervisord, and runtime deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
