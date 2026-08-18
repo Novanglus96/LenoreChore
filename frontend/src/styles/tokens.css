@@ -179,6 +179,35 @@
   border-radius: var(--lc-radius-sm);
 }
 
+/* ── Card grid ─────────────────────────────────────────────────────────────
+   Dash and List both rendered every card inside a single full-width column, so
+   a 27" monitor showed one card per row and the other 1500px sat empty.
+
+   auto-fill + minmax rather than Vuetify breakpoint columns: the track count
+   follows the ACTUAL available width, so it keeps working inside a narrower
+   container or a future split view without anyone maintaining a breakpoint
+   table. 340px is where a chore card's title, due chip and dirtiness bar stop
+   competing for the same line.
+
+   align-items: start matters — cards expand when their editor opens, and
+   without it every card in that row would stretch to match the tallest. */
+.lc-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--lc-space-4);
+  align-items: start;
+}
+
+@media (max-width: 599px) {
+  /* Single column, and edge-to-edge: the cards drop their radius at this
+     breakpoint, so a horizontal gap would leave a sliver of background beside
+     a square card. Vertical spacing only. */
+  .lc-card-grid {
+    grid-template-columns: 1fr;
+    gap: var(--lc-space-2) 0;
+  }
+}
+
 /* ── Skip link ─────────────────────────────────────────────────────────────
    Parked off-screen rather than display:none, because a hidden element is not
    focusable and a skip link that cannot be focused is not a skip link. It flies

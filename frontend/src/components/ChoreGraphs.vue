@@ -5,10 +5,16 @@
         ><v-col cols="3" class="text-right"
           ><v-btn
             icon="mdi-arrow-left"
-            size="sm"
+            size="small"
             color="primary"
+            aria-label="Show the previous week"
             @click="increaseWeek"
-          ></v-btn></v-col
+          >
+            <v-icon icon="mdi-arrow-left"></v-icon>
+            <v-tooltip activator="parent" location="top">
+              Previous week
+            </v-tooltip>
+          </v-btn></v-col
         ><v-col cols="6" class="text-center font-weight-bold text-h6"
           ><v-btn @click="historystore.graph.week = 0">{{
             weeklyTotals.title
@@ -16,11 +22,15 @@
         ><v-col cols="3" class="text-left"
           ><v-btn
             icon="mdi-arrow-right"
-            size="sm"
+            size="small"
             color="primary"
-            @click="decreaseWeek"
+            aria-label="Show the next week"
             :disabled="!historystore.graph.week"
-          ></v-btn></v-col></v-row
+            @click="decreaseWeek"
+          >
+            <v-icon icon="mdi-arrow-right"></v-icon>
+            <v-tooltip activator="parent" location="top">Next week</v-tooltip>
+          </v-btn></v-col></v-row
     ></v-container>
     <Bar id="my-chart-id" :options="chartOptions" :data="chartData" :plugins="chartPlugins" />
   </div>
