@@ -2,7 +2,7 @@
   <v-container class="pa-4 mx-auto" style="max-width: 700px">
     <v-card :rounded="$vuetify.display.smAndDown ? 0 : undefined">
       <v-card-item>
-        <v-img src="logov2.png" max-width="200" class="mb-2"></v-img>
+        <v-img src="logov2.png" max-width="200" class="mb-2" alt=""></v-img>
         <v-card-title>About LenoreChore</v-card-title>
         <v-card-subtitle>A simple chore app</v-card-subtitle>
       </v-card-item>
