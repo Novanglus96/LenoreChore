@@ -1,3 +1,10 @@
+# [1.5.0-alpha.6](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.5...v1.5.0-alpha.6) (2026-08-18)
+
+
+### Features
+
+* rebuild ProfileForm and make Change Password real ([98b887e](https://github.com/Novanglus96/LenoreChore/commit/98b887e8a6fb8046c90758914e2d326b1edd39f7)), closes [#11](https://github.com/Novanglus96/LenoreChore/issues/11)
+
 # [1.5.0-alpha.5](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.4...v1.5.0-alpha.5) (2026-08-18)
 
 
