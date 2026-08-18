@@ -208,6 +208,28 @@
   }
 }
 
+/* ── Fieldsets ─────────────────────────────────────────────────────────────
+   A fieldset carries a border and padding by default, which would draw a box
+   around every grouped control. The legend is what makes the group announce as
+   a group, so it stays and only the chrome goes.
+
+   Shared because three components need it — ChoreCard's editor, AddChoreForm
+   and ProfileForm — and a per-component copy is how they drift apart. */
+.lc-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+}
+
+/* Fills the available width rather than a fixed column count, so twelve months
+   reflow to 2, 3 or 4 across instead of being squeezed on a narrow phone. */
+.lc-months__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 0 var(--lc-space-2);
+}
+
 /* ── Skip link ─────────────────────────────────────────────────────────────
    Parked off-screen rather than display:none, because a hidden element is not
    focusable and a skip link that cannot be focused is not a skip link. It flies

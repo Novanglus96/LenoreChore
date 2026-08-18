@@ -195,7 +195,7 @@
                tying it to "which months does this chore run in". -->
           <v-row dense>
             <v-col>
-              <fieldset class="lc-months">
+              <fieldset class="lc-fieldset">
                 <legend class="text-body-2 mb-1">Active months</legend>
                 <div class="lc-months__grid">
                   <v-checkbox
@@ -458,6 +458,7 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import { useUserStore } from "@/stores/user";
 import { useOptions } from "@/composables/optionsComposable";
 import { useTheme } from "vuetify";
+import { MONTHS as months } from "@/utils/labels";
 
 const theme = useTheme();
 
@@ -468,21 +469,6 @@ const theme = useTheme();
 const userTimezone =
   Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
 
-// Was twelve near-identical hand-written v-checkbox blocks, ~10 lines each.
-const months = [
-  { value: 1, label: "Jan" },
-  { value: 2, label: "Feb" },
-  { value: 3, label: "Mar" },
-  { value: 4, label: "Apr" },
-  { value: 5, label: "May" },
-  { value: 6, label: "Jun" },
-  { value: 7, label: "Jul" },
-  { value: 8, label: "Aug" },
-  { value: 9, label: "Sep" },
-  { value: 10, label: "Oct" },
-  { value: 11, label: "Nov" },
-  { value: 12, label: "Dec" },
-];
 
 const { options } = useOptions();
 const expand = ref(false);
@@ -775,23 +761,7 @@ const computedAssignee = computed(() => {
   padding-inline: var(--lc-space-2);
 }
 
-/* A fieldset carries a default border and padding that would draw a box around
-   the months; the legend is kept (it is what makes the group announce) and only
-   the chrome is removed. */
-.lc-months {
-  border: 0;
-  padding: 0;
-  margin: 0;
-  min-inline-size: 0;
-}
 
-/* Fills the available width instead of a fixed 4-across grid, so the months
-   reflow to 2 or 3 columns on a narrow phone rather than being squeezed. */
-.lc-months__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
-  gap: 0 var(--lc-space-2);
-}
 
 @media (max-width: 599px) {
   .lc-chore-card__body {
