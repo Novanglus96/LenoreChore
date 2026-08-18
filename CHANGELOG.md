@@ -1,3 +1,10 @@
+# [1.5.0-alpha.9](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.8...v1.5.0-alpha.9) (2026-08-18)
+
+
+### Features
+
+* rebuild LoginForm and VacationForm ([9f3a855](https://github.com/Novanglus96/LenoreChore/commit/9f3a8558fe87836d193da2a3d817c49ee94d2e52))
+
 # [1.5.0-alpha.8](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.7...v1.5.0-alpha.8) (2026-08-18)
 
 
