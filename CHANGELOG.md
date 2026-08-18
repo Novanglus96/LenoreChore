@@ -1,3 +1,10 @@
+# [1.5.0-alpha.7](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.6...v1.5.0-alpha.7) (2026-08-18)
+
+
+### Features
+
+* label the add-form pickers and share the option lists ([8f553f7](https://github.com/Novanglus96/LenoreChore/commit/8f553f71e0743d656d642cbea67d451b53622e5e))
+
 # [1.5.0-alpha.6](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.5...v1.5.0-alpha.6) (2026-08-18)
 
 
