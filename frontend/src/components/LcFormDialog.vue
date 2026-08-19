@@ -71,6 +71,14 @@
            button in the action bar below is inside the form element it submits.
            Consumers get `errors` through the default slot.
 
+           ⚠️ Consumers must bind their controls with `componentField`, NEVER
+           with `field`. vee-validate's `field` is for NATIVE inputs: it sets a
+           plain `value`, which on a Vuetify component is not a prop, so it
+           falls through to the inner <input> as a DOM attribute. The browser
+           then paints that text while the component's own modelValue stays
+           undefined -- so it believes it is empty and leaves the label sitting
+           unfloated on top of the value. `componentField` binds modelValue.
+
            Keyed on the open count so it is a fresh mount every time the dialog
            opens. v-dialog keeps its content alive once shown, and vee-validate
            treats a changed `initialValues` as a non-forced reseed that

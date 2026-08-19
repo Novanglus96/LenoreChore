@@ -14,6 +14,8 @@ vi.mock("@/composables/optionsComposable", () => ({
   }),
 }));
 
+import { VSelect, VTextField } from "vuetify/components";
+
 import ChoreCard from "@/components/ChoreCard.vue";
 
 const vuetify = createVuetify({ components, directives });
@@ -219,6 +221,29 @@ describe("ChoreCard — remote updates vs unsaved edits", () => {
     await openEditor(wrapper);
     expect(nameField().value).toBe("Renamed by someone else");
     expect(overlayText()).not.toContain("changed this chore");
+  });
+
+  it("binds each control to its value, not just to the DOM", async () => {
+    // The bug: `v-bind="field"` is vee-validate's binding for NATIVE inputs. It
+    // sets a plain `value`, which is not a prop on a Vuetify component, so it
+    // fell through to the inner <input> as a DOM attribute. The browser painted
+    // that text while the component's own modelValue stayed undefined -- so it
+    // believed it was empty and left the label sitting unfloated on top of the
+    // value. Visible on every pre-populated field, worst on the two selects
+    // that open showing "Every"/"7" and "Unit"/"day(s)" overlaid.
+    const wrapper = mountCard(makeChore());
+    await openEditor(wrapper);
+
+    const select = label =>
+      wrapper.findAllComponents(VSelect).find(s => s.props("label") === label);
+
+    expect(select("Every").props("modelValue")).toBe(7);
+    expect(select("Unit").props("modelValue")).toBe("day(s)");
+
+    const name = wrapper
+      .findAllComponents(VTextField)
+      .find(t => t.props("label") === "Chore name");
+    expect(name.props("modelValue")).toBe("Vacuum living room");
   });
 
   it("emits editChore with the user's edits, not the reverted values", async () => {

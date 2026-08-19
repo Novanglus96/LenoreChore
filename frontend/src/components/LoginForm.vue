@@ -20,9 +20,9 @@
              at low contrast by design, and it is not announced as the field's
              name. Real labels, and the loose "Account" / "Password" headings
              that stood in for them are gone. -->
-        <Field name="email" v-slot="{ field }">
+        <Field name="email" v-slot="{ componentField }">
           <v-text-field
-            v-bind="field"
+            v-bind="componentField"
             label="Email address"
             type="email"
             autocomplete="username"
@@ -31,9 +31,9 @@
           ></v-text-field>
         </Field>
 
-        <Field name="password" v-slot="{ field }">
+        <Field name="password" v-slot="{ componentField }">
           <v-text-field
-            v-bind="field"
+            v-bind="componentField"
             label="Password"
             :type="visible ? 'text' : 'password'"
             autocomplete="current-password"

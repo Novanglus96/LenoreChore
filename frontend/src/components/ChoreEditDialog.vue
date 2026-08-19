@@ -48,9 +48,9 @@
     <fieldset class="lc-fieldset lc-form-group">
       <legend class="lc-form-group__legend text-body-2">What</legend>
 
-      <Field name="chore_name" v-slot="{ field, errorMessage }">
+      <Field name="chore_name" v-slot="{ componentField, errorMessage }">
         <v-text-field
-          v-bind="field"
+          v-bind="componentField"
           label="Chore name"
           prepend-inner-icon="mdi-format-title"
           :error-messages="errorMessage"
@@ -112,9 +112,9 @@
       <legend class="lc-form-group__legend text-body-2">How often</legend>
 
       <div class="lc-form-row">
-        <Field name="intervalNumber" v-slot="{ field, errorMessage }">
+        <Field name="intervalNumber" v-slot="{ componentField, errorMessage }">
           <v-select
-            v-bind="field"
+            v-bind="componentField"
             label="Every"
             :items="intervals"
             :error-messages="errorMessage"
@@ -122,9 +122,9 @@
           ></v-select>
         </Field>
 
-        <Field name="unit" v-slot="{ field, errorMessage }">
+        <Field name="unit" v-slot="{ componentField, errorMessage }">
           <v-select
-            v-bind="field"
+            v-bind="componentField"
             label="Unit"
             :items="units"
             :error-messages="errorMessage"
@@ -260,7 +260,7 @@ watch(
   }
 );
 
-// `v-bind="field"` already carries vee-validate's own onUpdate:modelValue;
+// `v-bind="componentField"` already carries vee-validate's own onUpdate:modelValue;
 // Vue merges same-named handlers into an array rather than replacing, so both
 // run. Without this the card's guard would only notice the pickers changing and
 // would happily overwrite a half-typed name.

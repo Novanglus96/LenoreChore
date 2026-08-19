@@ -128,9 +128,9 @@
 
         <!-- Was a plain v-model with `required` and no schema, so an
              empty area name saved happily. -->
-        <Field name="area_name" v-slot="{ field, errorMessage }">
+        <Field name="area_name" v-slot="{ componentField, errorMessage }">
           <v-text-field
-            v-bind="field"
+            v-bind="componentField"
             label="Area name"
             prepend-inner-icon="mdi-format-title"
             :error-messages="errorMessage"
