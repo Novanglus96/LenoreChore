@@ -26,7 +26,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install flake8==6.0.0
 COPY backend/ /usr/src/app/
-RUN flake8 --ignore=E501,F401 ./backend
+# --extend-ignore, NOT --ignore. `--ignore` REPLACES flake8's default ignore
+# list, which silently re-enables W503, W504 and E203 -- rules that contradict
+# each other and that ruff, the linter this project actually uses everywhere
+# else, deliberately does not raise. The result was a build that failed on
+# formatting ruff had just approved, and only in the image: no CI job runs
+# flake8, so the PR was green and the post-merge Docker build was not.
+RUN flake8 --extend-ignore=E501,F401 ./backend
 
 COPY backend/requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt

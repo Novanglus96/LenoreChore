@@ -1247,11 +1247,8 @@ def list_chores(
         (List[ChoreOut]): List of Chore objects.
     """
     if sort not in CHORE_SORTS:
-        raise HttpError(
-            422,
-            f"Unknown sort '{sort}'. Expected one of: "
-            + ", ".join(sorted(CHORE_SORTS)),
-        )
+        allowed = ", ".join(sorted(CHORE_SORTS))
+        raise HttpError(422, f"Unknown sort '{sort}'. Expected one of: {allowed}")
 
     # Every parameter has to be in the key. Adding a filter or a sort without
     # extending it serves one request's results to a differently-filtered one.
