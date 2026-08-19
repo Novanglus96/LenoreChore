@@ -2435,7 +2435,10 @@
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1433</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1430</span>
+<span class="normal">1431</span>
+<span class="normal">1432</span>
+<span class="normal">1433</span>
 <span class="normal">1434</span>
 <span class="normal">1435</span>
 <span class="normal">1436</span>
@@ -2452,10 +2455,7 @@
 <span class="normal">1447</span>
 <span class="normal">1448</span>
 <span class="normal">1449</span>
-<span class="normal">1450</span>
-<span class="normal">1451</span>
-<span class="normal">1452</span>
-<span class="normal">1453</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/users"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">CustomUserSchema</span><span class="p">])</span>
+<span class="normal">1450</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/users"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">CustomUserSchema</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_users</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_users` retrieves a list of CustomUser objects.</span>
@@ -3656,7 +3656,10 @@
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1456</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1453</span>
+<span class="normal">1454</span>
+<span class="normal">1455</span>
+<span class="normal">1456</span>
 <span class="normal">1457</span>
 <span class="normal">1458</span>
 <span class="normal">1459</span>
@@ -3681,10 +3684,7 @@
 <span class="normal">1478</span>
 <span class="normal">1479</span>
 <span class="normal">1480</span>
-<span class="normal">1481</span>
-<span class="normal">1482</span>
-<span class="normal">1483</span>
-<span class="normal">1484</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1481</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_areagroup</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">areagroup_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">AreaGroupIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_areagroup` updates a given AreaGroup object.</span>
@@ -3843,7 +3843,10 @@ Defaults to the lowest-ordered remaining group.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1730</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1727</span>
+<span class="normal">1728</span>
+<span class="normal">1729</span>
+<span class="normal">1730</span>
 <span class="normal">1731</span>
 <span class="normal">1732</span>
 <span class="normal">1733</span>
@@ -3903,10 +3906,7 @@ Defaults to the lowest-ordered remaining group.</p>
 <span class="normal">1787</span>
 <span class="normal">1788</span>
 <span class="normal">1789</span>
-<span class="normal">1790</span>
-<span class="normal">1791</span>
-<span class="normal">1792</span>
-<span class="normal">1793</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1790</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/areagroups/</span><span class="si">{areagroup_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_areagroup</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">areagroup_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reassign_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `delete_areagroup` deletes a given AreaGroup object, moving any</span>
@@ -4738,7 +4738,10 @@ with no order given is appended to the end of the list.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1487</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1484</span>
+<span class="normal">1485</span>
+<span class="normal">1486</span>
+<span class="normal">1487</span>
 <span class="normal">1488</span>
 <span class="normal">1489</span>
 <span class="normal">1490</span>
@@ -4759,10 +4762,7 @@ with no order given is appended to the end of the list.</p>
 <span class="normal">1505</span>
 <span class="normal">1506</span>
 <span class="normal">1507</span>
-<span class="normal">1508</span>
-<span class="normal">1509</span>
-<span class="normal">1510</span>
-<span class="normal">1511</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/areas/</span><span class="si">{area_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1508</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/areas/</span><span class="si">{area_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_area</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">area_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">AreaIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_area` updates a given Area object.</span>
@@ -4886,7 +4886,10 @@ with no order given is appended to the end of the list.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1796</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1793</span>
+<span class="normal">1794</span>
+<span class="normal">1795</span>
+<span class="normal">1796</span>
 <span class="normal">1797</span>
 <span class="normal">1798</span>
 <span class="normal">1799</span>
@@ -4903,10 +4906,7 @@ with no order given is appended to the end of the list.</p>
 <span class="normal">1810</span>
 <span class="normal">1811</span>
 <span class="normal">1812</span>
-<span class="normal">1813</span>
-<span class="normal">1814</span>
-<span class="normal">1815</span>
-<span class="normal">1816</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/areas/</span><span class="si">{area_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1813</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/areas/</span><span class="si">{area_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_area</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">area_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `delete_area` deletes a given Area object.</span>
@@ -6020,10 +6020,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1348</span>
 <span class="normal">1349</span>
 <span class="normal">1350</span>
-<span class="normal">1351</span>
-<span class="normal">1352</span>
-<span class="normal">1353</span>
-<span class="normal">1354</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/chores"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">ChoreOut</span><span class="p">])</span>
+<span class="normal">1351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/chores"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">ChoreOut</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_chores</span><span class="p">(</span>
     <span class="n">request</span><span class="p">,</span>
     <span class="n">inactive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -6058,11 +6055,8 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="sd">        (List[ChoreOut]): List of Chore objects.</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">sort</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CHORE_SORTS</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">HttpError</span><span class="p">(</span>
-            <span class="mi">422</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">"Unknown sort '</span><span class="si">{</span><span class="n">sort</span><span class="si">}</span><span class="s2">'. Expected one of: "</span>
-            <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">CHORE_SORTS</span><span class="p">)),</span>
-        <span class="p">)</span>
+        <span class="n">allowed</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">CHORE_SORTS</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="n">HttpError</span><span class="p">(</span><span class="mi">422</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Unknown sort '</span><span class="si">{</span><span class="n">sort</span><span class="si">}</span><span class="s2">'. Expected one of: </span><span class="si">{</span><span class="n">allowed</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Every parameter has to be in the key. Adding a filter or a sort without</span>
     <span class="c1"># extending it serves one request's results to a differently-filtered one.</span>
@@ -6278,7 +6272,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1514</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1511</span>
+<span class="normal">1512</span>
+<span class="normal">1513</span>
+<span class="normal">1514</span>
 <span class="normal">1515</span>
 <span class="normal">1516</span>
 <span class="normal">1517</span>
@@ -6307,10 +6304,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1540</span>
 <span class="normal">1541</span>
 <span class="normal">1542</span>
-<span class="normal">1543</span>
-<span class="normal">1544</span>
-<span class="normal">1545</span>
-<span class="normal">1546</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/chores/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1543</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/chores/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">ChoreIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_chore` updates a given Chore object.</span>
@@ -6442,7 +6436,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1819</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1816</span>
+<span class="normal">1817</span>
+<span class="normal">1818</span>
+<span class="normal">1819</span>
 <span class="normal">1820</span>
 <span class="normal">1821</span>
 <span class="normal">1822</span>
@@ -6460,10 +6457,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1834</span>
 <span class="normal">1835</span>
 <span class="normal">1836</span>
-<span class="normal">1837</span>
-<span class="normal">1838</span>
-<span class="normal">1839</span>
-<span class="normal">1840</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/chores/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1837</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/chores/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `delete_chore` deletes a given Chore object.</span>
@@ -6560,7 +6554,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1357</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1354</span>
+<span class="normal">1355</span>
+<span class="normal">1356</span>
+<span class="normal">1357</span>
 <span class="normal">1358</span>
 <span class="normal">1359</span>
 <span class="normal">1360</span>
@@ -6568,10 +6565,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1362</span>
 <span class="normal">1363</span>
 <span class="normal">1364</span>
-<span class="normal">1365</span>
-<span class="normal">1366</span>
-<span class="normal">1367</span>
-<span class="normal">1368</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">calculate_duedays</span><span class="p">(</span><span class="n">next_due</span><span class="p">):</span>
+<span class="normal">1365</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">calculate_duedays</span><span class="p">(</span><span class="n">next_due</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `calculate_duedays` calculates the days until due based on a given date.</span>
 
@@ -6698,7 +6692,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1549</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1546</span>
+<span class="normal">1547</span>
+<span class="normal">1548</span>
+<span class="normal">1549</span>
 <span class="normal">1550</span>
 <span class="normal">1551</span>
 <span class="normal">1552</span>
@@ -6718,10 +6715,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1566</span>
 <span class="normal">1567</span>
 <span class="normal">1568</span>
-<span class="normal">1569</span>
-<span class="normal">1570</span>
-<span class="normal">1571</span>
-<span class="normal">1572</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/togglechore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1569</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/togglechore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">toggle_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">TogglActive</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `toggle_chore` toggles wether a Chore is active/inactive.</span>
@@ -6860,7 +6854,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1575</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1572</span>
+<span class="normal">1573</span>
+<span class="normal">1574</span>
+<span class="normal">1575</span>
 <span class="normal">1576</span>
 <span class="normal">1577</span>
 <span class="normal">1578</span>
@@ -6880,10 +6877,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1592</span>
 <span class="normal">1593</span>
 <span class="normal">1594</span>
-<span class="normal">1595</span>
-<span class="normal">1596</span>
-<span class="normal">1597</span>
-<span class="normal">1598</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/snoozechore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1595</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/snoozechore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">snooze_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">SnoozeChore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `snooze_chore` updates a given Chore object's next due date.</span>
@@ -7022,7 +7016,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1601</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1598</span>
+<span class="normal">1599</span>
+<span class="normal">1600</span>
+<span class="normal">1601</span>
 <span class="normal">1602</span>
 <span class="normal">1603</span>
 <span class="normal">1604</span>
@@ -7041,10 +7038,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1617</span>
 <span class="normal">1618</span>
 <span class="normal">1619</span>
-<span class="normal">1620</span>
-<span class="normal">1621</span>
-<span class="normal">1622</span>
-<span class="normal">1623</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/claimchore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1620</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/claimchore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">claim_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">ClaimChore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `claim_chore` assigns a given Chore object to a user.</span>
@@ -7182,7 +7176,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1626</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1623</span>
+<span class="normal">1624</span>
+<span class="normal">1625</span>
+<span class="normal">1626</span>
 <span class="normal">1627</span>
 <span class="normal">1628</span>
 <span class="normal">1629</span>
@@ -7225,10 +7222,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1666</span>
 <span class="normal">1667</span>
 <span class="normal">1668</span>
-<span class="normal">1669</span>
-<span class="normal">1670</span>
-<span class="normal">1671</span>
-<span class="normal">1672</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/completechore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1669</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/chores/completechore/</span><span class="si">{chore_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">complete_chore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">chore_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">CompleteChore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `complete_chore` completes a given Chore object.</span>
@@ -8927,7 +8921,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1371</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1368</span>
+<span class="normal">1369</span>
+<span class="normal">1370</span>
+<span class="normal">1371</span>
 <span class="normal">1372</span>
 <span class="normal">1373</span>
 <span class="normal">1374</span>
@@ -8960,10 +8957,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1401</span>
 <span class="normal">1402</span>
 <span class="normal">1403</span>
-<span class="normal">1404</span>
-<span class="normal">1405</span>
-<span class="normal">1406</span>
-<span class="normal">1407</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/historyitems"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">PaginatedHistoryItems</span><span class="p">)</span>
+<span class="normal">1404</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/historyitems"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">PaginatedHistoryItems</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_historyitems</span><span class="p">(</span>
     <span class="n">request</span><span class="p">,</span>
     <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -9115,7 +9109,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1675</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1672</span>
+<span class="normal">1673</span>
+<span class="normal">1674</span>
+<span class="normal">1675</span>
 <span class="normal">1676</span>
 <span class="normal">1677</span>
 <span class="normal">1678</span>
@@ -9137,10 +9134,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1694</span>
 <span class="normal">1695</span>
 <span class="normal">1696</span>
-<span class="normal">1697</span>
-<span class="normal">1698</span>
-<span class="normal">1699</span>
-<span class="normal">1700</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1697</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_historyitem</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">historyitem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">HistoryItemIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_historyitem` updates a given HistoryItem object.</span>
@@ -9265,7 +9259,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1843</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1840</span>
+<span class="normal">1841</span>
+<span class="normal">1842</span>
+<span class="normal">1843</span>
 <span class="normal">1844</span>
 <span class="normal">1845</span>
 <span class="normal">1846</span>
@@ -9283,10 +9280,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1858</span>
 <span class="normal">1859</span>
 <span class="normal">1860</span>
-<span class="normal">1861</span>
-<span class="normal">1862</span>
-<span class="normal">1863</span>
-<span class="normal">1864</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1861</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/historyitems/</span><span class="si">{historyitem_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_historyitem</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">historyitem_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `delete_historyitem` deletes a given HistoryItem object.</span>
@@ -10015,7 +10009,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1410</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1407</span>
+<span class="normal">1408</span>
+<span class="normal">1409</span>
+<span class="normal">1410</span>
 <span class="normal">1411</span>
 <span class="normal">1412</span>
 <span class="normal">1413</span>
@@ -10032,10 +10029,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1424</span>
 <span class="normal">1425</span>
 <span class="normal">1426</span>
-<span class="normal">1427</span>
-<span class="normal">1428</span>
-<span class="normal">1429</span>
-<span class="normal">1430</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/options"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">OptionOut</span><span class="p">])</span>
+<span class="normal">1427</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/options"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">OptionOut</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_options</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_options` retrieves a list of Option objects.</span>
@@ -10171,7 +10165,10 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1703</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1700</span>
+<span class="normal">1701</span>
+<span class="normal">1702</span>
+<span class="normal">1703</span>
 <span class="normal">1704</span>
 <span class="normal">1705</span>
 <span class="normal">1706</span>
@@ -10192,10 +10189,7 @@ task -- dusting, say -- be worked through every area it exists in.</p>
 <span class="normal">1721</span>
 <span class="normal">1722</span>
 <span class="normal">1723</span>
-<span class="normal">1724</span>
-<span class="normal">1725</span>
-<span class="normal">1726</span>
-<span class="normal">1727</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/options/</span><span class="si">{option_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="normal">1724</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/options/</span><span class="si">{option_id}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_option</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">option_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">OptionIn</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `update_option` updates a given Option object.</span>
@@ -10722,7 +10716,10 @@ from the backend.</p>
 
             <details class="quote">
               <summary>Source code in <code>backend/backend/api.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1867</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1864</span>
+<span class="normal">1865</span>
+<span class="normal">1866</span>
+<span class="normal">1867</span>
 <span class="normal">1868</span>
 <span class="normal">1869</span>
 <span class="normal">1870</span>
@@ -10740,10 +10737,7 @@ from the backend.</p>
 <span class="normal">1882</span>
 <span class="normal">1883</span>
 <span class="normal">1884</span>
-<span class="normal">1885</span>
-<span class="normal">1886</span>
-<span class="normal">1887</span>
-<span class="normal">1888</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/version/list"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">VersionOut</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="normal">1885</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/version/list"</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">VersionOut</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_version</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VersionOut</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The function `list_version` retrieves the app version number</span>
