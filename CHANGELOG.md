@@ -1,3 +1,10 @@
+# [1.5.0-alpha.16](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.15...v1.5.0-alpha.16) (2026-08-19)
+
+
+### Features
+
+* bottom navigation on phones, and one touch-target rule ([124534e](https://github.com/Novanglus96/LenoreChore/commit/124534e6fa16fbaf2c15bc4f8d115092c948b5b1))
+
 # [1.5.0-alpha.15](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.14...v1.5.0-alpha.15) (2026-08-19)
 
 
