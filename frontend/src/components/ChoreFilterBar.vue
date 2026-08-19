@@ -150,28 +150,45 @@
 
                Only names carried by two or more active chores are offered; a
                one-off cannot be worked room by room. -->
-          <template v-if="choreNames?.length">
+          <div>
+            <!-- Rendered even when there is nothing to pick. Hiding it made the
+                 feature invisible in exactly the situation where someone would
+                 go looking for it: a household whose chores all have distinct
+                 names cannot tell whether this is missing, broken, or simply
+                 not applicable yet. Disabled with a reason instead. -->
             <v-select
               v-model="filters.chore_name"
               label="One task, every area"
-              :items="choreNames"
+              :items="choreNames ?? []"
               item-title="chore_name"
               item-value="chore_name"
               prepend-inner-icon="mdi-repeat-variant"
               density="comfortable"
               hide-details
               clearable
+              :disabled="!hasRepeatingTasks"
             >
               <template v-slot:item="{ props: itemProps, item }">
                 <v-list-item
                   v-bind="itemProps"
-                  :subtitle="`in ${item.raw.area_count} areas`"
+                  :subtitle="`in ${item.raw.area_count} ${
+                    item.raw.area_count === 1 ? 'area' : 'areas'
+                  }`"
                 ></v-list-item>
               </template>
             </v-select>
 
-            <v-divider class="my-1"></v-divider>
-          </template>
+            <p
+              v-if="!hasRepeatingTasks"
+              class="text-caption text-medium-emphasis mt-1 mb-0"
+            >
+              Give the same chore the same name in more than one area — a
+              &ldquo;Dust&rdquo; in each room — and it shows up here so you can
+              work through all of them at once.
+            </p>
+          </div>
+
+          <v-divider class="my-1"></v-divider>
 
           <v-select
             v-model="filters.group_id"
@@ -278,6 +295,10 @@ const { areas } = useAreas();
 const { areagroups } = useAreaGroups();
 const { users: rawUsers } = useUsers();
 const { choreNames } = useChoreNames();
+
+// Nothing repeats across areas yet, so there is nothing to filter to. The
+// control still renders -- see the template -- but says why it is inert.
+const hasRepeatingTasks = computed(() => (choreNames.value ?? []).length > 0);
 
 const filters = chorestore.filters;
 const panelOpen = ref(false);

@@ -26,14 +26,14 @@ vi.mock("@/composables/areaGroupsComposable", () => ({
   }),
 }));
 
+// Mutable, so both the populated and the empty path are reachable.
+let choreNamesData = ref([
+  { chore_name: "Dust", chore_count: 4, area_count: 4 },
+  { chore_name: "Vacuum", chore_count: 2, area_count: 2 },
+]);
+
 vi.mock("@/composables/choresComposasble", () => ({
-  useChoreNames: () => ({
-    choreNames: ref([
-      { chore_name: "Dust", chore_count: 4, area_count: 4 },
-      { chore_name: "Vacuum", chore_count: 2, area_count: 2 },
-    ]),
-    isLoading: ref(false),
-  }),
+  useChoreNames: () => ({ choreNames: choreNamesData, isLoading: ref(false) }),
 }));
 
 vi.mock("@/composables/usersComposable", () => ({
@@ -65,6 +65,10 @@ describe("ChoreFilterBar — quick filters", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     store = useChoreStore();
+    choreNamesData = ref([
+      { chore_name: "Dust", chore_count: 4, area_count: 4 },
+      { chore_name: "Vacuum", chore_count: 2, area_count: 2 },
+    ]);
     // The "Mine" chip only renders for a signed-in user.
     useUserStore().id = 7;
   });
@@ -108,6 +112,10 @@ describe("ChoreFilterBar — group narrows the area list", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     store = useChoreStore();
+    choreNamesData = ref([
+      { chore_name: "Dust", chore_count: 4, area_count: 4 },
+      { chore_name: "Vacuum", chore_count: 2, area_count: 2 },
+    ]);
     useUserStore().id = 7;
   });
 
@@ -144,6 +152,10 @@ describe("ChoreFilterBar — active filters and counts", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     store = useChoreStore();
+    choreNamesData = ref([
+      { chore_name: "Dust", chore_count: 4, area_count: 4 },
+      { chore_name: "Vacuum", chore_count: 2, area_count: 2 },
+    ]);
     useUserStore().id = 7;
   });
 
@@ -244,5 +256,37 @@ describe("ChoreFilterBar — active filters and counts", () => {
     expect(mountBar(1).vm.countLabel).toBe("1 chore");
     expect(mountBar(4).vm.countLabel).toBe("4 chores");
     expect(mountBar(0).vm.countLabel).toBe("0 chores");
+  });
+});
+
+describe("ChoreFilterBar — the task filter with nothing to pick", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    useUserStore().id = 7;
+  });
+
+  it("still renders the control, and says why it is inert", async () => {
+    // Hiding it made the feature invisible in exactly the case where someone
+    // would go looking for it: a household whose chores all have distinct
+    // names could not tell whether it was missing, broken, or not applicable.
+    choreNamesData = ref([]);
+    const wrapper = mountBar(0);
+    wrapper.vm.panelOpen = true;
+    await wrapper.vm.$nextTick();
+    await new Promise(r => setTimeout(r, 0));
+
+    expect(wrapper.vm.hasRepeatingTasks).toBe(false);
+
+    const panel = document.body.textContent;
+    expect(panel).toContain("One task, every area");
+    expect(panel).toContain("the same name in more than one area");
+  });
+
+  it("enables the control once a name repeats", async () => {
+    choreNamesData = ref([
+      { chore_name: "Dust", chore_count: 3, area_count: 3 },
+    ]);
+    const wrapper = mountBar(3);
+    expect(wrapper.vm.hasRepeatingTasks).toBe(true);
   });
 });
