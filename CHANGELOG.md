@@ -1,3 +1,10 @@
+# [1.5.0-alpha.13](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.12...v1.5.0-alpha.13) (2026-08-19)
+
+
+### Features
+
+* area groups become real structure, and can finally be managed ([0c8faa7](https://github.com/Novanglus96/LenoreChore/commit/0c8faa70904d6cb7305555bfb34758a852676efb))
+
 # [1.5.0-alpha.12](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.11...v1.5.0-alpha.12) (2026-08-19)
 
 
