@@ -84,3 +84,49 @@ export const EFFORT_LEVELS = {
 export function effortLabel(effort) {
   return EFFORT_LEVELS[effort] ?? "";
 }
+
+/**
+ * The four colours a household member can be.
+ *
+ * ⚠️ The VALUES are persisted in CustomUser.user_color as literal hex strings.
+ * Changing one silently re-colours nobody -- it orphans every user already
+ * holding the old value. Only the names are free to change, and these are the
+ * Material palette names for the same four hexes: "Color1".."Color4" told a
+ * sighted user nothing and a screen reader user less than nothing, since the
+ * swatch beside them is decorative.
+ *
+ * Lives here rather than in the profile screen because the profile is no
+ * longer the only thing that renders a member's colour.
+ */
+export const USER_COLORS = [
+  { name: "Pink", value: "#E91E63" },
+  { name: "Indigo", value: "#3F51B5" },
+  { name: "Teal", value: "#009688" },
+  { name: "Lime", value: "#CDDC39" },
+];
+
+/**
+ * The avatar illustration for a member.
+ *
+ * The four filenames were spelled out at three call sites, each rebuilding the
+ * same child/adult × masculine/feminine matrix by hand.
+ *
+ * @param {boolean} male which illustration, not an assertion about the person
+ * @param {boolean} isChild whether they are in the child group
+ */
+export function avatarImage(male, isChild) {
+  const age = isChild ? "child" : "adult";
+  return `${age}_${male ? "male" : "female"}_avatar.jpg`;
+}
+
+/**
+ * The avatar choices, named. Each radio used to contain ONLY an image, so both
+ * options announced as blank and were indistinguishable without sight. The
+ * label describes the illustration rather than the person choosing it.
+ */
+export function avatarOptions(isChild) {
+  return [
+    { value: true, label: "Masculine", image: avatarImage(true, isChild) },
+    { value: false, label: "Feminine", image: avatarImage(false, isChild) },
+  ];
+}
