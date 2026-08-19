@@ -1,0 +1,99 @@
+/* ===========================================================================
+   VueDatePicker, in the app's clothes
+   ===========================================================================
+   The date picker was the one visibly foreign element on screen: a third-party
+   control with its own palette, radius and focus treatment, sitting inside
+   cards that otherwise share one language. It appears in three places — the
+   chore editor's two date fields, the snooze dialog, and the reminder time on
+   the profile — so it was foreign in all of them.
+
+   Everything below maps its own custom properties onto the app's. Two things
+   make that work:
+
+   1. Vuetify writes the CURRENT theme's variables to `:root` (and rewrites
+      them when the theme changes), so `var(--v-theme-surface)` resolves even
+      in the picker's menu, which teleports to <body> and would otherwise sit
+      outside any themed element.
+
+   2. Because the values are expressions rather than literals, light and dark
+      both follow automatically. There is deliberately no dark-mode block here;
+      adding one would be a second source of truth for the same colours.
+
+   Targeting both theme classes rather than `:root` is what wins the cascade:
+   the library sets its defaults on `.dp__theme_light` / `.dp__theme_dark`, so
+   an equal-specificity selector loaded afterwards is what overrides them. The
+   load order is set in plugins/vuetify.js, which imports the library's stylesheet
+   immediately before this one.
+   =========================================================================== */
+
+.dp__theme_light,
+.dp__theme_dark {
+  /* ── Surfaces and text ───────────────────────────────────────────────── */
+  --dp-background-color: rgb(var(--v-theme-surface));
+  --dp-text-color: rgb(var(--v-theme-on-surface));
+  --dp-hover-color: rgb(var(--v-theme-surface-variant));
+  --dp-hover-text-color: rgb(var(--v-theme-on-surface));
+  --dp-hover-icon-color: rgb(var(--v-theme-on-surface));
+  --dp-icon-color: rgb(var(--v-theme-on-surface-variant));
+  --dp-secondary-color: rgb(var(--v-theme-on-surface-variant));
+
+  /* ── Selection ───────────────────────────────────────────────────────── */
+  --dp-primary-color: rgb(var(--v-theme-primary));
+  --dp-primary-text-color: rgb(var(--v-theme-on-primary));
+  --dp-primary-disabled-color: rgb(var(--v-theme-primary-container));
+  --dp-range-between-dates-background-color: rgb(
+    var(--v-theme-primary-container)
+  );
+  --dp-range-between-dates-text-color: rgb(var(--v-theme-on-primary-container));
+  --dp-range-between-border-color: rgb(var(--v-theme-primary-container));
+  --dp-marker-color: rgb(var(--v-theme-accent));
+  --dp-highlight-color: rgb(var(--v-theme-primary-container));
+
+  /* ── Borders ─────────────────────────────────────────────────────────── */
+  --dp-border-color: rgb(var(--v-theme-outline-variant));
+  --dp-menu-border-color: rgb(var(--v-theme-outline-variant));
+  --dp-border-color-hover: rgb(var(--v-theme-outline));
+  --dp-border-color-focus: rgb(var(--v-theme-primary));
+
+  /* ── State. The dirtiness bands double as the app's semantic colours, so
+        the picker borrows the same two rather than introducing a third red
+        and a third green. ──────────────────────────────────────────────── */
+  --dp-danger-color: rgb(var(--v-theme-filthy));
+  --dp-success-color: rgb(var(--v-theme-clean));
+  --dp-success-color-disabled: rgb(var(--v-theme-surface-variant));
+  --dp-disabled-color: rgb(var(--v-theme-surface-variant));
+  --dp-disabled-color-text: rgb(var(--v-theme-on-surface-variant));
+  --dp-tooltip-color: rgb(var(--v-theme-surface-variant));
+
+  --dp-scroll-bar-background: rgb(var(--v-theme-surface-variant));
+  --dp-scroll-bar-color: rgb(var(--v-theme-outline));
+
+  /* ── Shape and type ──────────────────────────────────────────────────── */
+  --dp-font-family: inherit;
+  --dp-border-radius: var(--lc-radius-sm);
+  --dp-cell-border-radius: var(--lc-radius-sm);
+
+  /* ── Motion, from the same vocabulary as everything else, so the picker
+        opens at the speed the rest of the app moves at — and collapses with
+        it under prefers-reduced-motion. ───────────────────────────────── */
+  --dp-animation-duration: var(--lc-dur-base);
+  --dp-transition-length: var(--lc-dur-base);
+  --dp-transition-timing: var(--lc-ease-standard);
+  --dp-transition-timing-general: var(--lc-ease-standard);
+  --dp-common-transition: all var(--lc-dur-quick) var(--lc-ease-standard);
+}
+
+/* The menu floats over content, so it needs the app's elevation rather than
+   the library's flat border. */
+.dp__menu {
+  box-shadow: var(--lc-shadow-3);
+}
+
+/* The library's focus ring is its own; the app defines one globally and a
+   second style for the same job is exactly the inconsistency this file exists
+   to remove. */
+.dp__input:focus-visible,
+.dp__menu :focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+}

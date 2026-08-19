@@ -9,7 +9,7 @@ async function createChoreFunction(newChore) {
   const chorestore = useChoreStore();
   try {
     const response = await apiClient.post("/chores", newChore);
-    chorestore.showSnackbar("Chore created successfully!", "success");
+    chorestore.showSnackbar("Chore added", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not created: ");
@@ -23,7 +23,7 @@ async function updateChoreFunction(updatedChore) {
       "/chores/" + updatedChore.id,
       updatedChore,
     );
-    chorestore.showSnackbar("Chore updated successfully!", "success");
+    chorestore.showSnackbar("Chore saved", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not updated: ");
@@ -37,7 +37,9 @@ async function completeChoreFunction(completedChore) {
       "/chores/completechore/" + completedChore.id,
       completedChore,
     );
-    chorestore.showSnackbar("Chore completed successfully!", "success");
+    // The payoff line. The card has already sprung away by the time this
+    // lands, so it confirms rather than announces.
+    chorestore.showSnackbar("Nice — that's one done.", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not completed: ");
@@ -51,7 +53,7 @@ async function snoozeChoreFunction(snoozedChore) {
       "/chores/snoozechore/" + snoozedChore.id,
       snoozedChore,
     );
-    chorestore.showSnackbar("Chore snoozed successfully!", "success");
+    chorestore.showSnackbar("Snoozed — it'll come back around.", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not snoozed: ");
@@ -65,7 +67,11 @@ async function claimChoreFunction(claimedChore) {
       "/chores/claimchore/" + claimedChore.id,
       claimedChore,
     );
-    chorestore.showSnackbar("Chore claimed successfully!", "success");
+    // The same endpoint claims and releases; assignee_id is which.
+    chorestore.showSnackbar(
+      claimedChore.assignee_id ? "It's yours." : "Back in the pool.",
+      "success",
+    );
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not claimed: ");
@@ -79,7 +85,12 @@ async function toggleChoreFunction(toggledChore) {
       "/chores/togglechore/" + toggledChore.id,
       toggledChore,
     );
-    chorestore.showSnackbar("Chore toggled successfully!", "success");
+    // status 0 is active, so this says which way it went rather than that
+    // something was "toggled".
+    chorestore.showSnackbar(
+      toggledChore.status === 0 ? "Chore is back on." : "Chore paused.",
+      "success",
+    );
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not toggled: ");
@@ -90,7 +101,7 @@ async function deleteChoreFunction(deletedChore) {
   const chorestore = useChoreStore();
   try {
     const response = await apiClient.delete("/chores/" + deletedChore.id);
-    chorestore.showSnackbar("Chore deleted successfully!", "success");
+    chorestore.showSnackbar("Chore deleted", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not deleted: ");

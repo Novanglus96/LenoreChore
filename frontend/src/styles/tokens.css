@@ -122,6 +122,60 @@
   pointer-events: none;
 }
 
+/* The last one.
+   ─────────────────────────────────────────────────────────────────────────
+   Clearing the FINAL chore is the emotional peak of a chore app, and it looked
+   exactly like clearing the fifth of twenty: the card sprang away and an empty
+   state appeared, flatly. This gives that empty state an entrance, on the same
+   spring the completion beat uses, so the two read as one gesture.
+
+   Only when a completion emptied the list -- arriving at an already-empty list
+   is not an achievement, and celebrating it would cheapen the times it is. */
+@keyframes lc-cleared {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.lc-cleared {
+  animation: lc-cleared var(--lc-dur-celebrate) var(--lc-ease-spring) both;
+}
+
+/* The payoff inside the payoff: the icon overshoots a beat after the panel
+   settles. Reduced motion drops the movement and keeps the fade, as everywhere
+   else in this file. */
+@keyframes lc-cleared-pop {
+  0% {
+    transform: scale(0.4) rotate(-12deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15) rotate(4deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.lc-cleared .v-empty-state__media {
+  animation: lc-cleared-pop var(--lc-dur-celebrate) var(--lc-ease-spring) 120ms
+    both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-cleared,
+  .lc-cleared .v-empty-state__media {
+    animation: none;
+  }
+}
+
 /* Overdue chores breathe, very slowly. Slow enough to read as ambient rather
    than as an alert that needs dismissing — it should draw the eye on a second
    pass through the list, not demand attention on the first. */

@@ -1,5 +1,11 @@
 import "vuetify/styles";
 import "@/styles/tokens.css";
+// The date picker's own stylesheet, then ours on top. Imported here rather
+// than inside the three components that use it: the overrides only win by
+// source order, and per-component imports made that order depend on which
+// component Vite happened to process first.
+import "@vuepic/vue-datepicker/dist/main.css";
+import "@/styles/datepicker.css";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";

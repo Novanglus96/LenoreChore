@@ -9,7 +9,7 @@ async function createAreaGroupFunction(newAreaGroup) {
   const chorestore = useChoreStore();
   try {
     const response = await apiClient.post("/areagroups", newAreaGroup);
-    chorestore.showSnackbar("Area group created successfully!", "success");
+    chorestore.showSnackbar("Group added", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Area group not created: ");
@@ -28,7 +28,7 @@ async function updateAreaGroupFunction(updatedAreaGroup) {
       "/areagroups/" + updatedAreaGroup.id,
       updatedAreaGroup,
     );
-    chorestore.showSnackbar("Area group updated", "success");
+    chorestore.showSnackbar("Group saved", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Area group not updated: ");
@@ -53,8 +53,8 @@ async function deleteAreaGroupFunction(deletedAreaGroup) {
     const moved = response.data?.areas_moved ?? 0;
     chorestore.showSnackbar(
       moved > 0
-        ? `Area group deleted — ${moved} area${moved === 1 ? "" : "s"} moved`
-        : "Area group deleted",
+        ? `Group deleted — ${moved} area${moved === 1 ? "" : "s"} moved`
+        : "Group deleted",
       "success",
     );
     return response.data;

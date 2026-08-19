@@ -10,7 +10,7 @@ async function createHistoryItemFunction(newHistoryItem) {
   const chorestore = useChoreStore();
   try {
     const response = await apiClient.post("/historyitems", newHistoryItem);
-    chorestore.showSnackbar("History Item created successfully!", "success");
+    chorestore.showSnackbar("Added to history", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "History Item not created: ");

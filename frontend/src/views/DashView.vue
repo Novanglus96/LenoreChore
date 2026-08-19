@@ -3,6 +3,28 @@
     <v-container :class="$vuetify.display.smAndDown ? 'pa-0' : ''">
       <h1 class="lc-visually-hidden">Dashboard</h1>
 
+      <!-- Summary before detail. The dashboard opened straight into a grid of
+           cards, and nothing on the screen said hello or told you how the
+           household was doing without reading every card. Rendered only once
+           the data has landed, so it never says "nothing needs doing" at a
+           household that simply has not loaded yet. -->
+      <header v-if="!isLoading" class="lc-greeting">
+        <p class="text-h6 font-weight-regular mb-0">
+          {{ greeting() }}{{ firstName ? `, ${firstName}` : "" }}.
+        </p>
+        <p class="text-body-2 text-medium-emphasis mb-0">
+          <v-icon
+            v-if="overdueCount"
+            icon="mdi-alert-circle"
+            size="14"
+            color="filthy"
+            class="mr-1"
+            aria-hidden="true"
+          ></v-icon>
+          {{ choreSummary(dueCount, overdueCount) }}
+        </p>
+      </header>
+
       <!-- Loading. Three skeletons rather than one, so the placeholder has the
            same shape as the grid it is standing in for and the layout does not
            jump when the data lands. -->
@@ -51,6 +73,8 @@ import AreaGroupSection from "@/components/AreaGroupSection.vue";
 import { useAreas } from "@/composables/areasComposable";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
 import { useDashboardStore } from "@/stores/dashboard";
+import { useUserStore } from "@/stores/user";
+import { greeting, choreSummary } from "@/utils/greeting";
 
 const { areas, isLoading: areasLoading, editArea, removeArea } = useAreas();
 const {
@@ -60,6 +84,23 @@ const {
   removeAreaGroup,
 } = useAreaGroups();
 const dashboard = useDashboardStore();
+const userstore = useUserStore();
+
+// Blank rather than "FirstName" -- the store's default is a placeholder, and
+// greeting a real person by a placeholder is worse than not greeting them.
+const firstName = computed(() => {
+  const name = userstore.firstname;
+  return !name || name === "FirstName" ? "" : name;
+});
+
+// Summed across areas rather than fetched separately: the dashboard already
+// has every area, and each carries its own counts.
+const dueCount = computed(() =>
+  (areas.value ?? []).reduce((sum, a) => sum + (a.dueCount || 0), 0)
+);
+const overdueCount = computed(() =>
+  (areas.value ?? []).reduce((sum, a) => sum + (a.overdueCount || 0), 0)
+);
 
 // Both queries feed the sections, and they resolve independently. Waiting for
 // both avoids a frame where the groups have not arrived and every area falls
@@ -182,3 +223,15 @@ const deleteGroup = async (payload, done) => {
   }
 };
 </script>
+
+<style scoped>
+.lc-greeting {
+  padding: var(--lc-space-2) var(--lc-space-3) var(--lc-space-4);
+}
+
+@media (max-width: 599px) {
+  .lc-greeting {
+    padding: var(--lc-space-3) var(--lc-space-4);
+  }
+}
+</style>

@@ -9,7 +9,7 @@ async function createOptionFunction(newOption) {
   const chorestore = useChoreStore();
   try {
     const response = await apiClient.post("/options", newOption);
-    chorestore.showSnackbar("Options created successfully!", "success");
+    chorestore.showSnackbar("Settings saved", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Options not created: ");
@@ -23,7 +23,7 @@ async function updateOptionFunction(updatedOption) {
       "/options/" + updatedOption.id,
       updatedOption,
     );
-    chorestore.showSnackbar("Options updated successfully!", "success");
+    chorestore.showSnackbar("Settings saved", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Options not updated: ");
@@ -34,7 +34,13 @@ async function toggleVacationFunction() {
   const chorestore = useChoreStore();
   try {
     const response = await apiClient.post("/toggle_vacation");
-    chorestore.showSnackbar("Vacation mode toggled successfully!", "success");
+    // The response carries the state it landed in, so this says which.
+    chorestore.showSnackbar(
+      response.data?.vacation_mode
+        ? "Vacation mode on — chores are paused."
+        : "Welcome back — chores are running again.",
+      "success",
+    );
     return response.data;
   } catch (error) {
     handleApiError(error, "Vacation mode not toggled: ");
@@ -45,7 +51,7 @@ async function deleteOptionFunction(deletedOption) {
   const chorestore = useChoreStore();
   try {
     const response = await apiClient.delete("/options/" + deletedOption.id);
-    chorestore.showSnackbar("Options deleted successfully!", "success");
+    chorestore.showSnackbar("Settings deleted", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Options not deleted: ");
