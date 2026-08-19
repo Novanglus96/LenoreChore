@@ -46,6 +46,23 @@ async function completeChoreFunction(completedChore) {
   }
 }
 
+async function completeChoresFunction(batch) {
+  const chorestore = useChoreStore();
+  try {
+    const response = await apiClient.post("/chores/complete", batch);
+    const n = response.data?.completed ?? 0;
+    // The count comes from the server, not from what was asked: paused and
+    // disabled chores are skipped, so the two can legitimately differ.
+    chorestore.showSnackbar(
+      n === 1 ? "Nice — that's one done." : `Nice — ${n} done in one go.`,
+      "success",
+    );
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "Chores not completed: ");
+  }
+}
+
 async function snoozeChoreFunction(snoozedChore) {
   const chorestore = useChoreStore();
   try {
@@ -242,6 +259,32 @@ export function useChores() {
     },
   });
 
+  const completeChoresMutation = useMutation({
+    mutationFn: completeChoresFunction,
+    onMutate: async batch => {
+      // Same optimistic removal the single completion does, so the round
+      // clears in one gesture rather than card by card as replies arrive.
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      const ids = new Set(batch.ids);
+      queryClient.setQueriesData({ queryKey: ["chores"] }, old =>
+        Array.isArray(old) ? old.filter(c => !ids.has(c.id)) : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      context?.snapshots?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data)
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chores"] });
+      queryClient.invalidateQueries({ queryKey: ["areas"] });
+      queryClient.invalidateQueries({ queryKey: ["historyitems"] });
+      queryClient.invalidateQueries({ queryKey: ["weeklytotals"] });
+    },
+  });
+
   const snoozeChoreMutation = useMutation({
     mutationFn: snoozeChoreFunction,
     onMutate: async (snoozedChore) => {
@@ -372,6 +415,10 @@ export function useChores() {
   //
   // mutationFn rejects on failure: every *Function above routes its catch
   // through handleApiError, which rethrows on every branch.
+  async function completeAll(batch) {
+    return completeChoresMutation.mutateAsync(batch);
+  }
+
   async function addChore(newChore) {
     return createChoreMutation.mutateAsync(newChore);
   }
@@ -400,6 +447,7 @@ export function useChores() {
   return {
     chores,
     isLoading,
+    completeAll,
     addChore,
     editChore,
     removeChore,

@@ -12,6 +12,44 @@
         :loading="isLoading"
       />
 
+      <!-- The round. Only offered when the list has been narrowed to a single
+           task, because "complete everything on screen" is a very different
+           and much more dangerous button than "complete every Dust". -->
+      <div v-if="!isLoading && roundOf" class="lc-round">
+        <div class="min-width-0">
+          <p class="text-subtitle-2 mb-0">Doing a round of {{ roundOf }}</p>
+          <p class="text-caption text-medium-emphasis mb-0">
+            {{ chores.length }}
+            {{ chores.length === 1 ? "chore" : "chores" }}, across the areas it
+            lives in.
+          </p>
+        </div>
+        <v-spacer></v-spacer>
+        <v-btn
+          variant="flat"
+          color="primary"
+          prepend-icon="mdi-check-all"
+          :loading="completingAll"
+          @click="roundDialog = true"
+        >
+          Complete all
+        </v-btn>
+      </div>
+
+      <LcConfirmDialog
+        v-model="roundDialog"
+        :title="`Complete all ${chores?.length ?? 0}?`"
+        icon="mdi-check-all"
+        confirm-label="Complete them"
+        confirm-icon="mdi-check-all"
+        confirm-color="primary"
+        :busy="completingAll"
+        @confirm="completeRound"
+      >
+        Marks every <strong>{{ roundOf }}</strong> on this list done today and
+        rolls each one forward to its next due date. There is no undo.
+      </LcConfirmDialog>
+
       <div v-if="isLoading" class="lc-card-grid" aria-hidden="true">
         <v-skeleton-loader
           v-for="n in 3"
@@ -76,11 +114,18 @@
 import { computed, ref, watch } from "vue";
 import ChoreCard from "@/components/ChoreCard.vue";
 import ChoreFilterBar from "@/components/ChoreFilterBar.vue";
+import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
 import { useChores } from "@/composables/choresComposasble";
+import { useChoreStore } from "@/stores/chores";
+import { useUserStore } from "@/stores/user";
+
+const chorestore = useChoreStore();
+const userstore = useUserStore();
 
 const {
   chores,
   isLoading,
+  completeAll,
   editChore,
   removeChore,
   snooze,
@@ -96,6 +141,40 @@ const hasActiveFilters = computed(
   () => filterBar.value?.hasActiveFilters ?? false
 );
 const clearFilters = () => filterBar.value?.resetFilters();
+
+// The task filter is what makes a bulk action safe to offer: it means every
+// chore on screen is the same job in a different room.
+const roundOf = computed(() =>
+  chorestore.filters.chore_name && chores.value?.length
+    ? chorestore.filters.chore_name
+    : null
+);
+
+const roundDialog = ref(false);
+const completingAll = ref(false);
+
+const completeRound = async () => {
+  if (completingAll.value) return;
+  const ids = (chores.value ?? []).map(c => c.id);
+  if (!ids.length) return;
+
+  completingAll.value = true;
+  // The same flag the single completion sets, so emptying the list this way
+  // gets the same moment.
+  completing = true;
+  try {
+    await completeAll({
+      ids,
+      lastCompleted: new Date().toISOString().split("T")[0],
+      completed_by_id: userstore.getID,
+    });
+    roundDialog.value = false;
+  } catch {
+    // handleApiError has already said so; leave the dialog open.
+  } finally {
+    completingAll.value = false;
+  }
+};
 
 // True only when a completion is what took the list to zero.
 const justCleared = ref(false);
@@ -170,3 +249,17 @@ const deleteChore = async deletedChore => {
   await removeChore(deletedChore);
 };
 </script>
+
+<style scoped>
+.lc-round {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  flex-wrap: wrap;
+  padding: var(--lc-space-3) var(--lc-space-4);
+  margin-bottom: var(--lc-space-3);
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+  border-radius: var(--lc-radius-lg);
+  background: rgb(var(--v-theme-surface));
+}
+</style>
