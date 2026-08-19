@@ -308,16 +308,24 @@ const cardLabel = computed(
   background: rgb(var(--v-theme-surface));
 }
 
+.lc-area-card {
+  /* One value, used by both the stripe and the padding that clears it. They
+     were separate literals -- 4px and calc(... + 4px) -- so widening the
+     stripe meant remembering to widen a calc in two other rules, and text
+     would have started sitting on the colour if anyone forgot. */
+  --lc-area-stripe: 6px;
+}
+
 .lc-area-card__stripe {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
-  width: 4px;
+  width: var(--lc-area-stripe);
 }
 
 .lc-area-card__body {
   padding: var(--lc-space-4) var(--lc-space-4) var(--lc-space-3)
-    calc(var(--lc-space-4) + 4px);
+    calc(var(--lc-space-4) + var(--lc-area-stripe));
 }
 
 .lc-area-card__icon {
@@ -367,7 +375,7 @@ const cardLabel = computed(
 @media (max-width: 599px) {
   .lc-area-card__body {
     padding: var(--lc-space-3) var(--lc-space-3) var(--lc-space-2)
-      calc(var(--lc-space-3) + 4px);
+      calc(var(--lc-space-3) + var(--lc-area-stripe));
   }
 }
 </style>

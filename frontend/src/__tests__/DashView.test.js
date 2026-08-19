@@ -97,7 +97,7 @@ describe("DashView — areas are grouped, not flattened", () => {
     expect(text).toContain("No areas in this group yet");
   });
 
-  it("shows an area whose group is null rather than dropping it", () => {
+  it("shows an area whose group is null rather than dropping it", async () => {
     // AreaOut.group is Optional now, matching the nullable column.
     groupsData.value = [GROUP_A];
     areasData.value = [
@@ -105,9 +105,18 @@ describe("DashView — areas are grouped, not flattened", () => {
       area(12, "Orphan room", null),
     ];
 
-    const text = mountDash().text();
-    expect(text).toContain("Orphan room");
-    expect(text).toContain("No group");
+    const wrapper = mountDash();
+    // The bucket is present and named, but folded by default -- so the area is
+    // reachable rather than on screen. Opening it is what reveals the area.
+    expect(wrapper.text()).toContain("No group");
+
+    const ungrouped = wrapper
+      .findAllComponents({ name: "AreaGroupSection" })
+      .find(c => c.props("group").id === null);
+    ungrouped.vm.dashboard.toggleGroup(null);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.text()).toContain("Orphan room");
   });
 
   it("totals due and total counts per group", () => {
@@ -217,5 +226,77 @@ describe("DashView — the greeting", () => {
     areasData.value = [area(10, "Kitchen", GROUP_A)];
 
     expect(mountDash().text()).toContain("Nothing needs doing right now.");
+  });
+});
+
+describe("DashView — the No group bucket", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    areasData = ref([]);
+    groupsData = ref([]);
+  });
+
+  const withOrphan = () => {
+    groupsData.value = [GROUP_A, GROUP_B];
+    areasData.value = [
+      area(10, "Kitchen", GROUP_A),
+      area(12, "Orphan room", null),
+      area(11, "Bathroom", GROUP_B),
+    ];
+  };
+
+  it("sorts to the bottom, after every real group", () => {
+    withOrphan();
+    const wrapper = mountDash();
+
+    const order = wrapper
+      .findAllComponents({ name: "AreaGroupSection" })
+      .map(c => c.props("group").group_name);
+    expect(order[order.length - 1]).toBe("No group");
+  });
+
+  it("starts collapsed, while real groups start open", () => {
+    // A leftovers bin rather than a group anyone made, so it stays out of the
+    // way until it is wanted.
+    withOrphan();
+    const wrapper = mountDash();
+
+    const sections = wrapper.findAllComponents({ name: "AreaGroupSection" });
+    const ungrouped = sections.find(c => c.props("group").id === null);
+    const real = sections.find(c => c.props("group").id !== null);
+
+    expect(ungrouped.vm.expanded).toBe(false);
+    expect(real.vm.expanded).toBe(true);
+    // Its area is not on screen until it is opened.
+    expect(wrapper.text()).not.toContain("Orphan room");
+  });
+
+  it("opens on demand and stays open", async () => {
+    withOrphan();
+    const wrapper = mountDash();
+    const ungrouped = wrapper
+      .findAllComponents({ name: "AreaGroupSection" })
+      .find(c => c.props("group").id === null);
+
+    ungrouped.vm.dashboard.toggleGroup(null);
+    await wrapper.vm.$nextTick();
+
+    expect(ungrouped.vm.expanded).toBe(true);
+    expect(wrapper.text()).toContain("Orphan room");
+  });
+
+  it("offers no management menu, having no row to manage", () => {
+    // Rename would open a form for nothing, move is a no-op, and delete would
+    // have sent DELETE /areagroups/null.
+    withOrphan();
+    const wrapper = mountDash();
+    const sections = wrapper.findAllComponents({ name: "AreaGroupSection" });
+
+    expect(
+      sections.find(c => c.props("group").id === null).vm.isRealGroup
+    ).toBe(false);
+    expect(
+      sections.find(c => c.props("group").id !== null).vm.isRealGroup
+    ).toBe(true);
   });
 });

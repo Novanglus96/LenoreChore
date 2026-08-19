@@ -320,3 +320,135 @@ def test_toggle_vacation_reports_the_state_it_landed_in(auth_client, option, are
     off = auth_client.post("/api/v2/toggle_vacation")
     assert off.status_code == 200
     assert off.json()["vacation_mode"] is False
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_complete_chores_in_bulk(auth_client, area, other_area, user):
+    """Working one task through every area it lives in."""
+    import json as _json
+    from api.models import HistoryItem
+
+    a = _chore(area, "Dust", due_offset=-1)
+    b = _chore(other_area, "Dust", due_offset=-1)
+    untouched = _chore(area, "Mop", due_offset=-1)
+
+    response = auth_client.post(
+        "/api/v2/chores/complete",
+        data=_json.dumps(
+            {
+                "ids": [a.id, b.id],
+                "lastCompleted": str(date.today()),
+                "completed_by_id": user.id,
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    assert response.json()["completed"] == 2
+
+    a.refresh_from_db()
+    b.refresh_from_db()
+    untouched.refresh_from_db()
+
+    # Rolled forward by their interval, exactly as a single completion does.
+    assert a.lastCompleted == date.today()
+    assert a.nextDue == date.today() + timedelta(days=1)
+    assert b.nextDue == date.today() + timedelta(days=1)
+    # Anything not named is left alone.
+    assert untouched.lastCompleted != date.today()
+
+    assert HistoryItem.objects.filter(chore__in=[a, b]).count() == 2
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_complete_chores_skips_inactive_ones(auth_client, area, user):
+    """A paused or disabled chore is skipped, not silently marked done."""
+    import json as _json
+    from api.models import Chore
+
+    active = _chore(area, "Dust", due_offset=-1)
+    paused = _chore(area, "Dust", due_offset=-1)
+    Chore.objects.filter(id=paused.id).update(status=3)  # vacation
+
+    response = auth_client.post(
+        "/api/v2/chores/complete",
+        data=_json.dumps(
+            {
+                "ids": [active.id, paused.id],
+                "lastCompleted": str(date.today()),
+                "completed_by_id": user.id,
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    # The count reports what actually happened rather than what was asked.
+    assert response.json()["completed"] == 1
+
+    paused.refresh_from_db()
+    assert paused.lastCompleted != date.today()
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_complete_chores_rejects_an_empty_batch(auth_client, user):
+    import json as _json
+
+    response = auth_client.post(
+        "/api/v2/chores/complete",
+        data=_json.dumps(
+            {
+                "ids": [],
+                "lastCompleted": str(date.today()),
+                "completed_by_id": user.id,
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_bulk_and_single_completion_agree(auth_client, area, other_area, user):
+    """The interval arithmetic is shared, so the two must land identically.
+
+    This is the drift the shared helper exists to prevent.
+    """
+    import json as _json
+
+    single = _chore(area, "Weekly", due_offset=-1)
+    single.unit = "week(s)"
+    single.intervalNumber = 2
+    single.save()
+
+    batched = _chore(other_area, "Weekly", due_offset=-1)
+    batched.unit = "week(s)"
+    batched.intervalNumber = 2
+    batched.save()
+
+    auth_client.patch(
+        f"/api/v2/chores/completechore/{single.id}",
+        data=_json.dumps(
+            {"lastCompleted": str(date.today()), "completed_by_id": user.id}
+        ),
+        content_type="application/json",
+    )
+    auth_client.post(
+        "/api/v2/chores/complete",
+        data=_json.dumps(
+            {
+                "ids": [batched.id],
+                "lastCompleted": str(date.today()),
+                "completed_by_id": user.id,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    single.refresh_from_db()
+    batched.refresh_from_db()
+    assert single.nextDue == batched.nextDue
+    assert single.assignee_id is None and batched.assignee_id is None

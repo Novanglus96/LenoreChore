@@ -16,12 +16,29 @@ export const useDashboardStore = defineStore("dashboard", {
      * serialises to {}.
      */
     collapsedGroups: [],
+    /**
+     * The synthetic "No group" bucket starts FOLDED, and needs its own flag to
+     * say so: it has no id, and defaulting it via collapsedGroups could not
+     * tell "never touched" from "deliberately expanded".
+     *
+     * It is a leftovers bin rather than a group someone made, so it should sit
+     * out of the way until it is wanted -- and on a healthy household it is
+     * empty and never rendered at all.
+     */
+    ungroupedExpanded: false,
   }),
   getters: {
-    isCollapsed: state => groupId => state.collapsedGroups.includes(groupId),
+    isCollapsed: state => groupId =>
+      groupId === null
+        ? !state.ungroupedExpanded
+        : state.collapsedGroups.includes(groupId),
   },
   actions: {
     toggleGroup(groupId) {
+      if (groupId === null) {
+        this.ungroupedExpanded = !this.ungroupedExpanded;
+        return;
+      }
       const at = this.collapsedGroups.indexOf(groupId);
       if (at === -1) {
         this.collapsedGroups.push(groupId);

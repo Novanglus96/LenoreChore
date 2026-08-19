@@ -18,6 +18,7 @@ from django.shortcuts import get_object_or_404
 from datetime import date, time, timedelta
 from ninja.errors import HttpError
 from dateutil.relativedelta import relativedelta
+from django.db import transaction
 from django.db.models import Count, Max
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -435,6 +436,21 @@ class CompleteChore(Schema):
         completed_by_id (int): ID of the user who completed chore.
     """
 
+    lastCompleted: date
+    completed_by_id: int
+
+
+class CompleteChores(Schema):
+    """
+    Schema to complete several Chore objects in one call.
+
+    Attributes:
+        ids (List[int]): IDs of the chores to complete.
+        lastCompleted (date): Date they were completed.
+        completed_by_id (int): ID of the user who completed them.
+    """
+
+    ids: List[int]
     lastCompleted: date
     completed_by_id: int
 
@@ -1049,6 +1065,57 @@ def get_area(request, area_id: int):
     return area
 
 
+# NOTE: declared before /chores/{chore_id}, for the same reason as
+# /chores/names above it -- that route matches this path and has no POST,
+# so registering this one later returns 405 Method Not Allowed.
+@api.post("/chores/complete")
+def complete_chores(request, payload: CompleteChores):
+    """
+    The function `complete_chores` completes several Chore objects at once.
+
+    This exists for working one task through every area it lives in: filter the
+    list to "Dust", do the round, and check them off together rather than
+    tapping through eight cards.
+
+    Only ACTIVE chores are completed. A disabled or vacation-paused chore that
+    happened to match the filter is skipped rather than silently marked done,
+    and the count returned says how many actually were.
+
+    The whole batch is one transaction: a half-applied round would leave the
+    household unable to tell which rooms were actually done.
+
+    Endpoint:
+        - **Path**: `/api/v2/chores/complete`
+        - **Method**: `POST`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (CompleteChores): The chores to complete, and by whom.
+
+    Returns:
+        (dict): `success` and the number of chores completed.
+    """
+    if not payload.ids:
+        raise HttpError(422, "No chores given to complete.")
+
+    with transaction.atomic():
+        chores = list(
+            Chore.objects.select_for_update().filter(
+                id__in=payload.ids, status=0
+            )
+        )
+        for chore in chores:
+            _apply_completion(
+                chore, payload.lastCompleted, payload.completed_by_id
+            )
+
+    invalidate_chores("weeklytotals:*")
+    invalidate("areas")
+    notify("chores")
+    notify("history")
+    return {"success": True, "completed": len(chores)}
+
+
 @api.get("/chores/names", response=List[ChoreNameOut])
 def list_chore_names(request):
     """
@@ -1625,6 +1692,35 @@ def claim_chore(request, chore_id: int, payload: ClaimChore):
     return {"success": True}
 
 
+def _apply_completion(chore, completed_on, completed_by_id):
+    """Mark one chore done and roll it forward to its next due date.
+
+    Extracted so completing one chore and completing a batch cannot drift:
+    this interval arithmetic is the part that would be quietly duplicated,
+    and a batch that advanced dates differently from a single completion
+    would be very hard to notice.
+    """
+    units = {
+        "day(s)": "days",
+        "week(s)": "weeks",
+        "month(s)": "months",
+        "year(s)": "years",
+    }
+    chore.lastCompleted = completed_on
+    unit = units.get(chore.unit)
+    if unit:
+        chore.nextDue = completed_on + relativedelta(
+            **{unit: chore.intervalNumber}
+        )
+    chore.assignee = None
+    chore.save()
+    HistoryItem.objects.create(
+        completed_date=completed_on,
+        completed_by_id=completed_by_id,
+        chore=chore,
+    )
+
+
 @api.patch("/chores/completechore/{chore_id}")
 def complete_chore(request, chore_id: int, payload: CompleteChore):
     """
@@ -1643,30 +1739,7 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
         (str): Returns `success` if successful.
     """
     chore = get_object_or_404(Chore, id=chore_id)
-    chore.lastCompleted = payload.lastCompleted
-    if chore.unit == "day(s)":
-        chore.nextDue = payload.lastCompleted + relativedelta(
-            days=chore.intervalNumber
-        )
-    elif chore.unit == "week(s)":
-        chore.nextDue = payload.lastCompleted + relativedelta(
-            weeks=chore.intervalNumber
-        )
-    elif chore.unit == "month(s)":
-        chore.nextDue = payload.lastCompleted + relativedelta(
-            months=chore.intervalNumber
-        )
-    elif chore.unit == "year(s)":
-        chore.nextDue = payload.lastCompleted + relativedelta(
-            years=chore.intervalNumber
-        )
-    chore.assignee = None
-    chore.save()
-    HistoryItem.objects.create(
-        completed_date=payload.lastCompleted,
-        completed_by_id=payload.completed_by_id,
-        chore=chore,
-    )
+    _apply_completion(chore, payload.lastCompleted, payload.completed_by_id)
     invalidate_chores("weeklytotals:*")
     invalidate("areas")
     notify("chores")

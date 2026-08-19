@@ -45,9 +45,10 @@
         {{ dueCount }} of {{ totalCount }} chores due in {{ group.group_name }}
       </span>
 
-      <v-spacer></v-spacer>
-
-      <v-menu>
+      <!-- No spacer. The header is as wide as the container, so pushing this
+           to the far right stranded it a long way from the group it acts on
+           once the window got wide. It belongs with the name and the count. -->
+      <v-menu v-if="isRealGroup">
         <template v-slot:activator="{ props: activatorProps }">
           <v-btn
             v-bind="activatorProps"
@@ -194,7 +195,12 @@ const deleteOpen = ref(false);
 const deleting = ref(false);
 const reassignTo = ref(null);
 
-const headingId = computed(() => `group-heading-${props.group.id}`);
+const headingId = computed(() => `group-heading-${props.group.id ?? "none"}`);
+
+// The "No group" bucket is synthetic -- there is no row behind it. Rename,
+// reorder and delete all have nothing to act on, and delete would have sent
+// DELETE /areagroups/null.
+const isRealGroup = computed(() => props.group.id !== null);
 const expanded = computed(() => !dashboard.isCollapsed(props.group.id));
 
 const dueCount = computed(() =>

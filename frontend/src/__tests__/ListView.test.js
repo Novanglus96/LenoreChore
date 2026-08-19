@@ -16,6 +16,11 @@ const complete = vi.fn(async () => {
   choresData.value = [];
 });
 
+const completeAll = vi.fn(async () => {
+  choresData.value = [];
+  return { completed: 2 };
+});
+
 vi.mock("@/composables/choresComposasble", () => ({
   // ChoreFilterBar pulls useChoreNames from this same module, so the mock has
   // to cover it or every mount here fails at setup.
@@ -27,6 +32,7 @@ vi.mock("@/composables/choresComposasble", () => ({
     removeChore: vi.fn(),
     snooze: vi.fn(),
     complete: (...a) => complete(...a),
+    completeAll: (...a) => completeAll(...a),
     toggle: vi.fn(),
     claim: vi.fn(),
   }),
@@ -166,5 +172,77 @@ describe("ListView — the last chore", () => {
     choresData.value = [{ id: 2, chore_name: "Mop" }];
     await wrapper.vm.$nextTick();
     expect(wrapper.vm.justCleared).toBe(false);
+  });
+});
+
+describe("ListView — completing a whole round", () => {
+  let store;
+
+  const mountList = () =>
+    mount(ListView, {
+      global: { plugins: [vuetify], stubs: { ChoreCard: true } },
+    });
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    store = useChoreStore();
+    choresData = ref([]);
+    completeAll.mockClear();
+  });
+
+  it("is not offered without a task filter", () => {
+    // "Complete everything on screen" is a far more dangerous button than
+    // "complete every Dust", so the task filter is what unlocks it.
+    choresData.value = [{ id: 1 }, { id: 2 }];
+    const wrapper = mountList();
+
+    expect(wrapper.vm.roundOf).toBeNull();
+    expect(wrapper.text()).not.toContain("Complete all");
+  });
+
+  it("is offered once the list is one task", async () => {
+    choresData.value = [{ id: 1 }, { id: 2 }];
+    store.filters.chore_name = "Dust";
+    const wrapper = mountList();
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.roundOf).toBe("Dust");
+    expect(wrapper.text()).toContain("Doing a round of Dust");
+    expect(wrapper.text()).toContain("2 chores");
+  });
+
+  it("is not offered when the filtered list is empty", async () => {
+    store.filters.chore_name = "Dust";
+    const wrapper = mountList();
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.roundOf).toBeNull();
+  });
+
+  it("sends every id on the list", async () => {
+    choresData.value = [{ id: 4 }, { id: 9 }];
+    store.filters.chore_name = "Dust";
+    const wrapper = mountList();
+    await wrapper.vm.$nextTick();
+
+    await wrapper.vm.completeRound();
+
+    expect(completeAll).toHaveBeenCalledTimes(1);
+    expect(completeAll.mock.calls[0][0].ids).toEqual([4, 9]);
+    expect(wrapper.vm.completingAll).toBe(false);
+  });
+
+  it("gets the last-one moment when the round empties the list", async () => {
+    choresData.value = [{ id: 4 }, { id: 9 }];
+    store.filters.chore_name = "Dust";
+    const wrapper = mountList();
+    await wrapper.vm.$nextTick();
+
+    await wrapper.vm.completeRound();
+    await wrapper.vm.$nextTick();
+
+    // Finishing a round is a completion emptying the list, so it earns the
+    // same moment a final single completion does.
+    expect(wrapper.vm.justCleared).toBe(true);
   });
 });
