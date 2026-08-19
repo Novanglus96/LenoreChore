@@ -180,3 +180,42 @@ describe("DashView — reordering repairs the legacy all-ties state", () => {
     expect(editAreaGroup).not.toHaveBeenCalled();
   });
 });
+
+describe("DashView — the greeting", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    areasData = ref([]);
+    groupsData = ref([]);
+  });
+
+  it("sums due and overdue across every area", () => {
+    groupsData.value = [GROUP_A, GROUP_B];
+    areasData.value = [
+      area(10, "Kitchen", GROUP_A, { dueCount: 2, overdueCount: 1 }),
+      area(11, "Bathroom", GROUP_B, { dueCount: 3, overdueCount: 2 }),
+    ];
+
+    const wrapper = mountDash();
+    expect(wrapper.vm.dueCount).toBe(5);
+    expect(wrapper.vm.overdueCount).toBe(3);
+    expect(wrapper.text()).toContain("5 chores due, 3 overdue.");
+  });
+
+  it("does not greet the user by the store's placeholder name", () => {
+    // useUserStore's default firstname is the literal "FirstName"; greeting a
+    // real person by a placeholder is worse than not greeting them.
+    groupsData.value = [GROUP_A];
+    areasData.value = [area(10, "Kitchen", GROUP_A)];
+
+    const wrapper = mountDash();
+    expect(wrapper.vm.firstName).toBe("");
+    expect(wrapper.text()).not.toContain("FirstName");
+  });
+
+  it("says nothing is waiting when nothing is", () => {
+    groupsData.value = [GROUP_A];
+    areasData.value = [area(10, "Kitchen", GROUP_A)];
+
+    expect(mountDash().text()).toContain("Nothing needs doing right now.");
+  });
+});

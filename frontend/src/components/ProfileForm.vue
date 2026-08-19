@@ -135,7 +135,6 @@
                 v-model="notifyTime"
                 time-picker
                 auto-apply
-                :dark="theme.global.current.value.dark"
                 :teleport="true"
                 @update:modelValue="onTimeChange"
               ></VueDatePicker>
@@ -218,14 +217,10 @@ import * as yup from "yup";
 import { useUserStore } from "@/stores/user";
 import { useChoreStore } from "@/stores/chores";
 import { usePush } from "@/composables/pushComposable";
-import { useTheme } from "vuetify";
 import axios from "axios";
 import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
 
 const userstore = useUserStore();
-const theme = useTheme();
-
 // Uses the GLOBAL snackbar rather than a second one local to this component.
 // The global one is wired to the live-region announcer, so profile feedback is
 // now spoken; the local copy never was, and having two meant the same class of

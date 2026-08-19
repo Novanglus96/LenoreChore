@@ -112,3 +112,24 @@ def test_area_includes_computed_stats(auth_client, area, chore):
     assert "dueCount" in result
     assert "totalCount" in result
     assert result["totalCount"] == 1
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_area_overdue_count_excludes_today(auth_client, area):
+    """dueCount uses <= today; overdueCount uses < today.
+
+    Something due today is not yet overdue -- the same reading ChoreCard and
+    the /chores overdue filter both use.
+    """
+    _add_chore(area, "Late", due_offset=-2, completed_offset=5)
+    _add_chore(area, "Today", due_offset=0, completed_offset=1)
+    _add_chore(area, "Later", due_offset=4, completed_offset=1)
+
+    response = auth_client.get("/api/v2/areas")
+    assert response.status_code == 200
+    result = next(a for a in response.json() if a["id"] == area.id)
+
+    assert result["overdueCount"] == 1
+    assert result["dueCount"] == 2   # the late one and today's
+    assert result["totalCount"] == 3

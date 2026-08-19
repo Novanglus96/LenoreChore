@@ -10,6 +10,12 @@ const GROUP = { id: 1, group_name: "Downstairs", group_color: "area1", group_ord
 
 let choresData = ref([]);
 
+// `complete` mimics the real optimistic update: the chore leaves the list the
+// instant the mutation starts, well before it resolves.
+const complete = vi.fn(async () => {
+  choresData.value = [];
+});
+
 vi.mock("@/composables/choresComposasble", () => ({
   // ChoreFilterBar pulls useChoreNames from this same module, so the mock has
   // to cover it or every mount here fails at setup.
@@ -20,7 +26,7 @@ vi.mock("@/composables/choresComposasble", () => ({
     editChore: vi.fn(),
     removeChore: vi.fn(),
     snooze: vi.fn(),
-    complete: vi.fn(),
+    complete: (...a) => complete(...a),
     toggle: vi.fn(),
     claim: vi.fn(),
   }),
@@ -56,13 +62,17 @@ describe("ListView — the two empty states", () => {
   });
 
   it("says nothing needs doing when there are no chores and no filters", () => {
-    const wrapper = mount(ListView, { global: { plugins: [vuetify] } });
+    const wrapper = mount(ListView, {
+      global: { plugins: [vuetify], stubs: { ChoreCard: true } },
+    });
     expect(wrapper.text()).toContain("Nothing needs doing");
     expect(wrapper.text()).not.toContain("Nothing matches those filters");
   });
 
   it("says nothing matches once a filter is on", async () => {
-    const wrapper = mount(ListView, { global: { plugins: [vuetify] } });
+    const wrapper = mount(ListView, {
+      global: { plugins: [vuetify], stubs: { ChoreCard: true } },
+    });
     store.filters.overdue = true;
     await wrapper.vm.$nextTick();
 
@@ -76,7 +86,9 @@ describe("ListView — the two empty states", () => {
   });
 
   it("clears the filters from the empty state's action", async () => {
-    const wrapper = mount(ListView, { global: { plugins: [vuetify] } });
+    const wrapper = mount(ListView, {
+      global: { plugins: [vuetify], stubs: { ChoreCard: true } },
+    });
     store.filters.overdue = true;
     store.filters.area_id = 10;
     await wrapper.vm.$nextTick();
@@ -87,5 +99,72 @@ describe("ListView — the two empty states", () => {
     expect(store.filters.overdue).toBe(false);
     expect(store.filters.area_id).toBeNull();
     expect(wrapper.text()).toContain("Nothing needs doing");
+  });
+});
+
+describe("ListView — the last chore", () => {
+  let store;
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    store = useChoreStore();
+    choresData = ref([]);
+    complete.mockClear();
+  });
+
+  it("celebrates when a completion empties the list", async () => {
+    choresData.value = [{ id: 1, chore_name: "Dust" }];
+    const wrapper = mount(ListView, {
+      global: { plugins: [vuetify], stubs: { ChoreCard: true } },
+    });
+
+    await wrapper.vm.completeChore(1, 7);
+    await wrapper.vm.$nextTick();
+
+    expect(complete).toHaveBeenCalled();
+    expect(wrapper.vm.justCleared).toBe(true);
+    expect(wrapper.text()).toContain("That was the last one");
+  });
+
+  it("stays quiet when the list was already empty", async () => {
+    // Arriving at an empty list is not an achievement, and cheering it would
+    // cheapen the times it is.
+    const wrapper = mount(ListView, {
+      global: { plugins: [vuetify], stubs: { ChoreCard: true } },
+    });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.justCleared).toBe(false);
+    expect(wrapper.text()).toContain("Nothing needs doing");
+  });
+
+  it("stays quiet when a filter empties the list", async () => {
+    choresData.value = [{ id: 1, chore_name: "Dust" }];
+    const wrapper = mount(ListView, {
+      global: { plugins: [vuetify], stubs: { ChoreCard: true } },
+    });
+    await wrapper.vm.$nextTick();
+
+    // No completion involved -- just a filter that matches nothing.
+    store.filters.overdue = true;
+    choresData.value = [];
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.justCleared).toBe(false);
+    expect(wrapper.text()).toContain("Nothing matches those filters");
+  });
+
+  it("stops celebrating once chores come back", async () => {
+    choresData.value = [{ id: 1, chore_name: "Dust" }];
+    const wrapper = mount(ListView, {
+      global: { plugins: [vuetify], stubs: { ChoreCard: true } },
+    });
+    await wrapper.vm.completeChore(1, 7);
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.justCleared).toBe(true);
+
+    choresData.value = [{ id: 2, chore_name: "Mop" }];
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.justCleared).toBe(false);
   });
 });

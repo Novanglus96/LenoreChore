@@ -54,18 +54,26 @@
         </template>
       </v-empty-state>
 
+      <!-- The last one. Celebrated only when a completion is what emptied the
+           list: arriving at an already-empty list is not an achievement, and
+           cheering it would cheapen the times it is. -->
       <v-empty-state
         v-else
+        :class="{ 'lc-cleared': justCleared }"
         icon="mdi-party-popper"
-        title="Nothing needs doing"
-        text="Every chore is done and dusted. Enjoy it while it lasts."
+        :title="justCleared ? 'That was the last one' : 'Nothing needs doing'"
+        :text="
+          justCleared
+            ? 'The whole list is clear. Go and enjoy it.'
+            : 'Every chore is done and dusted. Enjoy it while it lasts.'
+        "
       ></v-empty-state>
     </v-container>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import ChoreCard from "@/components/ChoreCard.vue";
 import ChoreFilterBar from "@/components/ChoreFilterBar.vue";
 import { useChores } from "@/composables/choresComposasble";
@@ -89,11 +97,31 @@ const hasActiveFilters = computed(
 );
 const clearFilters = () => filterBar.value?.resetFilters();
 
+// True only when a completion is what took the list to zero.
+const justCleared = ref(false);
+// Not a ref: nothing renders from it, and it is read inside a watcher that
+// runs before the awaited mutation settles.
+let completing = false;
+
+watch(
+  () => chores.value?.length ?? 0,
+  (now, before) => {
+    // The parent's optimistic update removes the chore the instant the
+    // mutation starts, so this fires well before the request resolves.
+    if (completing && now === 0 && before > 0) justCleared.value = true;
+    if (now > 0) justCleared.value = false;
+    if (now === 0) completing = false;
+  }
+);
+
 const updateChore = async updatedChore => {
   await editChore(updatedChore);
 };
 
 const completeChore = async (chore_id, user_id) => {
+  // Set before the call: the optimistic removal happens synchronously inside
+  // the mutation, so setting it afterwards would always be too late.
+  completing = true;
   let today = new Date();
   let formattedDate = today.toISOString().split("T")[0];
   let choredata = {

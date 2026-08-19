@@ -352,6 +352,7 @@ class AreaOut(Schema):
         group (AreaGroupOut): Group object area belongs to.
         dirtiness (int): Percentage of dirtiness for the area.
         dueCount (int): Number of chores due for the area.
+        overdueCount (int): Number of chores already past their due date.
         totalCount (int): Total number of chores for the area.
         total_dirtiness (int): Total dirtiness of the area.
     """
@@ -367,6 +368,7 @@ class AreaOut(Schema):
     group: Optional[AreaGroupOut] = None
     dirtiness: int
     dueCount: int
+    overdueCount: int
     totalCount: int
     total_dirtiness: int
 
@@ -884,7 +886,10 @@ def toggle_vacation(request):
     invalidate("areas")
     notify("options")
     notify("chores")
-    return {"success": True}
+    # The state it landed in, not just that something happened. A toggle whose
+    # response does not say which way it went leaves every caller guessing --
+    # the frontend was about to invert its own stale copy to word a message.
+    return {"success": True, "vacation_mode": option.vacation_mode}
 
 
 @api.post("/areagroups")

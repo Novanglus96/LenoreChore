@@ -333,7 +333,6 @@
                 :timezone="userTimezone"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
-                :dark="theme.global.current.value.dark"
                 auto-apply
                 teleport
                 format="yyyy-MM-dd"
@@ -424,14 +423,10 @@
 import { computed, ref, watch, onMounted } from "vue";
 import { useChoreStore } from "@/stores/chores";
 import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
 import { useUserStore } from "@/stores/user";
 import { useOptions } from "@/composables/optionsComposable";
-import { useTheme } from "vuetify";
 import LcMonthPicker from "@/components/LcMonthPicker.vue";
 import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
-
-const theme = useTheme();
 
 // Was hardcoded to "America/New_York" on all three pickers, so every date this
 // card wrote was interpreted in Eastern time regardless of where the user

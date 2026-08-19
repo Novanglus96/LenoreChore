@@ -305,3 +305,18 @@ def test_renaming_a_chore_refreshes_the_name_index(auth_client, area, other_area
 
     # Only one "Dust" left, so it drops out of the index entirely.
     assert auth_client.get("/api/v2/chores/names").json() == []
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_toggle_vacation_reports_the_state_it_landed_in(auth_client, option, area):
+    """A toggle whose response omits the new state leaves callers guessing."""
+    _chore(area, "Dust", due_offset=1)
+
+    on = auth_client.post("/api/v2/toggle_vacation")
+    assert on.status_code == 200
+    assert on.json()["vacation_mode"] is True
+
+    off = auth_client.post("/api/v2/toggle_vacation")
+    assert off.status_code == 200
+    assert off.json()["vacation_mode"] is False
