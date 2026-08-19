@@ -1,3 +1,10 @@
+# [1.5.0-alpha.12](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.11...v1.5.0-alpha.12) (2026-08-19)
+
+
+### Bug Fixes
+
+* make area groups safe to delete, and actually order them ([27a2bab](https://github.com/Novanglus96/LenoreChore/commit/27a2bab6c06a468156fa89d34422c9e4a6b750c8))
+
 # [1.5.0-alpha.11](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.10...v1.5.0-alpha.11) (2026-08-18)
 
 
