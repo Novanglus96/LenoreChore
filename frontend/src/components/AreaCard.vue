@@ -1,7 +1,6 @@
 <template>
   <v-card
     class="lc-area-card lc-lift"
-    :class="{ 'lc-area-card--idle': !expandcard }"
     tag="article"
     :aria-label="cardLabel"
     :rounded="$vuetify.display.smAndDown ? 0 : 'lg'"
@@ -75,115 +74,6 @@
         ></v-alert>
       </div>
     </div>
-    <v-expand-transition>
-      <div v-if="expandcard">
-        <div class="lc-area-card__panel">
-          <!-- Both dialogs were hand-rolled copies of the same stock markup:
-               a v-container/v-row/v-col grid inside a width="720" surface,
-               color="blue-darken-1" buttons, and -- on the delete -- "Close"
-               and "Delete" BOTH rendered as primary-darken-1 text, so the
-               irreversible action looked exactly like the way out. They use the
-               shared shells now. -->
-          <LcFormDialog
-            v-model="editcard"
-            title="Edit area"
-            icon="mdi-note-edit-outline"
-            submit-label="Save changes"
-            submit-icon="mdi-content-save-outline"
-            :schema="editSchema"
-            :initial-values="{ area_name: props.area.area_name }"
-            @submit="callEditArea"
-          >
-            <template v-slot:activator="{ props: activatorProps }">
-              <v-btn
-                v-bind="activatorProps"
-                icon="mdi-note-edit-outline"
-                :aria-label="`Edit ${props.area.area_name}`"
-              >
-                <v-icon icon="mdi-note-edit-outline"></v-icon>
-                <v-tooltip activator="parent" location="top">Edit</v-tooltip>
-              </v-btn>
-            </template>
-
-            <fieldset class="lc-fieldset lc-form-group">
-              <legend class="lc-form-group__legend text-body-2">What</legend>
-
-              <!-- Was a plain v-model with `required` and no schema, so an
-                   empty area name saved happily. -->
-              <Field name="area_name" v-slot="{ field, errorMessage }">
-                <v-text-field
-                  v-bind="field"
-                  label="Area name"
-                  prepend-inner-icon="mdi-format-title"
-                  :error-messages="errorMessage"
-                ></v-text-field>
-              </Field>
-
-              <v-select
-                v-model="editForm.group_id"
-                label="Area group"
-                prepend-inner-icon="mdi-shape-outline"
-                :items="areagroups"
-                item-title="group_name"
-                item-value="id"
-              ></v-select>
-            </fieldset>
-
-            <v-divider class="my-4"></v-divider>
-
-            <fieldset class="lc-fieldset">
-              <!-- Each chip now carries a name derived from its own MDI id, so
-                   the list cannot drift out of sync with the icons it
-                   describes. -->
-              <legend class="lc-form-group__legend text-body-2">Area icon</legend>
-              <v-chip-group
-                v-model="editForm.area_icon"
-                selected-class="text-primary"
-                column
-                mandatory
-              >
-                <v-chip
-                  v-for="icon in chorestore.areaicons"
-                  :key="icon"
-                  :value="icon"
-                  :aria-label="iconLabel(icon)"
-                  :title="iconLabel(icon)"
-                >
-                  <v-icon :icon="icon" aria-hidden="true"></v-icon>
-                </v-chip>
-              </v-chip-group>
-            </fieldset>
-          </LcFormDialog>
-
-          <LcConfirmDialog
-            v-model="deletecard"
-            title="Delete this area?"
-            icon="mdi-delete-forever-outline"
-            confirm-label="Delete area"
-            confirm-icon="mdi-delete-forever-outline"
-            @confirm="callDeleteArea(props.area)"
-          >
-            <template v-slot:activator="{ props: activatorProps }">
-              <v-btn
-                v-bind="activatorProps"
-                icon="mdi-delete-forever-outline"
-                color="filthy"
-                :aria-label="`Delete ${props.area.area_name}`"
-              >
-                <v-icon icon="mdi-delete-forever-outline"></v-icon>
-                <v-tooltip activator="parent" location="top">Delete</v-tooltip>
-              </v-btn>
-            </template>
-
-            Deleting <strong>{{ props.area.area_name }}</strong> also deletes
-            the
-            <strong>{{ props.area.totalCount }}</strong>
-            {{ props.area.totalCount === 1 ? "chore" : "chores" }} in it. This
-            cannot be undone.
-          </LcConfirmDialog>
-        </div>
-      </div>
-    </v-expand-transition>
     <v-divider></v-divider>
 
     <v-card-actions class="lc-area-card__actions">
@@ -199,20 +89,103 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        :icon="expandcard ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        :aria-label="`${expandcard ? 'Close' : 'Open'} settings for ${props.area.area_name}`"
-        :aria-expanded="expandcard ? 'true' : 'false'"
-        @click="expandcard = !expandcard"
+      <LcActionMenu
+        :items="menuItems"
+        :title="props.area.area_name"
+        @select="onMenuSelect"
       >
-        <v-icon
-          :icon="expandcard ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        ></v-icon>
-        <v-tooltip activator="parent" location="top">
-          {{ expandcard ? "Close settings" : "Area settings" }}
-        </v-tooltip>
-      </v-btn>
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn
+            v-bind="activatorProps"
+            icon="mdi-dots-vertical"
+            :aria-label="`More actions for ${props.area.area_name}`"
+          >
+            <v-icon icon="mdi-dots-vertical"></v-icon>
+          </v-btn>
+        </template>
+      </LcActionMenu>
     </v-card-actions>
+
+    <!-- ── Overlays ────────────────────────────────────────────────────────
+         Both used to sit inside a panel the chevron expanded, so reaching
+         "Edit area" was: tap chevron, wait for the card to grow, tap an
+         unlabelled pencil, then read the dialog. The panel's entire payload
+         was these two activators. They are menu items now, which is what the
+         group header directly above this card has always used for exactly the
+         same job -- two patterns for one thing on one screen. -->
+    <LcFormDialog
+      v-model="editcard"
+      title="Edit area"
+      icon="mdi-note-edit-outline"
+      submit-label="Save changes"
+      submit-icon="mdi-content-save-outline"
+      :schema="editSchema"
+      :initial-values="{ area_name: props.area.area_name }"
+      @submit="callEditArea"
+    >
+      <fieldset class="lc-fieldset lc-form-group">
+        <legend class="lc-form-group__legend text-body-2">What</legend>
+
+        <!-- Was a plain v-model with `required` and no schema, so an
+             empty area name saved happily. -->
+        <Field name="area_name" v-slot="{ field, errorMessage }">
+          <v-text-field
+            v-bind="field"
+            label="Area name"
+            prepend-inner-icon="mdi-format-title"
+            :error-messages="errorMessage"
+          ></v-text-field>
+        </Field>
+
+        <v-select
+          v-model="editForm.group_id"
+          label="Area group"
+          prepend-inner-icon="mdi-shape-outline"
+          :items="areagroups"
+          item-title="group_name"
+          item-value="id"
+        ></v-select>
+      </fieldset>
+
+      <v-divider class="my-4"></v-divider>
+
+      <fieldset class="lc-fieldset">
+        <!-- Each chip now carries a name derived from its own MDI id, so
+             the list cannot drift out of sync with the icons it
+             describes. -->
+        <legend class="lc-form-group__legend text-body-2">Area icon</legend>
+        <v-chip-group
+          v-model="editForm.area_icon"
+          selected-class="text-primary"
+          column
+          mandatory
+        >
+          <v-chip
+            v-for="icon in chorestore.areaicons"
+            :key="icon"
+            :value="icon"
+            :aria-label="iconLabel(icon)"
+            :title="iconLabel(icon)"
+          >
+            <v-icon :icon="icon" aria-hidden="true"></v-icon>
+          </v-chip>
+        </v-chip-group>
+      </fieldset>
+    </LcFormDialog>
+
+    <LcConfirmDialog
+      v-model="deletecard"
+      title="Delete this area?"
+      icon="mdi-delete-forever-outline"
+      confirm-label="Delete area"
+      confirm-icon="mdi-delete-forever-outline"
+      @confirm="callDeleteArea(props.area)"
+    >
+      Deleting <strong>{{ props.area.area_name }}</strong> also deletes the
+      <strong>{{ props.area.totalCount }}</strong>
+      {{ props.area.totalCount === 1 ? "chore" : "chores" }} in it. This cannot
+      be undone.
+    </LcConfirmDialog>
   </v-card>
 </template>
 
@@ -226,12 +199,12 @@ import { useChoreStore } from "@/stores/chores";
 import { useRouter } from "vue-router";
 import { useOptions } from "@/composables/optionsComposable";
 import { iconLabel } from "@/utils/labels";
+import LcActionMenu from "@/components/LcActionMenu.vue";
 import LcFormDialog from "@/components/LcFormDialog.vue";
 import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
 
 const { options } = useOptions();
 const router = useRouter();
-const expandcard = ref(false);
 const editcard = ref(false);
 const deletecard = ref(false);
 const chorestore = useChoreStore();
@@ -240,6 +213,28 @@ const props = defineProps({
   area: Object,
 });
 const dirtiness = computed(() => props.area.dirtiness || 0);
+
+// Built as data so the desktop menu and the mobile bottom sheet cannot drift.
+const menuItems = computed(() => [
+  { key: "edit", title: "Edit area…", icon: "mdi-note-edit-outline" },
+  {
+    key: "delete",
+    title: "Delete area",
+    icon: "mdi-delete-forever-outline",
+    color: "filthy",
+    dividerBefore: true,
+    subtitle: props.area.totalCount
+      ? `Also deletes ${props.area.totalCount} ${
+          props.area.totalCount === 1 ? "chore" : "chores"
+        }`
+      : undefined,
+  },
+]);
+
+const onMenuSelect = key => {
+  if (key === "edit") editcard.value = true;
+  else if (key === "delete") deletecard.value = true;
+};
 
 // See ChoreCard: AreaOut.group is Optional now, so it has to be read as such.
 const groupColor = computed(() => props.area.group?.group_color || "outline");
@@ -308,37 +303,19 @@ const cardLabel = computed(
   background: rgb(var(--v-theme-surface));
 }
 
-.lc-area-card {
-  /* One value, used by both the stripe and the padding that clears it. They
-     were separate literals -- 4px and calc(... + 4px) -- so widening the
-     stripe meant remembering to widen a calc in two other rules, and text
-     would have started sitting on the colour if anyone forgot. */
-  --lc-area-stripe: 6px;
-}
-
 .lc-area-card__stripe {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
-  width: var(--lc-area-stripe);
+  width: var(--lc-card-stripe);
 }
 
 .lc-area-card__body {
   padding: var(--lc-space-4) var(--lc-space-4) var(--lc-space-3)
-    calc(var(--lc-space-4) + var(--lc-area-stripe));
+    calc(var(--lc-space-4) + var(--lc-card-stripe));
 }
 
 .lc-area-card__icon {
-  background: rgb(var(--v-theme-surface-variant));
-}
-
-/* The settings panel is now just the two dialog activators, so it needs a row
-   rather than the v-container/v-row/v-col scaffolding that used to hold them. */
-.lc-area-card__panel {
-  display: flex;
-  align-items: center;
-  gap: var(--lc-space-1);
-  padding: var(--lc-space-2) var(--lc-space-3);
   background: rgb(var(--v-theme-surface-variant));
 }
 
@@ -366,16 +343,10 @@ const cardLabel = computed(
   min-width: 0;
 }
 
-/* No hover lift while the settings panel is open — see ChoreCard. */
-.lc-area-card:not(.lc-area-card--idle) {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
 @media (max-width: 599px) {
   .lc-area-card__body {
     padding: var(--lc-space-3) var(--lc-space-3) var(--lc-space-2)
-      calc(var(--lc-space-3) + var(--lc-area-stripe));
+      calc(var(--lc-space-3) + var(--lc-card-stripe));
   }
 }
 </style>

@@ -4,7 +4,7 @@
        of unlabelled groups. -->
   <v-card
     class="lc-chore-card lc-lift"
-    :class="{ 'lc-completing': isCompleting, 'lc-chore-card--idle': isIdle }"
+    :class="{ 'lc-completing': isCompleting }"
     tag="article"
     :aria-label="cardLabel"
     :rounded="$vuetify.display.smAndDown ? 0 : 'lg'"
@@ -92,356 +92,239 @@
       ></v-alert>
 
       <div class="d-flex align-center justify-space-between mt-3 ga-2">
-        <v-chip
+        <!-- Claiming used to be an unlabelled clipboard icon four buttons
+             along the action bar, while the chip that named the assignee sat
+             here doing nothing. The action now lives on the thing it changes.
+
+             A v-btn rather than a clickable v-chip: the global VBtn default is
+             already a pill, so it reads the same, and a button is focusable and
+             operable by keyboard without any of it having to be hand-rolled. -->
+        <v-btn
+          class="lc-chore-card__assignee"
           size="small"
           variant="tonal"
+          :color="localchore.isAssigned ? 'primary' : undefined"
           :prepend-icon="
             localchore.assignee ? 'mdi-account-check' : 'mdi-account-outline'
           "
+          :aria-label="claimLabel"
+          :aria-pressed="localchore.isAssigned ? 'true' : 'false'"
+          :disabled="localchore.status > 0"
+          @click="callClaimChore(localchore.id, localchore.assignee_id)"
         >
           {{ computedAssignee }}
-        </v-chip>
+        </v-btn>
 
+        <!-- Display only, and now honestly so. These were `:readonly="!expand"`
+             -- a control that looked live on a collapsed card and silently did
+             nothing. Effort is a setting, so it is set in the editor. -->
         <div class="d-flex align-center ga-1">
-          <span class="lc-visually-hidden">Effort</span>
+          <span class="lc-visually-hidden">
+            Effort: {{ effortLabel(localchore.effort) }}
+          </span>
           <v-rating
-            v-model="localchore.effort"
-            :readonly="!expand"
+            :model-value="localchore.effort"
+            readonly
             length="3"
             size="18"
             density="compact"
             active-color="accent"
-            :item-aria-label="'Effort level {0} of 3'"
-            @update:modelValue="changeDetected()"
+            aria-hidden="true"
           ></v-rating>
         </div>
       </div>
+
+      <!-- The one fact the history panel existed to show. It was behind a
+           button, in a table, in a second expanding panel; it is one line. -->
+      <p class="text-caption text-medium-emphasis mb-0 mt-2">
+        {{ lastDoneLabel }}
+      </p>
     </div>
-
-    <v-expand-transition>
-      <div v-if="expand">
-        <v-container class="bg-surface-variant">
-          <v-row v-if="remoteUpdatePending" dense>
-            <v-col>
-              <v-alert
-                type="warning"
-                variant="tonal"
-                density="compact"
-                role="status"
-                aria-live="polite"
-                text="Someone else changed this chore while you were editing.
-                      Saving keeps your version; reset loads theirs."
-              ></v-alert>
-            </v-col>
-          </v-row>
-          <v-row dense class="bg-surface-variant">
-            <v-col>
-              <v-text-field
-                v-model="localchore.chore_name"
-                label="Chore Name"
-                @update:modelValue="changeDetected()"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row dense class="bg-surface-variant">
-            <v-col>
-              <VueDatePicker
-                v-model="localchore.lastCompleted"
-                :timezone="userTimezone"
-                model-type="yyyy-MM-dd"
-                :enable-time-picker="false"
-                auto-apply
-                format="yyyy-MM-dd"
-                @update:modelValue="changeDetected(true)"
-              ></VueDatePicker>
-            </v-col>
-            <v-col>
-              <VueDatePicker
-                v-model="localchore.nextDue"
-                :timezone="userTimezone"
-                model-type="yyyy-MM-dd"
-                :enable-time-picker="false"
-                auto-apply
-                format="yyyy-MM-dd"
-                @update:modelValue="changeDetected(true)"
-              ></VueDatePicker>
-            </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col> Repeats </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col>
-              <v-select
-                label="Interval*"
-                required
-                :items="intervals"
-                v-model="localchore.intervalNumber"
-                @update:modelValue="changeDetected()"
-              ></v-select>
-            </v-col>
-            <v-col>
-              <v-select
-                label="Unit(s)*"
-                required
-                :items="units"
-                v-model="localchore.unit"
-                @update:modelValue="changeDetected()"
-              ></v-select>
-            </v-col>
-          </v-row>
-          <!-- A real fieldset with a legend. These twelve controls previously
-               sat loose in the form, so each announced alone with nothing
-               tying it to "which months does this chore run in". -->
-          <v-row dense>
-            <v-col>
-              <!-- Twelve checkboxes were most of the scroll between the first
-                   field and the Save button on a phone, for a setting that is
-                   "all year" on nearly every chore. Shared with AddChoreForm so
-                   the two cannot drift. -->
-              <LcMonthPicker
-                v-model="localchore.active_months"
-                @update:modelValue="changeDetected()"
-              />
-            </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col>
-              <v-btn
-                icon="mdi-content-save-outline"
-                :aria-label="`Save changes to ${localchore.chore_name}`"
-                :disabled="!saveEnabled"
-                @click="callSaveChore(localchore)"
-              >
-                <v-icon icon="mdi-content-save-outline"></v-icon>
-                <v-tooltip activator="parent" location="top">Save</v-tooltip>
-              </v-btn>
-              <v-btn
-                icon="mdi-arrow-u-left-top-bold"
-                :aria-label="`Discard changes to ${localchore.chore_name}`"
-                :disabled="!saveEnabled"
-                @click="callResetChore()"
-              >
-                <v-icon icon="mdi-arrow-u-left-top-bold"></v-icon>
-                <v-tooltip activator="parent" location="top">Reset</v-tooltip>
-              </v-btn>
-              <LcConfirmDialog
-                v-model="deleteDialog"
-                title="Delete this chore?"
-                icon="mdi-delete-forever-outline"
-                confirm-label="Delete chore"
-                confirm-icon="mdi-delete-forever-outline"
-                @confirm="callDeleteChore(localchore)"
-              >
-                <template v-slot:activator="{ props: activatorProps }">
-                  <v-btn
-                    v-bind="activatorProps"
-                    icon="mdi-delete-forever-outline"
-                    color="filthy"
-                    :aria-label="`Delete ${localchore.chore_name}`"
-                  >
-                    <v-icon icon="mdi-delete-forever-outline"></v-icon>
-                    <v-tooltip activator="parent" location="top">
-                      Delete
-                    </v-tooltip>
-                  </v-btn>
-                </template>
-
-                Deleting <strong>{{ localchore.chore_name }}</strong> from
-                <strong>{{ localchore.area.area_name }}</strong> also removes it
-                from the history. This cannot be undone.
-              </LcConfirmDialog>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-    </v-expand-transition>
-    <v-expand-transition>
-      <div v-if="localchore.history">
-        <v-container class="bg-surface-variant">
-          <v-row dense>
-            <v-col>
-              <v-table class="bg-surface-variant">
-                <thead>
-                  <tr>
-                    <th class="text-left">Date</th>
-                    <th class="text-left">Completed By</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="item in localchore.last_three_history_items"
-                    :key="item.id"
-                  >
-                    <td>{{ item.completed_date }}</td>
-                    <td>{{ item.completed_by }}</td>
-                  </tr>
-                </tbody>
-              </v-table>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-    </v-expand-transition>
 
     <v-divider></v-divider>
 
-    <!-- Every control here was previously an icon with no accessible name, so
-         the whole action bar announced as "button, button, button…". Each now
-         states the action AND its object, and any label that changes with state
-         changes with it (claim/release, disable/enable). -->
+    <!-- One primary action, one secondary, and everything else behind a menu
+         whose items have names in words.
+         ─────────────────────────────────────────────────────────────────────
+         This was six icon buttons whose only labels were tooltips, which a
+         touch device never shows -- and four of them greyed out whenever the
+         inline editor was open, for reasons the screen never gave. -->
     <v-card-actions class="lc-chore-card__actions">
       <v-btn
-        icon="mdi-check"
+        variant="flat"
+        color="primary"
+        size="small"
+        prepend-icon="mdi-check"
         :aria-label="`Mark ${localchore.chore_name} complete`"
-        :disabled="localchore.status > 0 || expand || isCompleting"
+        :disabled="localchore.status > 0 || isCompleting"
         @click="callCompleteChore(localchore.id, getID)"
       >
-        <v-icon icon="mdi-check"></v-icon>
-        <v-tooltip activator="parent" location="top">Complete</v-tooltip>
-      </v-btn>
-
-      <v-dialog v-model="snooze" scrollable max-width="420px">
-        <template v-slot:activator="{ props: activatorProps }">
-          <v-btn
-            v-bind="activatorProps"
-            icon="mdi-alarm-snooze"
-            :aria-label="`Snooze ${localchore.chore_name}`"
-            :disabled="localchore.status > 0 || expand"
-          >
-            <v-icon icon="mdi-alarm-snooze"></v-icon>
-            <v-tooltip activator="parent" location="top">Snooze</v-tooltip>
-          </v-btn>
-        </template>
-        <v-card>
-          <v-card-title>Snooze {{ localchore.chore_name }}</v-card-title>
-          <v-divider></v-divider>
-          <v-card-text>
-            <!-- VueDatePicker does not render an element carrying the id its
-                 `uid` prop implies, so a <label for> would point at nothing.
-                 Labelling the group is what actually reaches the control. -->
-            <div
-              id="snooze-date-label"
-              class="text-body-2 mb-2"
-              aria-hidden="true"
-            >
-              Push the due date to
-            </div>
-            <div role="group" aria-labelledby="snooze-date-label">
-              <VueDatePicker
-                v-model="localchore.nextDue"
-                :timezone="userTimezone"
-                model-type="yyyy-MM-dd"
-                :enable-time-picker="false"
-                auto-apply
-                teleport
-                format="yyyy-MM-dd"
-              ></VueDatePicker>
-            </div>
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn variant="text" @click="snooze = false">Cancel</v-btn>
-            <v-btn
-              variant="flat"
-              color="primary"
-              @click="callSnoozeChore(localchore.id, localchore.nextDue)"
-            >
-              Snooze
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-btn
-        icon="mdi-clipboard-account-outline"
-        :aria-label="claimLabel"
-        :aria-pressed="localchore.isAssigned ? 'true' : 'false'"
-        :color="localchore.isAssigned ? 'primary' : undefined"
-        :disabled="localchore.status > 0 || expand"
-        @click="callClaimChore(localchore.id, localchore.assignee_id)"
-      >
-        <v-icon
-          :icon="
-            localchore.isAssigned
-              ? 'mdi-clipboard-account'
-              : 'mdi-clipboard-account-outline'
-          "
-        ></v-icon>
-        <v-tooltip activator="parent" location="top">{{ claimLabel }}</v-tooltip>
+        Done
       </v-btn>
 
       <v-btn
-        icon="mdi-circle-off-outline"
-        :aria-label="toggleLabel"
-        :aria-pressed="localchore.status == 0 ? 'false' : 'true'"
-        :color="localchore.status == 0 ? undefined : 'accent'"
-        :disabled="localchore.status == 3"
-        @click="callToggleChore(localchore.id, localchore.status)"
+        variant="text"
+        size="small"
+        prepend-icon="mdi-alarm-snooze"
+        :aria-label="`Snooze ${localchore.chore_name}`"
+        :disabled="localchore.status > 0"
+        @click="openSnooze()"
       >
-        <v-icon
-          :icon="
-            localchore.status == 0 ? 'mdi-circle-off-outline' : 'mdi-circle-outline'
-          "
-        ></v-icon>
-        <v-tooltip activator="parent" location="top">{{ toggleLabel }}</v-tooltip>
+        Snooze
       </v-btn>
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        icon="mdi-clipboard-text-clock-outline"
-        :aria-label="`${localchore.history ? 'Hide' : 'Show'} history for ${localchore.chore_name}`"
-        :aria-expanded="localchore.history ? 'true' : 'false'"
-        :color="localchore.history ? 'primary' : undefined"
-        :disabled="expand"
-        @click="localchore.history = !localchore.history"
+      <LcActionMenu
+        :items="menuItems"
+        :title="localchore.chore_name"
+        @select="onMenuSelect"
       >
-        <v-icon icon="mdi-clipboard-text-clock-outline"></v-icon>
-        <v-tooltip activator="parent" location="top">History</v-tooltip>
-      </v-btn>
-
-      <v-btn
-        :icon="expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        :aria-label="`${expand ? 'Close' : 'Open'} editor for ${localchore.chore_name}`"
-        :aria-expanded="expand ? 'true' : 'false'"
-        :disabled="saveEnabled || localchore.status == 3"
-        @click="expand = !expand"
-      >
-        <v-icon :icon="expand ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-icon>
-        <v-tooltip activator="parent" location="top">
-          {{ expand ? "Close editor" : "Edit" }}
-        </v-tooltip>
-      </v-btn>
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn
+            v-bind="activatorProps"
+            icon="mdi-dots-vertical"
+            :aria-label="`More actions for ${localchore.chore_name}`"
+          >
+            <v-icon icon="mdi-dots-vertical"></v-icon>
+          </v-btn>
+        </template>
+      </LcActionMenu>
     </v-card-actions>
+
+    <!-- ── Overlays ────────────────────────────────────────────────────────
+         All three are overlays rather than panels that grow the card. Nothing
+         on this card changes height any more, so a list of them stays where it
+         was when you last looked at it. -->
+    <ChoreEditDialog
+      v-model="editOpen"
+      :chore="localchore"
+      :remote-update-pending="remoteUpdatePending"
+      @dirty="editDirty = true"
+      @submit="callSaveChore"
+      @cancel="cancelEdit"
+    />
+
+    <v-dialog v-model="snooze" scrollable max-width="420px">
+      <v-card>
+        <v-card-title>Snooze {{ localchore.chore_name }}</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <!-- VueDatePicker does not render an element carrying the id its
+               `uid` prop implies, so a <label for> would point at nothing.
+               Labelling the group is what actually reaches the control. -->
+          <div
+            :id="snoozeLabelId"
+            class="text-body-2 mb-2"
+            aria-hidden="true"
+          >
+            Push the due date to
+          </div>
+          <div role="group" :aria-labelledby="snoozeLabelId">
+            <VueDatePicker
+              v-model="snoozeDate"
+              :timezone="userTimezone"
+              model-type="yyyy-MM-dd"
+              :enable-time-picker="false"
+              auto-apply
+              teleport
+              format="yyyy-MM-dd"
+            ></VueDatePicker>
+          </div>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="snooze = false">Cancel</v-btn>
+          <v-btn
+            variant="flat"
+            color="primary"
+            @click="callSnoozeChore(localchore.id, snoozeDate)"
+          >
+            Snooze
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="historyOpen" scrollable max-width="420px">
+      <v-card>
+        <v-card-title class="text-subtitle-1 font-weight-medium">
+          History for {{ localchore.chore_name }}
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-table v-if="localchore.last_three_history_items?.length">
+            <thead>
+              <tr>
+                <th class="text-left">Date</th>
+                <th class="text-left">Completed By</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="item in localchore.last_three_history_items"
+                :key="`${item.completed_date}-${item.completed_by}`"
+              >
+                <td>{{ item.completed_date }}</td>
+                <td>{{ item.completed_by }}</td>
+              </tr>
+            </tbody>
+          </v-table>
+          <p v-else class="text-body-2 text-medium-emphasis mb-0">
+            This chore has never been completed.
+          </p>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="historyOpen = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <LcConfirmDialog
+      v-model="deleteDialog"
+      title="Delete this chore?"
+      icon="mdi-delete-forever-outline"
+      confirm-label="Delete chore"
+      confirm-icon="mdi-delete-forever-outline"
+      @confirm="callDeleteChore(localchore)"
+    >
+      Deleting <strong>{{ localchore.chore_name }}</strong> from
+      <strong>{{ localchore.area.area_name }}</strong> also removes it from the
+      history. This cannot be undone.
+    </LcConfirmDialog>
   </v-card>
 </template>
 <script setup>
 // defineProps/defineEmits are compiler macros — importing them warns on every
 // build and every test run.
 import { computed, ref, watch, onMounted } from "vue";
-import { useChoreStore } from "@/stores/chores";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { useUserStore } from "@/stores/user";
 import { useOptions } from "@/composables/optionsComposable";
-import LcMonthPicker from "@/components/LcMonthPicker.vue";
+import { effortLabel } from "@/utils/labels";
+import LcActionMenu from "@/components/LcActionMenu.vue";
 import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
+import ChoreEditDialog from "@/components/ChoreEditDialog.vue";
 
-// Was hardcoded to "America/New_York" on all three pickers, so every date this
-// card wrote was interpreted in Eastern time regardless of where the user
-// actually is -- while the backend has stored a per-user notify_timezone since
-// the reminders feature shipped. Falls back to the browser's own zone.
+// Was hardcoded to "America/New_York", so every date this card wrote was
+// interpreted in Eastern time regardless of where the user actually is --
+// while the backend has stored a per-user notify_timezone since the reminders
+// feature shipped. Falls back to the browser's own zone.
 const userTimezone =
   Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
 
-
 const { options } = useOptions();
-const expand = ref(false);
 const snooze = ref(false);
-const saveEnabled = ref(false);
+// Its own value rather than a v-model straight onto localchore.nextDue: the
+// picker writes on every change, so picking a date and then pressing Cancel
+// left the card showing a due date the server had never been told about.
+const snoozeDate = ref(null);
+const historyOpen = ref(false);
+const editOpen = ref(false);
 const deleteDialog = ref(false);
-const chorestore = useChoreStore();
 const userstore = useUserStore();
 const emit = defineEmits([
   "editChore",
@@ -456,9 +339,19 @@ const props = defineProps({
 });
 const localchore = ref({ ...props.chore });
 
+// A grid mounts many of these; a literal id would make every snooze dialog's
+// aria-labelledby point at the first card's label.
+const snoozeLabelId = computed(() => `snooze-date-${props.chore?.id}`);
+
 function deepCopy(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
+
+// True while the editor holds changes the user has not saved. This was
+// `saveEnabled`, which did double duty as "the Save button is live" and "hold
+// remote updates back" -- and, fatally, as "disable the button that closes the
+// editor". It only means the second thing now.
+const editDirty = ref(false);
 
 // True when a newer version of this chore arrived from the server while the
 // user had unsaved edits, so we declined to apply it.
@@ -470,10 +363,10 @@ watch(
     // Never overwrite unsaved edits. Every write endpoint publishes an SSE
     // event, so any other household member completing a chore invalidates
     // ["chores"] and hands this component a new object identity. Before this
-    // guard that replaced the open edit panel's contents mid-typing -- and
-    // because saveEnabled stayed true, the next click of Save wrote the
+    // guard that replaced the open editor's contents mid-typing -- and
+    // because the dirty flag stayed set, the next click of Save wrote the
     // reverted values back over the server's copy.
-    if (saveEnabled.value) {
+    if (editDirty.value) {
       remoteUpdatePending.value = true;
       return;
     }
@@ -486,80 +379,81 @@ onMounted(() => {
   localchore.value = deepCopy(props.chore);
 });
 
-// Reset means "discard my edits and show the server's current copy", so it
-// takes a full snapshot rather than restoring the nine fields it used to name
-// individually. That list omitted anything a remote change might have touched
-// (assignee and status among them), which mattered once the watch above began
-// holding updates back.
-const callResetChore = async () => {
-  localchore.value = deepCopy(props.chore);
-  saveEnabled.value = false;
-  remoteUpdatePending.value = false;
+// ── The overflow menu ───────────────────────────────────────────────────────
+// Built as data rather than as markup so the mobile bottom sheet and the
+// desktop menu cannot drift, and so "why is this greyed out" is answerable in
+// the item itself rather than by reading a disabled expression in the template.
+const menuItems = computed(() => {
+  const c = localchore.value;
+  const paused = c?.status == 3;
+  return [
+    {
+      key: "edit",
+      title: "Edit chore…",
+      icon: "mdi-pencil-outline",
+      disabled: paused,
+      subtitle: paused ? "Paused for vacation" : undefined,
+    },
+    {
+      key: "history",
+      title: "Recent history",
+      icon: "mdi-clipboard-text-clock-outline",
+    },
+    {
+      key: "toggle",
+      title: c?.status == 0 ? "Disable chore" : "Enable chore",
+      icon: c?.status == 0 ? "mdi-circle-off-outline" : "mdi-circle-outline",
+      disabled: paused,
+      subtitle: paused ? "Paused for vacation" : undefined,
+    },
+    {
+      key: "delete",
+      title: "Delete chore",
+      icon: "mdi-delete-forever-outline",
+      color: "filthy",
+      dividerBefore: true,
+    },
+  ];
+});
+
+const onMenuSelect = key => {
+  if (key === "edit") editOpen.value = true;
+  else if (key === "history") historyOpen.value = true;
+  else if (key === "toggle")
+    callToggleChore(localchore.value.id, localchore.value.status);
+  else if (key === "delete") deleteDialog.value = true;
 };
-const changeDetected = async recalcDirty => {
-  if (recalcDirty) {
-    localchore.value.dirtiness = calcDirtiness();
-    localchore.value.duedays = calcDueDays();
-  }
-  saveEnabled.value = true;
-};
-const calcDirtiness = () => {
-  const millisecondsInADay = 1000 * 60 * 60 * 24;
-  const today = new Date();
-  const nextDueDate = new Date(localchore.value.nextDue);
-  const lastCompleted = new Date(localchore.value.lastCompleted);
 
-  // Calculate the time difference in milliseconds
-  const timesincedone = lastCompleted - today;
-  const timeperiod = lastCompleted - nextDueDate;
-
-  // Calculate the time difference in days
-  const timesincedonedays = Math.ceil(timesincedone / millisecondsInADay);
-  const timeperioddays = Math.ceil(timeperiod / millisecondsInADay);
-
-  let dirtiness = 0;
-
-  if (timeperioddays === 0) {
-    dirtiness = 0;
-  } else {
-    dirtiness = Math.round((timesincedonedays / timeperioddays) * 100);
-    dirtiness = Math.min(dirtiness, 100); // Ensure dirtiness is at most 100
-  }
-
-  return dirtiness;
-};
-const calcDueDays = () => {
-  const today = new Date();
-  const nextDueDate = new Date(localchore.value.nextDue);
-
-  // Calculate the difference in milliseconds
-  const timeDifference = nextDueDate - today;
-
-  // Convert milliseconds to days
-  const millisecondsInADay = 1000 * 60 * 60 * 24;
-  const duedays = Math.ceil(timeDifference / millisecondsInADay);
-
-  return duedays;
-};
 const getID = computed(() => {
   return userstore.getID;
 });
-const units = computed(() => {
-  return chorestore.units;
-});
-const intervals = computed(() => {
-  return chorestore.intervals;
-});
+const openSnooze = () => {
+  snoozeDate.value = localchore.value.nextDue;
+  snooze.value = true;
+};
+
 const callSnoozeChore = async (chore_id, next_due) => {
   emit("snoozeChore", chore_id, next_due);
-  snooze.value = !snooze.value;
+  snooze.value = false;
 };
-const callSaveChore = async saveChore => {
-  saveEnabled.value = false;
-  expand.value = false;
-  // Clearing this explicitly rather than waiting for the post-save refetch to
-  // do it, so the flag cannot outlive the edit it belongs to.
+
+// Cancel is what Reset used to be: discard the draft and show the server's
+// current copy. It takes a full snapshot rather than restoring the nine fields
+// the old Reset named individually -- that list omitted anything a remote
+// change might have touched, assignee and status among them, which mattered
+// precisely because the watch above holds updates back.
+const cancelEdit = () => {
+  localchore.value = deepCopy(props.chore);
+  editDirty.value = false;
   remoteUpdatePending.value = false;
+};
+
+const callSaveChore = async saveChore => {
+  editDirty.value = false;
+  // Cleared explicitly rather than waiting for the post-save refetch to do it,
+  // so the flag cannot outlive the edit it belongs to.
+  remoteUpdatePending.value = false;
+  localchore.value = deepCopy(saveChore);
   emit("editChore", saveChore);
 };
 const callDeleteChore = async deleteChore => {
@@ -647,18 +541,35 @@ const dueLabel = computed(() => {
   return `Due in ${days} days`;
 });
 
+/**
+ * The most recent completion, in words.
+ *
+ * Split rather than handed to `new Date(string)`: an ISO date with no time is
+ * parsed as UTC midnight, so anywhere west of Greenwich it renders as the day
+ * before -- which on a chore app means the card disagrees with the history
+ * table about when you did something.
+ */
+const lastDoneLabel = computed(() => {
+  const item = localchore.value?.last_three_history_items?.[0];
+  if (!item) return "Never completed";
+
+  const [y, m, d] = String(item.completed_date).split("-").map(Number);
+  const when = new Date(y, (m || 1) - 1, d || 1).toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+  });
+
+  return item.completed_by
+    ? `Last done ${when} by ${item.completed_by}`
+    : `Last done ${when}`;
+});
+
 // State-dependent labels, so what a screen reader announces changes with the
 // control rather than describing only its resting state.
 const claimLabel = computed(() =>
   localchore.value?.isAssigned
     ? `Release ${localchore.value.chore_name}`
     : `Claim ${localchore.value?.chore_name}`
-);
-
-const toggleLabel = computed(() =>
-  localchore.value?.status == 0
-    ? `Disable ${localchore.value.chore_name}`
-    : `Enable ${localchore.value?.chore_name}`
 );
 
 // The card's own accessible name, so the list can be navigated chore by chore.
@@ -670,9 +581,6 @@ const cardLabel = computed(() => {
   )} percent dirty, ${dueLabel.value}`;
 });
 
-// Idle = nothing pending, nothing open. Used only to allow the hover lift,
-// which would be distracting while the editor is open.
-const isIdle = computed(() => !expand.value && !localchore.value?.history);
 const computedAssignee = computed(() => {
   if (!localchore.value) {
     return "";
@@ -698,19 +606,21 @@ const computedAssignee = computed(() => {
   background: rgb(var(--v-theme-surface));
 }
 
-/* The area group's colour. 4px is enough to identify at a glance in a scrolling
-   list without becoming a block of colour competing with the content. */
+/* The area group's colour, at the same width as the area card's -- they sit on
+   the same screens and a 4px stripe beside a 6px one read as a mistake. Wide
+   enough to identify at a glance in a scrolling list without becoming a block
+   of colour competing with the content. */
 .lc-chore-card__stripe {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
-  width: 4px;
+  width: var(--lc-card-stripe);
 }
 
 .lc-chore-card__body {
   /* Clears the stripe so text never sits against it. */
   padding: var(--lc-space-4) var(--lc-space-4) var(--lc-space-3)
-    calc(var(--lc-space-4) + 4px);
+    calc(var(--lc-space-4) + var(--lc-card-stripe));
 }
 
 .lc-chore-card__area-icon {
@@ -723,29 +633,40 @@ const computedAssignee = computed(() => {
   overflow-wrap: anywhere;
 }
 
+/* A long name or email would otherwise push the effort stars off the card.
+   The ellipsis has to go on .v-btn__content: that is the flex child holding
+   the text, and clipping the button itself would just hide the overflow with
+   no indication anything had been cut. */
+.lc-chore-card__assignee {
+  min-width: 0;
+  max-width: 60%;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.lc-chore-card__assignee :deep(.v-btn__content) {
+  min-width: 0;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .min-width-0 {
   /* Flex children default to min-width:auto, which stops them shrinking below
      their content and is what lets a long word overflow the card. */
   min-width: 0;
 }
 
-/* The lift is for cards at rest. While the editor or history panel is open the
-   card is a working surface, and having it rise under the pointer is noise. */
-.lc-chore-card:not(.lc-chore-card--idle) {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
 .lc-chore-card__actions {
   padding-inline: var(--lc-space-2);
+  gap: var(--lc-space-1);
 }
-
-
 
 @media (max-width: 599px) {
   .lc-chore-card__body {
     padding: var(--lc-space-3) var(--lc-space-3) var(--lc-space-2)
-      calc(var(--lc-space-3) + 4px);
+      calc(var(--lc-space-3) + var(--lc-card-stripe));
   }
 }
 </style>

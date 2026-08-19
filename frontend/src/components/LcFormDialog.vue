@@ -69,8 +69,16 @@
 
       <!-- The <Form> lives here rather than in each consumer so that the submit
            button in the action bar below is inside the form element it submits.
-           Consumers get `errors` through the default slot. -->
+           Consumers get `errors` through the default slot.
+
+           Keyed on the open count so it is a fresh mount every time the dialog
+           opens. v-dialog keeps its content alive once shown, and vee-validate
+           treats a changed `initialValues` as a non-forced reseed that
+           deliberately leaves dirty fields alone -- so without this, a dialog
+           closed with Cancel came back still holding the draft the user had
+           just abandoned, and a newer server copy never reached the field. -->
       <Form
+        :key="formKey"
         class="lc-form-dialog__form"
         :validation-schema="schema"
         :initial-values="initialValues"
@@ -145,6 +153,7 @@ defineProps({
 const emit = defineEmits(["submit", "cancel"]);
 
 const cardRef = ref(null);
+const formKey = ref(0);
 
 const cancel = () => {
   emit("cancel");
@@ -159,6 +168,7 @@ const onSubmit = values => {
 
 watch(model, async open => {
   if (!open) return;
+  formKey.value++;
   // Only on a pointer-sized screen. Focusing a text field on a phone summons
   // the keyboard over a dialog the user has not read yet.
   if (display.smAndDown.value) return;
