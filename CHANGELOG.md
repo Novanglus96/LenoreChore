@@ -1,3 +1,16 @@
+# [1.5.0-alpha.17](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.16...v1.5.0-alpha.17) (2026-08-19)
+
+
+### Bug Fixes
+
+* drop the duplicate alpha.16 changelog block ([89f2857](https://github.com/Novanglus96/LenoreChore/commit/89f285772a7851d0098db67b517624a9f1d3eb39)), closes [#26](https://github.com/Novanglus96/LenoreChore/issues/26)
+
+
+### Features
+
+* complete a whole round at once, plus three dashboard tweaks ([bc82953](https://github.com/Novanglus96/LenoreChore/commit/bc829536e64984034e1964748af83d2ec52e22a1))
+* the whimsy pass ([6d9fd6e](https://github.com/Novanglus96/LenoreChore/commit/6d9fd6e97a8ae878584bce389241fffb44ef41d2)), closes [#500](https://github.com/Novanglus96/LenoreChore/issues/500)
+
 # [1.5.0-alpha.16](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.15...v1.5.0-alpha.16) (2026-08-19)
 
 
