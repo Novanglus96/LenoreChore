@@ -73,6 +73,7 @@ export const useChoreStore = defineStore("chore", {
       assignee_id: null,
       area_id: null,
       group_id: null,
+      chore_name: null,
       overdue: false,
       sort: "due",
     },

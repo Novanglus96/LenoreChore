@@ -49,6 +49,18 @@ def invalidate_pattern(*patterns):
             cache.clear()
 
 
+def invalidate_chores(*extra):
+    """Drop every cache a chore write can invalidate.
+
+    There are twelve call sites, and the chore-name index added for the
+    "same task everywhere" filter is derived from the chore table -- so a
+    rename, a delete or a disable changes it. Bundling them means adding a
+    derived cache later cannot silently miss one of those twelve.
+    """
+    invalidate_pattern("chores:*", *extra)
+    invalidate("chorenames")
+
+
 api = NinjaAPI(auth=django_auth, urls_namespace="api_v2")
 router = Router()
 api.title = "LenoreChore API"
@@ -263,6 +275,21 @@ class CustomUserSchema(Schema):
         if hasattr(groups, "all"):
             return [group.id for group in groups.all()]
         return list(groups)
+
+
+class ChoreNameOut(Schema):
+    """
+    Schema to represent a chore name that recurs across the household.
+
+    Attributes:
+        chore_name (str): The name itself.
+        chore_count (int): How many active chores carry it.
+        area_count (int): How many distinct areas those chores span.
+    """
+
+    chore_name: str
+    chore_count: int
+    area_count: int
 
 
 class AreaGroupIn(Schema):
@@ -853,7 +880,7 @@ def toggle_vacation(request):
             chore.nextDue = date.today() + timedelta(days=chore.vacationPause)
             chore.save()
     invalidate("options")
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("options")
     notify("chores")
@@ -942,7 +969,7 @@ def create_chore(request, payload: ChoreIn):
     # Set the active_months field
     chore.active_months.set(active_months)
 
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"id": chore.id}
@@ -971,7 +998,7 @@ def create_historyitem(request, payload: HistoryItemIn):
         completed_by=completed_by_object,
         chore_id=payload.chore_id,
     )
-    invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate_chores("weeklytotals:*")
     notify("chores")
     notify("history")
     return {"id": historyitem.id}
@@ -1015,6 +1042,53 @@ def get_area(request, area_id: int):
     """
     area = get_object_or_404(Area, id=area_id)
     return area
+
+
+@api.get("/chores/names", response=List[ChoreNameOut])
+def list_chore_names(request):
+    """
+    The function `list_chore_names` retrieves chore names that appear on more
+    than one active chore -- the "same task in several rooms" case, e.g. a
+    Dusting that exists separately in every area.
+
+    Only names with two or more active chores are returned: a name carried by a
+    single chore cannot be worked through room by room, which is the whole point
+    of the filter this feeds.
+
+    Matching is on the name as typed, so it depends on those chores being named
+    consistently. A household that writes "Dust" in one area and "Dusting" in
+    another gets two entries.
+
+    NOTE: declared BEFORE /chores/{chore_id}. That path converts to int, so a
+    request for /chores/names would fail against it with a 422 rather than
+    falling through to this one.
+
+    Endpoint:
+        - **Path**: `/api/v2/chores/names`
+        - **Method**: `GET`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        (List[ChoreNameOut]): Recurring chore names, commonest first.
+    """
+    cached = cache.get("chorenames")
+    if cached is not None:
+        return cached
+
+    rows = list(
+        Chore.objects.filter(status=0)
+        .values("chore_name")
+        .annotate(
+            chore_count=Count("id"),
+            area_count=Count("area_id", distinct=True),
+        )
+        .filter(chore_count__gte=2)
+        .order_by("-chore_count", "chore_name")
+    )
+    cache.set("chorenames", rows, CACHE_TTL)
+    return rows
 
 
 @api.get("/chores/{chore_id}", response=ChoreOut)
@@ -1146,6 +1220,7 @@ def list_chores(
     assignee_id: Optional[int] = None,
     area_id: Optional[int] = None,
     group_id: Optional[int] = None,
+    chore_name: Optional[str] = None,
     overdue: bool = False,
     sort: str = "due",
 ):
@@ -1163,6 +1238,8 @@ def list_chores(
         assignee_id (int): Filter chores by assigned CustomUser ID. Retreives all if None. Default=None.
         area_id (int): Filter chores by Area ID. Retreives all if None. Default=None.
         group_id (int): Filter chores by the AreaGroup their area belongs to. Default=None.
+        chore_name (str): Only chores with this name, case-insensitively. Lets one
+            task -- dusting, say -- be worked through every area it exists in.
         overdue (bool): Only chores whose due date has already passed. Default=False.
         sort (str): One of `due`, `name`, `effort`, `dirtiest`. Default=`due`.
 
@@ -1180,7 +1257,7 @@ def list_chores(
     # extending it serves one request's results to a differently-filtered one.
     cache_key = (
         f"chores:{inactive}:{timeframe}:{assignee_id}:{area_id}"
-        f":{group_id}:{overdue}:{sort}"
+        f":{group_id}:{chore_name}:{overdue}:{sort}"
     )
     cached = cache.get(cache_key)
     if cached is not None:
@@ -1217,6 +1294,11 @@ def list_chores(
     if group_id is not None:
         # Chores reach a group through their area.
         qs = qs.filter(area__group_id=group_id)
+    if chore_name:
+        # iexact rather than exact: the name is picked from a list the API
+        # itself produced, but a filter that silently returns nothing over a
+        # capitalisation difference is a bad way to find that out.
+        qs = qs.filter(chore_name__iexact=chore_name)
     chore_list = []
 
     for chore in qs:
@@ -1458,7 +1540,7 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
     chore.assignee_id = payload.assignee_id
     chore.effort = payload.effort
     chore.save()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"success": True}
@@ -1484,7 +1566,7 @@ def toggle_chore(request, chore_id: int, payload: TogglActive):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.status = payload.status
     chore.save()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"success": True}
@@ -1510,7 +1592,7 @@ def snooze_chore(request, chore_id: int, payload: SnoozeChore):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.nextDue = payload.nextDue
     chore.save()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"success": True}
@@ -1536,7 +1618,7 @@ def claim_chore(request, chore_id: int, payload: ClaimChore):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.assignee_id = payload.assignee_id
     chore.save()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     notify("chores")
     return {"success": True}
 
@@ -1583,7 +1665,7 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
         completed_by_id=payload.completed_by_id,
         chore=chore,
     )
-    invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate_chores("weeklytotals:*")
     invalidate("areas")
     notify("chores")
     notify("history")
@@ -1612,7 +1694,7 @@ def update_historyitem(request, historyitem_id: int, payload: HistoryItemIn):
     historyitem.completed_by = payload.completed_by
     historyitem.chore_id = payload.chore_id
     historyitem.save()
-    invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate_chores("weeklytotals:*")
     notify("chores")
     notify("history")
     return {"success": True}
@@ -1705,7 +1787,7 @@ def delete_areagroup(request, areagroup_id: int, reassign_to: Optional[int] = No
     # have to go too -- the old version invalidated "areagroups" alone and left
     # every area still reporting its deleted group.
     invalidate("areas", "areagroups")
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     notify("areagroups")
     notify("areas")
     return {"success": True, "reassigned_to": destination.id, "areas_moved": moved}
@@ -1752,7 +1834,7 @@ def delete_chore(request, chore_id: int):
     """
     chore = get_object_or_404(Chore, id=chore_id)
     chore.delete()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"success": True}
@@ -1776,7 +1858,7 @@ def delete_historyitem(request, historyitem_id: int):
     """
     historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
     historyitem.delete()
-    invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate_chores("weeklytotals:*")
     notify("chores")
     notify("history")
     return {"success": True}

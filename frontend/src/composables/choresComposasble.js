@@ -116,6 +116,9 @@ async function getChoresFunction(filters) {
     if (filters.group_id) {
       params.set("group_id", filters.group_id);
     }
+    if (filters.chore_name) {
+      params.set("chore_name", filters.chore_name);
+    }
     if (filters.overdue) {
       params.set("overdue", "true");
     }
@@ -129,6 +132,37 @@ async function getChoresFunction(filters) {
   } catch (error) {
     handleApiError(error, "Chores not fetched: ");
   }
+}
+
+async function getChoreNamesFunction() {
+  try {
+    const response = await apiClient.get("/chores/names");
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "Chore names not fetched: ");
+  }
+}
+
+/**
+ * The names that exist on more than one active chore -- dusting that lives
+ * separately in every room, and so on. Feeds the "one task, every area" filter.
+ *
+ * Its own query rather than something derived from the chores list, because
+ * that list is itself filtered: deriving the options from it would make them
+ * disappear as soon as one was chosen.
+ */
+export function useChoreNames() {
+  const userStore = useUserStore();
+  const isAuthenticated = computed(() => userStore.isLoggedIn);
+
+  const { data: choreNames, isLoading } = useQuery({
+    queryKey: ["chorenames"],
+    queryFn: getChoreNamesFunction,
+    select: response => response,
+    enabled: isAuthenticated,
+  });
+
+  return { choreNames, isLoading };
 }
 
 export function useChores() {
@@ -147,6 +181,10 @@ export function useChores() {
     mutationFn: createChoreFunction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
+      // The chore-name index counts ACTIVE chores by name, so a create,
+      // rename, delete or disable can change it. complete/snooze/claim
+      // cannot, and deliberately do not refetch it.
+      queryClient.invalidateQueries({ queryKey: ["chorenames"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
@@ -155,6 +193,10 @@ export function useChores() {
     mutationFn: updateChoreFunction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
+      // The chore-name index counts ACTIVE chores by name, so a create,
+      // rename, delete or disable can change it. complete/snooze/claim
+      // cannot, and deliberately do not refetch it.
+      queryClient.invalidateQueries({ queryKey: ["chorenames"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
@@ -291,6 +333,10 @@ export function useChores() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
+      // The chore-name index counts ACTIVE chores by name, so a create,
+      // rename, delete or disable can change it. complete/snooze/claim
+      // cannot, and deliberately do not refetch it.
+      queryClient.invalidateQueries({ queryKey: ["chorenames"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
@@ -299,6 +345,10 @@ export function useChores() {
     mutationFn: deleteChoreFunction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
+      // The chore-name index counts ACTIVE chores by name, so a create,
+      // rename, delete or disable can change it. complete/snooze/claim
+      // cannot, and deliberately do not refetch it.
+      queryClient.invalidateQueries({ queryKey: ["chorenames"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });

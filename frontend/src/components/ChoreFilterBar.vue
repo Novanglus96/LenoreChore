@@ -144,6 +144,35 @@
         <v-divider></v-divider>
 
         <v-card-text class="d-flex flex-column ga-3">
+          <!-- Working one task through every room it exists in -- dusting,
+               say. Listed first because it is a mode rather than a narrowing:
+               it changes what you are looking at, not just how much of it.
+
+               Only names carried by two or more active chores are offered; a
+               one-off cannot be worked room by room. -->
+          <template v-if="choreNames?.length">
+            <v-select
+              v-model="filters.chore_name"
+              label="One task, every area"
+              :items="choreNames"
+              item-title="chore_name"
+              item-value="chore_name"
+              prepend-inner-icon="mdi-repeat-variant"
+              density="comfortable"
+              hide-details
+              clearable
+            >
+              <template v-slot:item="{ props: itemProps, item }">
+                <v-list-item
+                  v-bind="itemProps"
+                  :subtitle="`in ${item.raw.area_count} areas`"
+                ></v-list-item>
+              </template>
+            </v-select>
+
+            <v-divider class="my-1"></v-divider>
+          </template>
+
           <v-select
             v-model="filters.group_id"
             label="Group"
@@ -227,6 +256,7 @@ import { useUserStore } from "@/stores/user";
 import { useAreas } from "@/composables/areasComposable";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
 import { useUsers } from "@/composables/usersComposable";
+import { useChoreNames } from "@/composables/choresComposasble";
 
 const props = defineProps({
   /** How many chores the current filters matched. */
@@ -247,6 +277,7 @@ const userstore = useUserStore();
 const { areas } = useAreas();
 const { areagroups } = useAreaGroups();
 const { users: rawUsers } = useUsers();
+const { choreNames } = useChoreNames();
 
 const filters = chorestore.filters;
 const panelOpen = ref(false);
@@ -305,6 +336,7 @@ const toggleDueToday = () => {
 // hides rather than what is already visible as a chip.
 const advancedCount = computed(() => {
   let n = 0;
+  if (filters.chore_name) n++;
   if (filters.group_id != null) n++;
   if (filters.area_id != null) n++;
   if (filters.assignee_id != null) n++;
@@ -324,6 +356,13 @@ const nameOf = (list, id, key) =>
 
 const activeChips = computed(() => {
   const chips = [];
+  if (filters.chore_name) {
+    chips.push({
+      key: "chore_name",
+      label: `Task: ${filters.chore_name}`,
+      clear: () => (filters.chore_name = null),
+    });
+  }
   if (filters.overdue) {
     chips.push({
       key: "overdue",
@@ -379,6 +418,7 @@ const activeChips = computed(() => {
 });
 
 const resetFilters = () => {
+  filters.chore_name = null;
   filters.area_id = null;
   filters.group_id = null;
   filters.timeframe = null;

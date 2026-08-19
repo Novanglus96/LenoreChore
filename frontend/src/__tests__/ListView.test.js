@@ -11,6 +11,9 @@ const GROUP = { id: 1, group_name: "Downstairs", group_color: "area1", group_ord
 let choresData = ref([]);
 
 vi.mock("@/composables/choresComposasble", () => ({
+  // ChoreFilterBar pulls useChoreNames from this same module, so the mock has
+  // to cover it or every mount here fails at setup.
+  useChoreNames: () => ({ choreNames: ref([]), isLoading: ref(false) }),
   useChores: () => ({
     chores: choresData,
     isLoading: ref(false),

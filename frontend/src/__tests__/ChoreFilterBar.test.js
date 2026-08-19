@@ -26,6 +26,16 @@ vi.mock("@/composables/areaGroupsComposable", () => ({
   }),
 }));
 
+vi.mock("@/composables/choresComposasble", () => ({
+  useChoreNames: () => ({
+    choreNames: ref([
+      { chore_name: "Dust", chore_count: 4, area_count: 4 },
+      { chore_name: "Vacuum", chore_count: 2, area_count: 2 },
+    ]),
+    isLoading: ref(false),
+  }),
+}));
+
 vi.mock("@/composables/usersComposable", () => ({
   useUsers: () => ({
     users: ref([
@@ -180,6 +190,7 @@ describe("ChoreFilterBar — active filters and counts", () => {
       timeframe: 3,
       overdue: true,
       inactive: true,
+      chore_name: "Dust",
       sort: "dirtiest",
     });
     await wrapper.vm.$nextTick();
@@ -192,8 +203,41 @@ describe("ChoreFilterBar — active filters and counts", () => {
     expect(store.filters.timeframe).toBeNull();
     expect(store.filters.overdue).toBe(false);
     expect(store.filters.inactive).toBe(false);
+    expect(store.filters.chore_name).toBeNull();
     // Silently reordering the list on "Clear all" would be a surprise.
     expect(store.filters.sort).toBe("dirtiest");
+  });
+
+  it("shows the task filter as its own chip and badges it", async () => {
+    const wrapper = mountBar();
+    store.filters.chore_name = "Dust";
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.activeChips.map(c => c.label)).toContain("Task: Dust");
+    // It lives behind the Filters button, so it counts toward the badge.
+    expect(wrapper.vm.advancedCount).toBe(1);
+    expect(wrapper.vm.hasActiveFilters).toBe(true);
+  });
+
+  it("clears the task filter from its chip", async () => {
+    const wrapper = mountBar();
+    store.filters.chore_name = "Dust";
+    await wrapper.vm.$nextTick();
+
+    wrapper.vm.activeChips.find(c => c.key === "chore_name").clear();
+    expect(store.filters.chore_name).toBeNull();
+  });
+
+  it("composes the task filter with the others", async () => {
+    // "Dusting, upstairs only" has to be expressible.
+    const wrapper = mountBar();
+    store.filters.chore_name = "Dust";
+    store.filters.group_id = GROUP_B.id;
+    await wrapper.vm.$nextTick();
+
+    const keys = wrapper.vm.activeChips.map(c => c.key);
+    expect(keys).toEqual(expect.arrayContaining(["chore_name", "group"]));
+    expect(wrapper.vm.advancedCount).toBe(2);
   });
 
   it("pluralises the result count", async () => {

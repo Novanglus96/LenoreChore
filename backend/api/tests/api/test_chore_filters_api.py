@@ -168,3 +168,140 @@ def test_filters_combine(auth_client, area, area_group, other_area, user):
     )
     assert response.status_code == 200
     assert [c["chore_name"] for c in response.json()] == ["Mine and overdue"]
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_chore_names_lists_only_recurring_tasks(auth_client, area, other_area):
+    """The "same task in several rooms" index.
+
+    A name carried by a single chore cannot be worked through room by room,
+    so it is not offered.
+    """
+    _chore(area, "Dust", due_offset=1)
+    _chore(other_area, "Dust", due_offset=2)
+    _chore(area, "Descale the kettle", due_offset=1)
+
+    response = auth_client.get("/api/v2/chores/names")
+    assert response.status_code == 200
+    data = response.json()
+
+    assert [row["chore_name"] for row in data] == ["Dust"]
+    assert data[0]["chore_count"] == 2
+    assert data[0]["area_count"] == 2
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_chore_names_counts_areas_distinctly(auth_client, area, other_area):
+    """Two chores of the same name in ONE area is still one area."""
+    _chore(area, "Dust", due_offset=1)
+    _chore(area, "Dust", due_offset=2)
+    _chore(other_area, "Dust", due_offset=3)
+
+    data = auth_client.get("/api/v2/chores/names").json()
+    assert data[0]["chore_count"] == 3
+    assert data[0]["area_count"] == 2
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_chore_names_ignores_disabled_chores(auth_client, area, other_area):
+    from api.models import Chore
+
+    _chore(area, "Dust", due_offset=1)
+    disabled = _chore(other_area, "Dust", due_offset=2)
+    Chore.objects.filter(id=disabled.id).update(status=1)
+
+    # Down to a single active chore, so it stops being a recurring task.
+    assert auth_client.get("/api/v2/chores/names").json() == []
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_chore_names_is_not_parsed_as_a_chore_id(auth_client, area):
+    """/chores/{chore_id} is declared first and converts to int.
+
+    Declared in the wrong order, this path 422s instead of reaching the
+    index endpoint.
+    """
+    response = auth_client.get("/api/v2/chores/names")
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_filter_by_chore_name_spans_areas(auth_client, area, other_area):
+    """The point of the filter: one task, every area it lives in."""
+    _chore(area, "Dust", due_offset=1)
+    _chore(other_area, "Dust", due_offset=2)
+    _chore(area, "Mop", due_offset=1)
+
+    response = auth_client.get("/api/v2/chores?chore_name=Dust")
+    assert response.status_code == 200
+    data = response.json()
+    assert [c["chore_name"] for c in data] == ["Dust", "Dust"]
+    assert {c["area"]["id"] for c in data} == {area.id, other_area.id}
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_filter_by_chore_name_is_case_insensitive(auth_client, area, other_area):
+    _chore(area, "Dust", due_offset=1)
+    _chore(other_area, "dust", due_offset=2)
+
+    data = auth_client.get("/api/v2/chores?chore_name=DUST").json()
+    assert len(data) == 2
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_chore_name_is_in_the_cache_key(auth_client, area, other_area):
+    _chore(area, "Dust", due_offset=1)
+    _chore(other_area, "Mop", due_offset=2)
+
+    everything = auth_client.get("/api/v2/chores")
+    assert len(everything.json()) == 2
+
+    # Same request but for one task: must not be served the cached full list.
+    just_dust = auth_client.get("/api/v2/chores?chore_name=Dust")
+    assert [c["chore_name"] for c in just_dust.json()] == ["Dust"]
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_renaming_a_chore_refreshes_the_name_index(auth_client, area, other_area):
+    """The index is derived from the chore table, so a write invalidates it.
+
+    Twelve call sites invalidate the chore caches; this is why they go
+    through one helper.
+    """
+    import json as _json
+
+    first = _chore(area, "Dust", due_offset=1)
+    _chore(other_area, "Dust", due_offset=2)
+
+    assert auth_client.get("/api/v2/chores/names").json()[0]["chore_count"] == 2
+
+    response = auth_client.put(
+        f"/api/v2/chores/{first.id}",
+        data=_json.dumps(
+            {
+                "chore_name": "Polish",
+                "area_id": area.id,
+                "nextDue": str(date.today()),
+                "lastCompleted": str(date.today()),
+                "intervalNumber": 1,
+                "unit": "day(s)",
+                "effort": 1,
+                "active_months": [],
+                "status": 0,
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
+    # Only one "Dust" left, so it drops out of the index entirely.
+    assert auth_client.get("/api/v2/chores/names").json() == []
