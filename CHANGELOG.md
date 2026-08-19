@@ -1,3 +1,10 @@
+# [1.5.0-alpha.21](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.20...v1.5.0-alpha.21) (2026-08-19)
+
+
+### Features
+
+* the profile edits in a dialog, like everything else ([9f4b5e8](https://github.com/Novanglus96/LenoreChore/commit/9f4b5e8fefc90d533a0707df5137b01e24cc43bc))
+
 # [1.5.0-alpha.20](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.19...v1.5.0-alpha.20) (2026-08-19)
 
 
