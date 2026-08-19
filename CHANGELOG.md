@@ -1,3 +1,10 @@
+# [1.5.0-alpha.22](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.21...v1.5.0-alpha.22) (2026-08-19)
+
+
+### Features
+
+* a house that gets dirty, and bubbles when you finish ([3e141c5](https://github.com/Novanglus96/LenoreChore/commit/3e141c53b0c76ae17fea081fb8b5f8c98ff5d1ea))
+
 # [1.5.0-alpha.21](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.20...v1.5.0-alpha.21) (2026-08-19)
 
 
