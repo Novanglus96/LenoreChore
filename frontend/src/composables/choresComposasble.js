@@ -99,18 +99,32 @@ async function deleteChoreFunction(deletedChore) {
 
 async function getChoresFunction(filters) {
   try {
-    let params = "";
-    params = "inactive=" + filters.inactive;
+    // URLSearchParams rather than string concatenation: the hand-built version
+    // was one missing "&" away from a silently wrong query, and it grew a
+    // parameter every time the filter did.
+    const params = new URLSearchParams();
+    params.set("inactive", String(Boolean(filters.inactive)));
     if (filters.timeframe != null) {
-      params = params + "&timeframe=" + filters.timeframe;
+      params.set("timeframe", filters.timeframe);
     }
     if (filters.assignee_id) {
-      params = params + "&assignee_id=" + filters.assignee_id;
+      params.set("assignee_id", filters.assignee_id);
     }
     if (filters.area_id) {
-      params = params + "&area_id=" + filters.area_id;
+      params.set("area_id", filters.area_id);
     }
-    const response = await apiClient.get("/chores?" + params);
+    if (filters.group_id) {
+      params.set("group_id", filters.group_id);
+    }
+    if (filters.overdue) {
+      params.set("overdue", "true");
+    }
+    // Omitted when it is the default, so the common request keeps the URL --
+    // and therefore the Workbox cache entry -- it had before.
+    if (filters.sort && filters.sort !== "due") {
+      params.set("sort", filters.sort);
+    }
+    const response = await apiClient.get("/chores?" + params.toString());
     return response.data;
   } catch (error) {
     handleApiError(error, "Chores not fetched: ");

@@ -667,7 +667,11 @@ def get_weeklytotals(request, week: int = 0):
         return cached
 
     labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    today = timezone.now().date()
+    # localdate(), not now().date(): see list_chores. With TIME_ZONE set to
+    # America/New_York and USE_TZ on, now().date() is the UTC date, so from
+    # ~8pm Eastern it is already tomorrow -- and on a Sunday evening that
+    # rolled this into next week's window.
+    today = timezone.localdate()
     days = week * 7
     start_of_week = (
         today - timedelta(days=today.weekday()) - timedelta(days=days)
@@ -1123,6 +1127,17 @@ def list_areas(request):
     return qs
 
 
+# Sorts the chore list accepts. Values are the ORM ordering to apply; "dirtiest"
+# is None because Chore.dirtiness is a computed Python property, not a column,
+# so it cannot be ordered in SQL and is sorted after the list is built.
+CHORE_SORTS = {
+    "due": ("status", "nextDue", "lastCompleted", "effort", "chore_name", "id"),
+    "name": ("chore_name", "id"),
+    "effort": ("effort", "nextDue", "chore_name", "id"),
+    "dirtiest": None,
+}
+
+
 @api.get("/chores", response=List[ChoreOut])
 def list_chores(
     request,
@@ -1130,6 +1145,9 @@ def list_chores(
     timeframe: Optional[int] = None,
     assignee_id: Optional[int] = None,
     area_id: Optional[int] = None,
+    group_id: Optional[int] = None,
+    overdue: bool = False,
+    sort: str = "due",
 ):
     """
     The function `list_chores` retrieves a list of Chore objects.
@@ -1144,30 +1162,61 @@ def list_chores(
         timeframe (int): Days from today to retrieve. Retreives all if None. Default=None.
         assignee_id (int): Filter chores by assigned CustomUser ID. Retreives all if None. Default=None.
         area_id (int): Filter chores by Area ID. Retreives all if None. Default=None.
+        group_id (int): Filter chores by the AreaGroup their area belongs to. Default=None.
+        overdue (bool): Only chores whose due date has already passed. Default=False.
+        sort (str): One of `due`, `name`, `effort`, `dirtiest`. Default=`due`.
 
     Returns:
         (List[ChoreOut]): List of Chore objects.
     """
-    cache_key = f"chores:{inactive}:{timeframe}:{assignee_id}:{area_id}"
+    if sort not in CHORE_SORTS:
+        raise HttpError(
+            422,
+            f"Unknown sort '{sort}'. Expected one of: "
+            + ", ".join(sorted(CHORE_SORTS)),
+        )
+
+    # Every parameter has to be in the key. Adding a filter or a sort without
+    # extending it serves one request's results to a differently-filtered one.
+    cache_key = (
+        f"chores:{inactive}:{timeframe}:{assignee_id}:{area_id}"
+        f":{group_id}:{overdue}:{sort}"
+    )
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
 
-    qs = Chore.objects.all().order_by(
-        "status", "nextDue", "lastCompleted", "effort", "chore_name", "id"
-    )
+    # "dirtiest" still needs a stable base ordering, so ties after the Python
+    # sort below fall back to something deterministic rather than to whatever
+    # the database returns.
+    ordering = CHORE_SORTS[sort] or CHORE_SORTS["due"]
+    qs = Chore.objects.all().order_by(*ordering)
+
     if not inactive:
         qs = qs.filter(status=0)
     if timeframe is not None:
-        today = timezone.now().date()
+        today = timezone.localdate()
         target_date = today
         if timeframe > 0:
             target_date = today + timedelta(days=timeframe)
         qs = qs.filter(nextDue__lte=target_date)
+    if overdue:
+        # Strictly before today: something due today is not yet overdue, which
+        # is also how ChoreCard's "Due today" vs "N days overdue" reads.
+        #
+        # localdate(), NOT now().date(). USE_TZ is on and TIME_ZONE is
+        # America/New_York, so now().date() is the UTC date -- already tomorrow
+        # from about 8pm Eastern. The pre-existing `timeframe` filter above had
+        # the same bug: for those hours every evening it matched a day too far,
+        # while Chore.duedays and Chore.dirtiness use date.today() and did not.
+        qs = qs.filter(nextDue__lt=timezone.localdate())
     if assignee_id is not None:
         qs = qs.filter(assignee_id=assignee_id)
     if area_id is not None:
         qs = qs.filter(area_id=area_id)
+    if group_id is not None:
+        # Chores reach a group through their area.
+        qs = qs.filter(area__group_id=group_id)
     chore_list = []
 
     for chore in qs:
@@ -1212,6 +1261,12 @@ def list_chores(
             status=chore.status,
         )
         chore_list.append(chore_data)
+
+    if sort == "dirtiest":
+        # Chore.dirtiness is computed per chore in Python, so this cannot be an
+        # order_by. Sorted here on the built objects, which already carry the
+        # value, rather than recomputing it.
+        chore_list.sort(key=lambda c: c.dirtiness, reverse=True)
 
     cache.set(cache_key, chore_list, CACHE_TTL)
     return chore_list

@@ -63,11 +63,18 @@ export const useChoreStore = defineStore("chore", {
     med_thresh: 49,
     high_thresh: 74,
     vacation_mode: false,
+    // `sort` lives alongside the filters rather than beside them because the
+    // chores query is keyed on this whole object -- keeping it here is what
+    // makes changing the sort refetch. `hasActiveFilters` in ListView
+    // deliberately ignores it, since sorting is not filtering.
     filters: {
       inactive: false,
       timeframe: null,
       assignee_id: null,
       area_id: null,
+      group_id: null,
+      overdue: false,
+      sort: "due",
     },
   }),
   getters: {
