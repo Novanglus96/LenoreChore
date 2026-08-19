@@ -11,7 +11,7 @@
     <!-- Group colour as identity, not as a surface. See ChoreCard. -->
     <div
       class="lc-area-card__stripe"
-      :class="`bg-${props.area.group.group_color}`"
+      :class="`bg-${groupColor}`"
       aria-hidden="true"
     ></div>
 
@@ -20,7 +20,7 @@
         <v-avatar
           size="44"
           class="lc-area-card__icon flex-shrink-0"
-          :class="`text-${props.area.group.group_color}`"
+          :class="`text-${groupColor}`"
           aria-hidden="true"
         >
           <v-icon :icon="props.area.area_icon" size="24"></v-icon>
@@ -29,7 +29,7 @@
         <div class="flex-grow-1 min-width-0">
           <h2 class="text-h6 lc-area-card__title">{{ props.area.area_name }}</h2>
           <p class="text-caption text-medium-emphasis mb-0">
-            {{ props.area.group.group_name }}
+            {{ groupName }}
           </p>
         </div>
 
@@ -240,10 +240,14 @@ const props = defineProps({
   area: Object,
 });
 const dirtiness = computed(() => props.area.dirtiness || 0);
+
+// See ChoreCard: AreaOut.group is Optional now, so it has to be read as such.
+const groupColor = computed(() => props.area.group?.group_color || "outline");
+const groupName = computed(() => props.area.group?.group_name || "no group");
 const editForm = ref({
   id: props.area.id || 0,
   area_name: props.area.area_name || "",
-  group_id: props.area.group.id || 0,
+  group_id: props.area.group?.id || null,
   area_icon: props.area.area_icon || "",
 });
 
@@ -291,7 +295,7 @@ const dirtBand = computed(() => {
 
 const cardLabel = computed(
   () =>
-    `${props.area.area_name}, ${props.area.group.group_name}, ` +
+    `${props.area.area_name}, ${groupName.value}, ` +
     `${props.area.dueCount} of ${props.area.totalCount} chores due, ` +
     `${Math.ceil(dirtiness.value)} percent dirty`
 );

@@ -16,7 +16,7 @@
          whatever colour they picked. -->
     <div
       class="lc-chore-card__stripe"
-      :class="`bg-${localchore.area.group.group_color}`"
+      :class="`bg-${groupColor}`"
       aria-hidden="true"
     ></div>
 
@@ -25,7 +25,7 @@
         <v-avatar
           size="40"
           class="lc-chore-card__area-icon flex-shrink-0"
-          :class="`text-${localchore.area.group.group_color}`"
+          :class="`text-${groupColor}`"
           aria-hidden="true"
         >
           <v-icon :icon="localchore.area.area_icon" size="22"></v-icon>
@@ -38,7 +38,7 @@
           <p class="text-caption text-medium-emphasis mb-0">
             {{ localchore.area.area_name }}
             <span class="lc-visually-hidden">
-              in {{ localchore.area.group.group_name }}</span
+              in {{ groupName }}</span
             >
           </p>
         </div>
@@ -621,6 +621,16 @@ const callToggleChore = async (chore_id, active) => {
 // only signal before, which fails for anyone who cannot distinguish the hues --
 // and the thresholds are user-configurable, so the word is also the only thing
 // that explains why a given percentage is "filthy" in this household.
+// AreaOut.group is Optional now, matching the nullable column it maps -- an
+// area can legitimately have no group. Dereferencing it blindly here would just
+// move the crash from the API to the client.
+const groupColor = computed(
+  () => localchore.value?.area?.group?.group_color || "outline"
+);
+const groupName = computed(
+  () => localchore.value?.area?.group?.group_name || "no group"
+);
+
 const dirtBand = computed(() => {
   const dirt = localchore.value?.dirtiness ?? 0;
   const med = options.value?.med_thresh ?? 49;

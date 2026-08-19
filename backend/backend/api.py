@@ -18,7 +18,7 @@ from django.shortcuts import get_object_or_404
 from datetime import date, time, timedelta
 from ninja.errors import HttpError
 from dateutil.relativedelta import relativedelta
-from django.db.models import Count
+from django.db.models import Count, Max
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.core.cache import cache
@@ -271,12 +271,13 @@ class AreaGroupIn(Schema):
 
     Attributes:
         group_name (str): Area group name.
-        group_order (int): Area group order index.
+        group_order (int): Area group order index. Optional; on create, a group
+            with no order given is appended to the end of the list.
         group_color (str): Hex value of area group color.
     """
 
     group_name: str
-    group_order: int
+    group_order: Optional[int] = None
     group_color: str
 
 
@@ -331,8 +332,12 @@ class AreaOut(Schema):
     id: int
     area_name: str
     area_icon: str
-    group_id: int
-    group: AreaGroupOut
+    # Area.group is null=True with on_delete=SET_DEFAULT, so both of these can
+    # legitimately be None. They were declared non-Optional, which meant a single
+    # group-less area returned 500 from BOTH /areas and /chores -- the same shape
+    # as the two Pydantic-v2 bugs that needed the v1.4.1 hotfix.
+    group_id: Optional[int] = None
+    group: Optional[AreaGroupOut] = None
     dirtiness: int
     dueCount: int
     totalCount: int
@@ -867,7 +872,14 @@ def create_areagroup(request, payload: AreaGroupIn):
     Returns:
         (int): The ID of the newly created AreaGroup object.
     """
-    areagroup = AreaGroup.objects.create(**payload.model_dump())
+    data = payload.model_dump()
+    # A new group goes to the end unless the caller asks for a position. The
+    # frontend used to send a hardcoded 1 for every group, so ordering was a
+    # twelve-way tie broken by whatever the database felt like.
+    if not data.get("group_order"):
+        highest = AreaGroup.objects.aggregate(Max("group_order"))["group_order__max"]
+        data["group_order"] = (highest or 0) + 1
+    areagroup = AreaGroup.objects.create(**data)
     invalidate("areagroups")
     notify("areagroups")
     return {"id": areagroup.id}
@@ -1079,7 +1091,11 @@ def list_areagroups(request):
     cached = cache.get("areagroups")
     if cached is not None:
         return cached
-    qs = list(AreaGroup.objects.all())
+    # group_order exists precisely to order this list, and nothing was using it:
+    # a bare .all() returns database order, so every group picker in the app was
+    # in arbitrary order. group_name breaks ties left over from the era when the
+    # frontend hardcoded group_order=1 on every group it created.
+    qs = list(AreaGroup.objects.all().order_by("group_order", "group_name"))
     cache.set("areagroups", qs, CACHE_TTL)
     return qs
 
@@ -1319,7 +1335,11 @@ def update_areagroup(request, areagroup_id: int, payload: AreaGroupIn):
     """
     areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
     areagroup.group_name = payload.group_name
-    areagroup.group_order = payload.group_order
+    # group_order is optional on the way in (see AreaGroupIn), but the column is
+    # a non-null IntegerField -- assigning None unconditionally would turn a
+    # rename that omits the order into a 500. Omitting it means "leave it".
+    if payload.group_order is not None:
+        areagroup.group_order = payload.group_order
     areagroup.group_color = payload.group_color
     areagroup.save()
     invalidate("areagroups")
@@ -1571,9 +1591,24 @@ def update_option(request, option_id: int, payload: OptionIn):
 
 
 @api.delete("/areagroups/{areagroup_id}")
-def delete_areagroup(request, areagroup_id: int):
+def delete_areagroup(request, areagroup_id: int, reassign_to: Optional[int] = None):
     """
-    The function `delete_areagroup` deletes a given AreaGroup object.
+    The function `delete_areagroup` deletes a given AreaGroup object, moving any
+    areas that belong to it into another group first.
+
+    Area.group is `null=True, on_delete=SET_DEFAULT, default=1`, which made the
+    unguarded delete this replaces unsafe in three separate ways:
+
+    1. Deleting an ordinary group silently moved its areas to group 1 -- no
+       warning, no say in the destination.
+    2. Deleting group 1 set its own areas' group_id to 1, the row being deleted,
+       violating the foreign key.
+    3. Any area left group-less returned 500 from /areas and /chores, because
+       AreaOut.group was non-Optional. (That schema is fixed too, but an area
+       silently losing its group is still wrong.)
+
+    The reassignment is therefore explicit and happens before the delete, so
+    SET_DEFAULT never fires at all.
 
     Endpoint:
         - **Path**: `/api/v2/areagroups/{areagroup_id}`
@@ -1582,15 +1617,43 @@ def delete_areagroup(request, areagroup_id: int):
     Args:
         request (HttpRequest): The HTTP request object.
         areagroup_id (int): ID of the AreaGroup object to delete.
+        reassign_to (int): ID of the group to move this group's areas into.
+            Defaults to the lowest-ordered remaining group.
 
     Returns:
-        (str): Returns `success` if successful.
+        (dict): `success`, the destination group id, and how many areas moved.
     """
     areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
+
+    remaining = AreaGroup.objects.exclude(id=areagroup_id).order_by(
+        "group_order", "group_name"
+    )
+
+    # Areas have to land somewhere, so the last group cannot go.
+    if not remaining.exists():
+        raise HttpError(
+            400,
+            "This is the only area group. Create another one before deleting it.",
+        )
+
+    if reassign_to is None:
+        destination = remaining.first()
+    else:
+        if reassign_to == areagroup_id:
+            raise HttpError(400, "Cannot reassign areas to the group being deleted.")
+        destination = get_object_or_404(AreaGroup, id=reassign_to)
+
+    moved = Area.objects.filter(group_id=areagroup_id).update(group=destination)
     areagroup.delete()
-    invalidate("areagroups")
+
+    # Reassigning areas changes what /areas and /chores return, so those caches
+    # have to go too -- the old version invalidated "areagroups" alone and left
+    # every area still reporting its deleted group.
+    invalidate("areas", "areagroups")
+    invalidate_pattern("chores:*")
     notify("areagroups")
-    return {"success": True}
+    notify("areas")
+    return {"success": True, "reassigned_to": destination.id, "areas_moved": moved}
 
 
 @api.delete("/areas/{area_id}")

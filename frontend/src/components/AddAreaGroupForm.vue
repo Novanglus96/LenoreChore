@@ -86,9 +86,12 @@ const schema = yup.object({
 const dialog = ref(false);
 const busy = ref(false);
 
+// group_order is deliberately NOT sent. It used to be hardcoded to 1 on every
+// group the form created, so ordering was an n-way tie the database broke
+// however it liked. The API now appends a new group to the end when the field
+// is omitted, and reordering is its own operation.
 const DEFAULTS = () => ({
   group_color: "area1",
-  group_order: 1,
 });
 
 const formData = ref(DEFAULTS());
