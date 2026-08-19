@@ -254,6 +254,25 @@
   transform: translateY(0);
 }
 
+/* ── Touch targets ─────────────────────────────────────────────────────────
+   Vuetify's default icon-button hit area dips under the 44px that both
+   WCAG 2.5.8 and the platform HIGs ask for on touch.
+
+   This lived as a copy inside four components, each scoped to that component's
+   own action bar -- so the nav menu, the filter controls and every dialog
+   button missed it. Applying it once, to icon buttons and list items, is what
+   makes it a rule rather than four exceptions.
+
+   Bounded to the coarse-pointer breakpoint: on a desktop, 44px around every
+   icon button makes dense toolbars balloon for no benefit. */
+@media (max-width: 599px) {
+  .v-btn--icon,
+  .v-list-item {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
 /* ── Screen-reader-only utility ────────────────────────────────────────────
    For text that must be announced but not shown — the counterpart to giving
    icon-only controls an accessible name. */

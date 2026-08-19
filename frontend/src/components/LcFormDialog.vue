@@ -213,11 +213,5 @@ watch(model, async open => {
   .lc-form-dialog__body {
     padding: var(--lc-space-4);
   }
-
-  /* WCAG 2.5.8 and both platform HIGs ask for 44px on touch. */
-  .lc-form-dialog__bar :deep(.v-btn--icon) {
-    min-width: 44px;
-    min-height: 44px;
-  }
 }
 </style>

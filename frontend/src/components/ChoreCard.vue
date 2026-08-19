@@ -752,12 +752,5 @@ const computedAssignee = computed(() => {
     padding: var(--lc-space-3) var(--lc-space-3) var(--lc-space-2)
       calc(var(--lc-space-3) + 4px);
   }
-
-  /* Vuetify's default icon-button hit area dips under the 44px that both
-     WCAG 2.5.8 and the platform HIGs ask for on touch. */
-  .lc-chore-card__actions :deep(.v-btn--icon) {
-    min-width: 44px;
-    min-height: 44px;
-  }
 }
 </style>

@@ -295,10 +295,5 @@ const confirmDelete = async () => {
   .lc-group__header {
     padding-inline: var(--lc-space-1);
   }
-
-  .lc-group__header :deep(.v-btn--icon) {
-    min-width: 44px;
-    min-height: 44px;
-  }
 }
 </style>

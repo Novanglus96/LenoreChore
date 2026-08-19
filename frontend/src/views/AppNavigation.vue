@@ -13,7 +13,10 @@
           <v-icon icon="mdi-menu"></v-icon>
         </v-btn>
       </template>
-      <v-list nav>
+      <!-- Hidden on a phone: the bottom navigation offers these four, and a
+           menu that repeats them makes the same destination reachable two ways
+           with no way to tell which is authoritative. -->
+      <v-list v-if="!$vuetify.display.smAndDown" nav>
         <!-- The v-for alias used to be named `menu`, which shadowed the ref
              holding the overflow menu's open state -- so `@click="menu = false"`
              assigned to the loop variable and the intended close never
@@ -151,6 +154,7 @@
   import { useOptions } from "@/composables/optionsComposable";
   import VacationForm from "@/components/VacationForm.vue";
   import { version as appVersion } from "../../package.json";
+  import { DESTINATIONS } from "@/utils/navigation";
 
   const themeStore = useThemeStore();
   const offlineStore = useOfflineStore();
@@ -159,12 +163,8 @@
   const showVacationForm = ref(false);
   const store = useUserStore();
 
-  const menus = [
-    { title: "Dashboard", url: "/", icon: "mdi-home" },
-    { title: "List", url: "/list", icon: "mdi-view-list" },
-    { title: "Graphs", url: "/graphs", icon: "mdi-chart-bar" },
-    { title: "History", url: "/history", icon: "mdi-clipboard-clock-outline" },
-  ];
+  // Shared with BottomNav, so the two cannot offer different destinations.
+  const menus = DESTINATIONS;
 
   const menu = ref(false);
   const navMenu = ref(false);
