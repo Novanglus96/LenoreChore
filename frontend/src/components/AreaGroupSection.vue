@@ -71,13 +71,12 @@
     <div v-if="!expanded" class="lc-group__folded">
       <!-- A collapsed group still says how it is doing, or folding one away
            would mean losing sight of it entirely. -->
-      <v-progress-linear
-        :model-value="dirtiness"
-        :color="dirtBand.color"
-        height="6"
-        rounded
-        :aria-label="`${group.group_name}: ${dirtiness} percent dirty, ${dirtBand.label}`"
-      ></v-progress-linear>
+      <LcDirtBar
+        :value="dirtiness"
+        :height="6"
+        :show-label="false"
+        :label="group.group_name"
+      />
     </div>
 
     <v-expand-transition>
@@ -146,9 +145,10 @@ import { computed, ref } from "vue";
 import AreaCard from "@/components/AreaCard.vue";
 import AreaGroupForm from "@/components/AreaGroupForm.vue";
 import LcActionMenu from "@/components/LcActionMenu.vue";
+import LcDirtBar from "@/components/LcDirtBar.vue";
 import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
 import { useDashboardStore } from "@/stores/dashboard";
-import { useOptions } from "@/composables/optionsComposable";
+import { weightedDirtiness } from "@/utils/dirt";
 
 const props = defineProps({
   group: { type: Object, required: true },
@@ -163,7 +163,6 @@ const props = defineProps({
 const emit = defineEmits(["editArea", "removeArea", "move", "remove"]);
 
 const dashboard = useDashboardStore();
-const { options } = useOptions();
 
 const editOpen = ref(false);
 const deleteOpen = ref(false);
@@ -185,29 +184,9 @@ const totalCount = computed(() =>
   props.areas.reduce((sum, a) => sum + (a.totalCount || 0), 0)
 );
 
-// Chore-weighted, not a mean of means: total_dirtiness is the SUM of chore
-// dirtiness and totalCount the chore count, so dividing the sums gives the same
-// answer an area with all these chores in it would report. Averaging each
-// area's percentage would let a one-chore area outvote a twenty-chore one.
-const dirtiness = computed(() => {
-  const chores = totalCount.value;
-  if (!chores) return 0;
-  const total = props.areas.reduce(
-    (sum, a) => sum + (a.total_dirtiness || 0),
-    0
-  );
-  return Math.min(100, Math.round(total / chores));
-});
-
-// Same bands as ChoreCard and AreaCard, and the same reason: a word as well as
-// a colour.
-const dirtBand = computed(() => {
-  const med = options.value?.med_thresh ?? 49;
-  const high = options.value?.high_thresh ?? 74;
-  if (dirtiness.value <= med) return { color: "clean", label: "clean-ish" };
-  if (dirtiness.value <= high) return { color: "soiled", label: "getting there" };
-  return { color: "filthy", label: "filthy" };
-});
+// The same helper the dashboard's house reads, so a folded group's bar and the
+// window standing for it cannot disagree.
+const dirtiness = computed(() => weightedDirtiness(props.areas));
 
 // Shared with the cards below, so the group's own actions reach a thumb the
 // same way theirs do -- this was a v-menu, which on a phone opened wherever it
