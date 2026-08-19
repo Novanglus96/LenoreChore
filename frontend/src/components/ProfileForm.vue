@@ -29,17 +29,17 @@
         v-slot="{ errors }"
       >
         <div class="lc-profile__names">
-          <Field name="first_name" v-slot="{ field }">
+          <Field name="first_name" v-slot="{ componentField }">
             <v-text-field
-              v-bind="field"
+              v-bind="componentField"
               label="First name"
               :counter="20"
               :error-messages="errors.first_name"
             ></v-text-field>
           </Field>
-          <Field name="last_name" v-slot="{ field }">
+          <Field name="last_name" v-slot="{ componentField }">
             <v-text-field
-              v-bind="field"
+              v-bind="componentField"
               label="Last name"
               :counter="20"
               :error-messages="errors.last_name"

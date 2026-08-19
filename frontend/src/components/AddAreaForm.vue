@@ -22,9 +22,9 @@
     <fieldset class="lc-fieldset lc-form-group">
       <legend class="lc-form-group__legend text-body-2">What</legend>
 
-      <Field name="area_name" v-slot="{ field, errorMessage }">
+      <Field name="area_name" v-slot="{ componentField, errorMessage }">
         <v-text-field
-          v-bind="field"
+          v-bind="componentField"
           label="Area name"
           prepend-inner-icon="mdi-format-title"
           :error-messages="errorMessage"

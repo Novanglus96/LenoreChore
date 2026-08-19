@@ -26,18 +26,18 @@
     <fieldset class="lc-fieldset lc-form-group">
       <legend class="lc-form-group__legend text-body-2">What</legend>
 
-      <Field name="chore_name" v-slot="{ field, errorMessage }">
+      <Field name="chore_name" v-slot="{ componentField, errorMessage }">
         <v-text-field
-          v-bind="field"
+          v-bind="componentField"
           label="Chore name"
           prepend-inner-icon="mdi-format-title"
           :error-messages="errorMessage"
         ></v-text-field>
       </Field>
 
-      <Field name="area_id" v-slot="{ field, errorMessage }">
+      <Field name="area_id" v-slot="{ componentField, errorMessage }">
         <v-select
-          v-bind="field"
+          v-bind="componentField"
           label="Area"
           prepend-inner-icon="mdi-home-outline"
           :items="areas"
@@ -56,18 +56,18 @@
       <!-- The one place two fields genuinely belong on a line: they read as a
            single phrase, "every 3 day(s)". -->
       <div class="lc-form-row">
-        <Field name="intervalNumber" v-slot="{ field, errorMessage }">
+        <Field name="intervalNumber" v-slot="{ componentField, errorMessage }">
           <v-select
-            v-bind="field"
+            v-bind="componentField"
             label="Every"
             :items="intervals"
             :error-messages="errorMessage"
           ></v-select>
         </Field>
 
-        <Field name="unit" v-slot="{ field, errorMessage }">
+        <Field name="unit" v-slot="{ componentField, errorMessage }">
           <v-select
-            v-bind="field"
+            v-bind="componentField"
             label="Unit"
             :items="units"
             :error-messages="errorMessage"
