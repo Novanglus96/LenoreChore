@@ -1,3 +1,10 @@
+# [1.5.0-alpha.18](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.17...v1.5.0-alpha.18) (2026-08-19)
+
+
+### Bug Fixes
+
+* refuse to start on a stale version, and guard the stamp ([e837051](https://github.com/Novanglus96/LenoreChore/commit/e8370513ab9cf046cbaeb50a1a640ea768549fc6))
+
 # [1.5.0-alpha.17](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.16...v1.5.0-alpha.17) (2026-08-19)
 
 
