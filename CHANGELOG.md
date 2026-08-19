@@ -1,3 +1,10 @@
+# [1.5.0-alpha.15](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.14...v1.5.0-alpha.15) (2026-08-19)
+
+
+### Bug Fixes
+
+* unbreak the Docker build, and stop flake8 contradicting ruff ([8e41f95](https://github.com/Novanglus96/LenoreChore/commit/8e41f953640e09086327455bf3100c2b4cd0edd5)), closes [#23](https://github.com/Novanglus96/LenoreChore/issues/23)
+
 # [1.5.0-alpha.14](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.13...v1.5.0-alpha.14) (2026-08-19)
 
 
