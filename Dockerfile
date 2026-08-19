@@ -48,7 +48,7 @@ LABEL maintainer="John Adams"
 # The single-container consolidation replaced backend/Dockerfile and
 # frontend/Dockerfile, each of which carried this label, and it was never
 # re-added here -- so published images have carried no version label since.
-LABEL version="1.5.0-alpha.18"
+LABEL version="1.5.0-alpha.19"
 
 # Install nginx, supervisord, and runtime deps
 RUN apt-get update && apt-get install -y --no-install-recommends \

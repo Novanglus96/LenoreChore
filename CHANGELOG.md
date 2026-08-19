@@ -1,3 +1,10 @@
+# [1.5.0-alpha.19](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.18...v1.5.0-alpha.19) (2026-08-19)
+
+
+### Features
+
+* cards stop expanding, and every action gets a name ([ce96160](https://github.com/Novanglus96/LenoreChore/commit/ce9616095eeb615eccfb980735b7b5a4591a2fa8))
+
 # [1.5.0-alpha.18](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.17...v1.5.0-alpha.18) (2026-08-19)
 
 
