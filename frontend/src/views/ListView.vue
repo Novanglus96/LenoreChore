@@ -98,14 +98,19 @@
       <v-empty-state
         v-else
         :class="{ 'lc-cleared': justCleared }"
-        icon="mdi-party-popper"
         :title="justCleared ? 'That was the last one' : 'Nothing needs doing'"
         :text="
           justCleared
             ? 'The whole list is clear. Go and enjoy it.'
             : 'Every chore is done and dusted. Enjoy it while it lasts.'
         "
-      ></v-empty-state>
+      >
+        <!-- The media slot rather than the icon prop: tokens.css springs
+             .lc-cleared .v-empty-state__media, which is this. -->
+        <template v-slot:media>
+          <LcSponge :size="132" />
+        </template>
+      </v-empty-state>
     </v-container>
   </div>
 </template>
@@ -115,6 +120,7 @@ import { computed, ref, watch } from "vue";
 import ChoreCard from "@/components/ChoreCard.vue";
 import ChoreFilterBar from "@/components/ChoreFilterBar.vue";
 import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
+import LcSponge from "@/components/LcSponge.vue";
 import { useChores } from "@/composables/choresComposasble";
 import { useChoreStore } from "@/stores/chores";
 import { useUserStore } from "@/stores/user";

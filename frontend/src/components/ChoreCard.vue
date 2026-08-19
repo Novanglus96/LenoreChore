@@ -1,301 +1,307 @@
 <template>
-  <!-- The card is an <article> with its own accessible name, so a screen
-       reader can navigate the list by chore instead of hearing an unbroken run
-       of unlabelled groups. -->
-  <v-card
-    class="lc-chore-card lc-lift"
-    :class="{ 'lc-completing': isCompleting }"
-    tag="article"
-    :aria-label="cardLabel"
-    :rounded="$vuetify.display.smAndDown ? 0 : 'lg'"
-    :elevation="0"
-    border
-  >
-    <!-- The area group's colour, as identity rather than as a surface. Text
-         never sits on it, so its contrast is not load-bearing and users keep
-         whatever colour they picked. -->
-    <div
-      class="lc-chore-card__stripe"
-      :class="`bg-${groupColor}`"
-      aria-hidden="true"
-    ></div>
+  <!-- The shell exists for the bubbles alone.
+       ─────────────────────────────────────────────────────────────────────
+       They cannot live inside the card: it is overflow:hidden, which clips the
+       burst back to the card's own edges, and lc-complete animates the card's
+       opacity to zero -- taking every child with it, so the bubbles would fade
+       at exactly the moment they are meant to be seen. -->
+  <div class="lc-chore-card__shell">
+    <!-- The card is an <article> with its own accessible name, so a screen
+         reader can navigate the list by chore instead of hearing an unbroken run
+         of unlabelled groups. -->
+    <v-card
+      class="lc-chore-card lc-lift"
+      :class="{ 'lc-completing': isCompleting }"
+      tag="article"
+      :aria-label="cardLabel"
+      :rounded="$vuetify.display.smAndDown ? 0 : 'lg'"
+      :elevation="0"
+      border
+    >
+      <!-- The area group's colour, as identity rather than as a surface. Text
+           never sits on it, so its contrast is not load-bearing and users keep
+           whatever colour they picked. -->
+      <div
+        class="lc-chore-card__stripe"
+        :class="`bg-${groupColor}`"
+        aria-hidden="true"
+      ></div>
 
-    <div class="lc-chore-card__body">
-      <div class="d-flex align-start ga-3">
-        <v-avatar
-          size="40"
-          class="lc-chore-card__area-icon flex-shrink-0"
-          :class="`text-${groupColor}`"
-          aria-hidden="true"
-        >
-          <v-icon :icon="localchore.area.area_icon" size="22"></v-icon>
-        </v-avatar>
-
-        <div class="flex-grow-1 min-width-0">
-          <h3 class="text-subtitle-1 font-weight-medium lc-chore-card__title">
-            {{ localchore.chore_name }}
-          </h3>
-          <p class="text-caption text-medium-emphasis mb-0">
-            {{ localchore.area.area_name }}
-            <span class="lc-visually-hidden">
-              in {{ groupName }}</span
-            >
-          </p>
-        </div>
-
-        <!-- Due state. Overdue is carried by the word "overdue", an icon and a
-             slow pulse -- not by red text alone, which is invisible to anyone
-             who cannot distinguish it. -->
-        <div v-if="localchore.status == 0" class="text-right flex-shrink-0">
-          <v-chip
-            size="small"
-            :color="localchore.isOverdue ? 'filthy' : undefined"
-            :variant="localchore.isOverdue ? 'flat' : 'tonal'"
-            :class="{ 'lc-breathe': localchore.isOverdue }"
+      <div class="lc-chore-card__body">
+        <div class="d-flex align-start ga-3">
+          <v-avatar
+            size="40"
+            class="lc-chore-card__area-icon flex-shrink-0"
+            :class="`text-${groupColor}`"
+            aria-hidden="true"
           >
-            <v-icon
-              start
-              size="14"
-              :icon="localchore.isOverdue ? 'mdi-alert-circle' : 'mdi-clock-outline'"
-              aria-hidden="true"
-            ></v-icon>
-            {{ dueLabel }}
-          </v-chip>
+            <v-icon :icon="localchore.area.area_icon" size="22"></v-icon>
+          </v-avatar>
+
+          <div class="flex-grow-1 min-width-0">
+            <h3 class="text-subtitle-1 font-weight-medium lc-chore-card__title">
+              {{ localchore.chore_name }}
+            </h3>
+            <p class="text-caption text-medium-emphasis mb-0">
+              {{ localchore.area.area_name }}
+              <span class="lc-visually-hidden">
+                in {{ groupName }}</span
+              >
+            </p>
+          </div>
+
+          <!-- Due state. Overdue is carried by the word "overdue", an icon and a
+               slow pulse -- not by red text alone, which is invisible to anyone
+               who cannot distinguish it. -->
+          <div v-if="localchore.status == 0" class="text-right flex-shrink-0">
+            <v-chip
+              size="small"
+              :color="localchore.isOverdue ? 'filthy' : undefined"
+              :variant="localchore.isOverdue ? 'flat' : 'tonal'"
+              :class="{ 'lc-breathe': localchore.isOverdue }"
+            >
+              <v-icon
+                start
+                size="14"
+                :icon="localchore.isOverdue ? 'mdi-alert-circle' : 'mdi-clock-outline'"
+                aria-hidden="true"
+              ></v-icon>
+              {{ dueLabel }}
+            </v-chip>
+          </div>
         </div>
+
+        <!-- Dirtiness. The percentage is spoken by the progressbar role, and the
+             band name ("filthy") is redundant text so the meaning does not depend
+             on the bar's colour. -->
+        <div v-if="localchore.status == 0" class="mt-3">
+          <LcDirtBar :value="localchore.dirtiness" />
+        </div>
+
+        <v-alert
+          v-else-if="localchore.status == 3"
+          type="info"
+          density="compact"
+          class="mt-3"
+          icon="mdi-island"
+          text="Vacation mode — this chore is paused."
+        ></v-alert>
+
+        <div class="d-flex align-center justify-space-between mt-3 ga-2">
+          <!-- Claiming used to be an unlabelled clipboard icon four buttons
+               along the action bar, while the chip that named the assignee sat
+               here doing nothing. The action now lives on the thing it changes.
+
+               A v-btn rather than a clickable v-chip: the global VBtn default is
+               already a pill, so it reads the same, and a button is focusable and
+               operable by keyboard without any of it having to be hand-rolled. -->
+          <v-btn
+            class="lc-chore-card__assignee"
+            size="small"
+            variant="tonal"
+            :color="localchore.isAssigned ? 'primary' : undefined"
+            :prepend-icon="
+              localchore.assignee ? 'mdi-account-check' : 'mdi-account-outline'
+            "
+            :aria-label="claimLabel"
+            :aria-pressed="localchore.isAssigned ? 'true' : 'false'"
+            :disabled="localchore.status > 0"
+            @click="callClaimChore(localchore.id, localchore.assignee_id)"
+          >
+            {{ computedAssignee }}
+          </v-btn>
+
+          <!-- Display only, and now honestly so. These were `:readonly="!expand"`
+               -- a control that looked live on a collapsed card and silently did
+               nothing. Effort is a setting, so it is set in the editor. -->
+          <div class="d-flex align-center ga-1">
+            <span class="lc-visually-hidden">
+              Effort: {{ effortLabel(localchore.effort) }}
+            </span>
+            <v-rating
+              :model-value="localchore.effort"
+              readonly
+              length="3"
+              size="18"
+              density="compact"
+              active-color="accent"
+              aria-hidden="true"
+            ></v-rating>
+          </div>
+        </div>
+
+        <!-- The one fact the history panel existed to show. It was behind a
+             button, in a table, in a second expanding panel; it is one line. -->
+        <p class="text-caption text-medium-emphasis mb-0 mt-2">
+          {{ lastDoneLabel }}
+        </p>
       </div>
 
-      <!-- Dirtiness. The percentage is spoken by the progressbar role, and the
-           band name ("filthy") is redundant text so the meaning does not depend
-           on the bar's colour. -->
-      <div v-if="localchore.status == 0" class="mt-3">
-        <v-progress-linear
-          :model-value="localchore.dirtiness"
-          :color="dirtBand.color"
-          height="22"
-          rounded
-          :striped="localchore.dirtiness > 0"
-          :aria-label="`${Math.ceil(localchore.dirtiness)} percent dirty, ${dirtBand.label}`"
-        >
-          <span class="text-caption font-weight-medium">
-            {{ Math.ceil(localchore.dirtiness) }}% · {{ dirtBand.label }}
-          </span>
-        </v-progress-linear>
-      </div>
+      <v-divider></v-divider>
 
-      <v-alert
-        v-else-if="localchore.status == 3"
-        type="info"
-        density="compact"
-        class="mt-3"
-        icon="mdi-island"
-        text="Vacation mode — this chore is paused."
-      ></v-alert>
-
-      <div class="d-flex align-center justify-space-between mt-3 ga-2">
-        <!-- Claiming used to be an unlabelled clipboard icon four buttons
-             along the action bar, while the chip that named the assignee sat
-             here doing nothing. The action now lives on the thing it changes.
-
-             A v-btn rather than a clickable v-chip: the global VBtn default is
-             already a pill, so it reads the same, and a button is focusable and
-             operable by keyboard without any of it having to be hand-rolled. -->
+      <!-- One primary action, one secondary, and everything else behind a menu
+           whose items have names in words.
+           ─────────────────────────────────────────────────────────────────────
+           This was six icon buttons whose only labels were tooltips, which a
+           touch device never shows -- and four of them greyed out whenever the
+           inline editor was open, for reasons the screen never gave. -->
+      <v-card-actions class="lc-chore-card__actions">
         <v-btn
-          class="lc-chore-card__assignee"
+          variant="flat"
+          color="primary"
           size="small"
-          variant="tonal"
-          :color="localchore.isAssigned ? 'primary' : undefined"
-          :prepend-icon="
-            localchore.assignee ? 'mdi-account-check' : 'mdi-account-outline'
-          "
-          :aria-label="claimLabel"
-          :aria-pressed="localchore.isAssigned ? 'true' : 'false'"
-          :disabled="localchore.status > 0"
-          @click="callClaimChore(localchore.id, localchore.assignee_id)"
+          prepend-icon="mdi-check"
+          :aria-label="`Mark ${localchore.chore_name} complete`"
+          :disabled="localchore.status > 0 || isCompleting"
+          @click="callCompleteChore(localchore.id, getID)"
         >
-          {{ computedAssignee }}
+          Done
         </v-btn>
 
-        <!-- Display only, and now honestly so. These were `:readonly="!expand"`
-             -- a control that looked live on a collapsed card and silently did
-             nothing. Effort is a setting, so it is set in the editor. -->
-        <div class="d-flex align-center ga-1">
-          <span class="lc-visually-hidden">
-            Effort: {{ effortLabel(localchore.effort) }}
-          </span>
-          <v-rating
-            :model-value="localchore.effort"
-            readonly
-            length="3"
-            size="18"
-            density="compact"
-            active-color="accent"
-            aria-hidden="true"
-          ></v-rating>
-        </div>
-      </div>
+        <v-btn
+          variant="text"
+          size="small"
+          prepend-icon="mdi-alarm-snooze"
+          :aria-label="`Snooze ${localchore.chore_name}`"
+          :disabled="localchore.status > 0"
+          @click="openSnooze()"
+        >
+          Snooze
+        </v-btn>
 
-      <!-- The one fact the history panel existed to show. It was behind a
-           button, in a table, in a second expanding panel; it is one line. -->
-      <p class="text-caption text-medium-emphasis mb-0 mt-2">
-        {{ lastDoneLabel }}
-      </p>
+        <v-spacer></v-spacer>
+
+        <LcActionMenu
+          :items="menuItems"
+          :title="localchore.chore_name"
+          @select="onMenuSelect"
+        >
+          <template v-slot:activator="{ props: activatorProps }">
+            <v-btn
+              v-bind="activatorProps"
+              icon="mdi-dots-vertical"
+              :aria-label="`More actions for ${localchore.chore_name}`"
+            >
+              <v-icon icon="mdi-dots-vertical"></v-icon>
+            </v-btn>
+          </template>
+        </LcActionMenu>
+      </v-card-actions>
+
+      <!-- ── Overlays ────────────────────────────────────────────────────────
+           All three are overlays rather than panels that grow the card. Nothing
+           on this card changes height any more, so a list of them stays where it
+           was when you last looked at it. -->
+      <ChoreEditDialog
+        v-model="editOpen"
+        :chore="localchore"
+        :remote-update-pending="remoteUpdatePending"
+        @dirty="editDirty = true"
+        @submit="callSaveChore"
+        @cancel="cancelEdit"
+      />
+
+      <v-dialog v-model="snooze" scrollable max-width="420px">
+        <v-card>
+          <v-card-title>Snooze {{ localchore.chore_name }}</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text>
+            <!-- VueDatePicker does not render an element carrying the id its
+                 `uid` prop implies, so a <label for> would point at nothing.
+                 Labelling the group is what actually reaches the control. -->
+            <div
+              :id="snoozeLabelId"
+              class="text-body-2 mb-2"
+              aria-hidden="true"
+            >
+              Push the due date to
+            </div>
+            <div role="group" :aria-labelledby="snoozeLabelId">
+              <VueDatePicker
+                v-model="snoozeDate"
+                :timezone="userTimezone"
+                model-type="yyyy-MM-dd"
+                :enable-time-picker="false"
+                auto-apply
+                teleport
+                format="yyyy-MM-dd"
+              ></VueDatePicker>
+            </div>
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn variant="text" @click="snooze = false">Cancel</v-btn>
+            <v-btn
+              variant="flat"
+              color="primary"
+              @click="callSnoozeChore(localchore.id, snoozeDate)"
+            >
+              Snooze
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="historyOpen" scrollable max-width="420px">
+        <v-card>
+          <v-card-title class="text-subtitle-1 font-weight-medium">
+            History for {{ localchore.chore_name }}
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-table v-if="localchore.last_three_history_items?.length">
+              <thead>
+                <tr>
+                  <th class="text-left">Date</th>
+                  <th class="text-left">Completed By</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="item in localchore.last_three_history_items"
+                  :key="`${item.completed_date}-${item.completed_by}`"
+                >
+                  <td>{{ item.completed_date }}</td>
+                  <td>{{ item.completed_by }}</td>
+                </tr>
+              </tbody>
+            </v-table>
+            <p v-else class="text-body-2 text-medium-emphasis mb-0">
+              This chore has never been completed.
+            </p>
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn variant="text" @click="historyOpen = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <LcConfirmDialog
+        v-model="deleteDialog"
+        title="Delete this chore?"
+        icon="mdi-delete-forever-outline"
+        confirm-label="Delete chore"
+        confirm-icon="mdi-delete-forever-outline"
+        @confirm="callDeleteChore(localchore)"
+      >
+        Deleting <strong>{{ localchore.chore_name }}</strong> from
+        <strong>{{ localchore.area.area_name }}</strong> also removes it from the
+        history. This cannot be undone.
+      </LcConfirmDialog>
+    </v-card>
+
+    <div v-if="isCompleting" class="lc-bubbles" aria-hidden="true">
+      <span
+        v-for="bubble in bubbles"
+        :key="bubble.i"
+        class="lc-bubbles__bubble"
+        :style="bubble.style"
+      ></span>
     </div>
-
-    <v-divider></v-divider>
-
-    <!-- One primary action, one secondary, and everything else behind a menu
-         whose items have names in words.
-         ─────────────────────────────────────────────────────────────────────
-         This was six icon buttons whose only labels were tooltips, which a
-         touch device never shows -- and four of them greyed out whenever the
-         inline editor was open, for reasons the screen never gave. -->
-    <v-card-actions class="lc-chore-card__actions">
-      <v-btn
-        variant="flat"
-        color="primary"
-        size="small"
-        prepend-icon="mdi-check"
-        :aria-label="`Mark ${localchore.chore_name} complete`"
-        :disabled="localchore.status > 0 || isCompleting"
-        @click="callCompleteChore(localchore.id, getID)"
-      >
-        Done
-      </v-btn>
-
-      <v-btn
-        variant="text"
-        size="small"
-        prepend-icon="mdi-alarm-snooze"
-        :aria-label="`Snooze ${localchore.chore_name}`"
-        :disabled="localchore.status > 0"
-        @click="openSnooze()"
-      >
-        Snooze
-      </v-btn>
-
-      <v-spacer></v-spacer>
-
-      <LcActionMenu
-        :items="menuItems"
-        :title="localchore.chore_name"
-        @select="onMenuSelect"
-      >
-        <template v-slot:activator="{ props: activatorProps }">
-          <v-btn
-            v-bind="activatorProps"
-            icon="mdi-dots-vertical"
-            :aria-label="`More actions for ${localchore.chore_name}`"
-          >
-            <v-icon icon="mdi-dots-vertical"></v-icon>
-          </v-btn>
-        </template>
-      </LcActionMenu>
-    </v-card-actions>
-
-    <!-- ── Overlays ────────────────────────────────────────────────────────
-         All three are overlays rather than panels that grow the card. Nothing
-         on this card changes height any more, so a list of them stays where it
-         was when you last looked at it. -->
-    <ChoreEditDialog
-      v-model="editOpen"
-      :chore="localchore"
-      :remote-update-pending="remoteUpdatePending"
-      @dirty="editDirty = true"
-      @submit="callSaveChore"
-      @cancel="cancelEdit"
-    />
-
-    <v-dialog v-model="snooze" scrollable max-width="420px">
-      <v-card>
-        <v-card-title>Snooze {{ localchore.chore_name }}</v-card-title>
-        <v-divider></v-divider>
-        <v-card-text>
-          <!-- VueDatePicker does not render an element carrying the id its
-               `uid` prop implies, so a <label for> would point at nothing.
-               Labelling the group is what actually reaches the control. -->
-          <div
-            :id="snoozeLabelId"
-            class="text-body-2 mb-2"
-            aria-hidden="true"
-          >
-            Push the due date to
-          </div>
-          <div role="group" :aria-labelledby="snoozeLabelId">
-            <VueDatePicker
-              v-model="snoozeDate"
-              :timezone="userTimezone"
-              model-type="yyyy-MM-dd"
-              :enable-time-picker="false"
-              auto-apply
-              teleport
-              format="yyyy-MM-dd"
-            ></VueDatePicker>
-          </div>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn variant="text" @click="snooze = false">Cancel</v-btn>
-          <v-btn
-            variant="flat"
-            color="primary"
-            @click="callSnoozeChore(localchore.id, snoozeDate)"
-          >
-            Snooze
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="historyOpen" scrollable max-width="420px">
-      <v-card>
-        <v-card-title class="text-subtitle-1 font-weight-medium">
-          History for {{ localchore.chore_name }}
-        </v-card-title>
-        <v-divider></v-divider>
-        <v-card-text>
-          <v-table v-if="localchore.last_three_history_items?.length">
-            <thead>
-              <tr>
-                <th class="text-left">Date</th>
-                <th class="text-left">Completed By</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in localchore.last_three_history_items"
-                :key="`${item.completed_date}-${item.completed_by}`"
-              >
-                <td>{{ item.completed_date }}</td>
-                <td>{{ item.completed_by }}</td>
-              </tr>
-            </tbody>
-          </v-table>
-          <p v-else class="text-body-2 text-medium-emphasis mb-0">
-            This chore has never been completed.
-          </p>
-        </v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn variant="text" @click="historyOpen = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <LcConfirmDialog
-      v-model="deleteDialog"
-      title="Delete this chore?"
-      icon="mdi-delete-forever-outline"
-      confirm-label="Delete chore"
-      confirm-icon="mdi-delete-forever-outline"
-      @confirm="callDeleteChore(localchore)"
-    >
-      Deleting <strong>{{ localchore.chore_name }}</strong> from
-      <strong>{{ localchore.area.area_name }}</strong> also removes it from the
-      history. This cannot be undone.
-    </LcConfirmDialog>
-  </v-card>
+  </div>
 </template>
 <script setup>
 // defineProps/defineEmits are compiler macros — importing them warns on every
@@ -303,9 +309,9 @@
 import { computed, ref, watch, onMounted } from "vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import { useUserStore } from "@/stores/user";
-import { useOptions } from "@/composables/optionsComposable";
 import { effortLabel } from "@/utils/labels";
 import LcActionMenu from "@/components/LcActionMenu.vue";
+import LcDirtBar from "@/components/LcDirtBar.vue";
 import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
 import ChoreEditDialog from "@/components/ChoreEditDialog.vue";
 
@@ -316,7 +322,6 @@ import ChoreEditDialog from "@/components/ChoreEditDialog.vue";
 const userTimezone =
   Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
 
-const { options } = useOptions();
 const snooze = ref(false);
 // Its own value rather than a v-model straight onto localchore.nextDue: the
 // picker writes on every change, so picking a date and then pressing Cancel
@@ -482,8 +487,35 @@ const prefersReducedMotion = () =>
   typeof window.matchMedia === "function" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/**
+ * The burst, scattered fresh on each completion.
+ *
+ * Built at the moment of completing rather than held as static markup: a list
+ * of forty cards would otherwise carry 560 bubble elements that stay invisible
+ * for the entire life of the page.
+ */
+const bubbles = ref([]);
+
+const makeBubbles = () =>
+  Array.from({ length: 14 }, (_, i) => {
+    const size = Math.round(6 + Math.random() * 14);
+    return {
+      i,
+      style: {
+        width: `${size}px`,
+        height: `${size}px`,
+        left: `${Math.round(10 + Math.random() * 80)}%`,
+        top: `${Math.round(20 + Math.random() * 60)}%`,
+        "--lc-bubble-dx": `${Math.round(Math.random() * 80 - 40)}px`,
+        "--lc-bubble-dy": `${Math.round(-90 + Math.random() * 60)}px`,
+        animationDelay: `${Math.round(Math.random() * 140)}ms`,
+      },
+    };
+  });
+
 const callCompleteChore = async (chore_id, user_id) => {
   if (isCompleting.value) return; // a second click would emit twice
+  bubbles.value = makeBubbles();
   isCompleting.value = true;
 
   // Drain the bar in step with the card leaving.
@@ -506,29 +538,15 @@ const callClaimChore = async (chore_id, user_id) => {
 const callToggleChore = async (chore_id, active) => {
   emit("toggleActivation", chore_id, active);
 };
-// The dirtiness band, carrying BOTH a colour and a word. Colour alone was the
-// only signal before, which fails for anyone who cannot distinguish the hues --
-// and the thresholds are user-configurable, so the word is also the only thing
-// that explains why a given percentage is "filthy" in this household.
-// AreaOut.group is Optional now, matching the nullable column it maps -- an
-// area can legitimately have no group. Dereferencing it blindly here would just
-// move the crash from the API to the client.
+// AreaOut.group is Optional, matching the nullable column it maps -- an area
+// can legitimately have no group. Dereferencing it blindly here would just move
+// the crash from the API to the client.
 const groupColor = computed(
   () => localchore.value?.area?.group?.group_color || "outline"
 );
 const groupName = computed(
   () => localchore.value?.area?.group?.group_name || "no group"
 );
-
-const dirtBand = computed(() => {
-  const dirt = localchore.value?.dirtiness ?? 0;
-  const med = options.value?.med_thresh ?? 49;
-  const high = options.value?.high_thresh ?? 74;
-
-  if (dirt <= med) return { color: "clean", label: "clean-ish" };
-  if (dirt <= high) return { color: "soiled", label: "getting there" };
-  return { color: "filthy", label: "filthy" };
-});
 
 const dueLabel = computed(() => {
   const days = localchore.value?.duedays ?? 0;
@@ -600,6 +618,11 @@ const computedAssignee = computed(() => {
 });
 </script>
 <style scoped>
+/* Not overflow:hidden, and never animated -- that is its entire job. */
+.lc-chore-card__shell {
+  position: relative;
+}
+
 .lc-chore-card {
   position: relative;
   overflow: hidden;

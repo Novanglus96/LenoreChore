@@ -51,19 +51,7 @@
       </div>
 
       <div class="mt-3">
-        <v-progress-linear
-          v-if="!options?.vacation_mode"
-          :model-value="dirtiness"
-          :color="dirtBand.color"
-          height="22"
-          rounded
-          :striped="dirtiness > 0"
-          :aria-label="`${Math.ceil(dirtiness)} percent dirty, ${dirtBand.label}`"
-        >
-          <span class="text-caption font-weight-medium">
-            {{ Math.ceil(dirtiness) }}% · {{ dirtBand.label }}
-          </span>
-        </v-progress-linear>
+        <LcDirtBar v-if="!options?.vacation_mode" :value="dirtiness" />
 
         <v-alert
           v-else
@@ -200,6 +188,7 @@ import { useRouter } from "vue-router";
 import { useOptions } from "@/composables/optionsComposable";
 import { iconLabel } from "@/utils/labels";
 import LcActionMenu from "@/components/LcActionMenu.vue";
+import LcDirtBar from "@/components/LcDirtBar.vue";
 import LcFormDialog from "@/components/LcFormDialog.vue";
 import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
 
@@ -276,18 +265,6 @@ const callEditArea = async values => {
   editcard.value = false;
   emit("editArea", { ...editForm.value, area_name: values.area_name });
 };
-// Same bands as ChoreCard: a colour AND a word, so the meaning does not depend
-// on being able to tell the hues apart.
-const dirtBand = computed(() => {
-  const dirt = dirtiness.value;
-  const med = options.value?.med_thresh ?? 49;
-  const high = options.value?.high_thresh ?? 74;
-
-  if (dirt <= med) return { color: "clean", label: "clean-ish" };
-  if (dirt <= high) return { color: "soiled", label: "getting there" };
-  return { color: "filthy", label: "filthy" };
-});
-
 const cardLabel = computed(
   () =>
     `${props.area.area_name}, ${groupName.value}, ` +

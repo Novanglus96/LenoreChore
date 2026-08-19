@@ -128,6 +128,58 @@
   pointer-events: none;
 }
 
+/* Soap bubbles, riding the completion beat.
+   ─────────────────────────────────────────────────────────────────────────
+   The card already springs away; these leave with it. Deliberately on the same
+   duration and the same spring as lc-complete so the two read as one gesture
+   rather than as a card animation with an effect stuck on top.
+
+   Each bubble carries its own --lc-bubble-dx/dy and delay, set inline, so a
+   burst scatters without fourteen keyframe blocks. */
+@keyframes lc-bubble {
+  0% {
+    transform: translate(0, 0) scale(0.3);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(var(--lc-bubble-dx, 0), var(--lc-bubble-dy, -60px))
+      scale(1);
+    opacity: 0;
+  }
+}
+
+.lc-bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 1;
+}
+
+.lc-bubbles__bubble {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(var(--v-theme-primary), 0.7);
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(var(--v-theme-surface), 0.9),
+    rgba(var(--v-theme-primary), 0.16)
+  );
+  animation: lc-bubble var(--lc-dur-celebrate) var(--lc-ease-spring) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Fourteen things flying outward is precisely what this query is for, and
+     unlike the fades elsewhere in this file there is nothing left worth
+     keeping once the movement goes. */
+  .lc-bubbles {
+    display: none;
+  }
+}
+
 /* The last one.
    ─────────────────────────────────────────────────────────────────────────
    Clearing the FINAL chore is the emotional peak of a chore app, and it looked

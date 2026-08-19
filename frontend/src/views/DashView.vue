@@ -3,6 +3,18 @@
     <v-container :class="$vuetify.display.smAndDown ? 'pa-0' : ''">
       <h1 class="lc-visually-hidden">Dashboard</h1>
 
+      <!-- The household, drawn. Above the greeting rather than behind it, so
+           no text ever sits on the artwork and its contrast is never
+           load-bearing. Held back until the data lands: a spotless house at a
+           household that has simply not loaded yet would be a lie, and the
+           skeletons below already say "wait". -->
+      <LcHouse
+        v-if="!isLoading"
+        class="lc-dash__house"
+        :dirtiness="householdDirtiness"
+        :groups="houseGroups"
+      />
+
       <!-- Summary before detail. The dashboard opened straight into a grid of
            cards, and nothing on the screen said hello or told you how the
            household was doing without reading every card. Rendered only once
@@ -70,11 +82,13 @@
 <script setup>
 import { computed, watch } from "vue";
 import AreaGroupSection from "@/components/AreaGroupSection.vue";
+import LcHouse from "@/components/LcHouse.vue";
 import { useAreas } from "@/composables/areasComposable";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
 import { useDashboardStore } from "@/stores/dashboard";
 import { useUserStore } from "@/stores/user";
 import { greeting, choreSummary } from "@/utils/greeting";
+import { weightedDirtiness } from "@/utils/dirt";
 
 const { areas, isLoading: areasLoading, editArea, removeArea } = useAreas();
 const {
@@ -148,6 +162,23 @@ const sections = computed(() => {
 
   return out;
 });
+
+// What the house reads. Chore-weighted across every area, through the same
+// helper AreaGroupSection uses for a single group -- so the house and the bars
+// beneath it cannot disagree about how the household is doing.
+const householdDirtiness = computed(() => weightedDirtiness(areas.value));
+
+// One window per section, INCLUDING the synthetic "No group" bucket: its
+// chores count toward the household, so leaving it out would draw a house
+// cleaner than the numbers underneath it.
+const houseGroups = computed(() =>
+  sections.value.map(section => ({
+    id: section.group.id,
+    name: section.group.group_name,
+    color: section.group.group_color,
+    dirtiness: weightedDirtiness(section.areas),
+  }))
+);
 
 // "Move down" must stop at the last REAL group; the ungrouped bucket is not
 // reorderable because it is not a row in the database.
@@ -225,6 +256,10 @@ const deleteGroup = async (payload, done) => {
 </script>
 
 <style scoped>
+.lc-dash__house {
+  margin-bottom: var(--lc-space-3);
+}
+
 .lc-greeting {
   padding: var(--lc-space-2) var(--lc-space-3) var(--lc-space-4);
 }
