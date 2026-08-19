@@ -48,7 +48,12 @@
       <!-- No spacer. The header is as wide as the container, so pushing this
            to the far right stranded it a long way from the group it acts on
            once the window got wide. It belongs with the name and the count. -->
-      <v-menu v-if="isRealGroup">
+      <LcActionMenu
+        v-if="isRealGroup"
+        :items="menuItems"
+        :title="group.group_name"
+        @select="onMenuSelect"
+      >
         <template v-slot:activator="{ props: activatorProps }">
           <v-btn
             v-bind="activatorProps"
@@ -60,38 +65,7 @@
             <v-icon icon="mdi-dots-vertical"></v-icon>
           </v-btn>
         </template>
-        <v-list density="compact">
-          <v-list-item prepend-icon="mdi-pencil-outline" @click="editOpen = true">
-            <v-list-item-title>Edit group</v-list-item-title>
-          </v-list-item>
-          <v-list-item
-            prepend-icon="mdi-arrow-up"
-            :disabled="isFirst"
-            @click="emit('move', group, -1)"
-          >
-            <v-list-item-title>Move up</v-list-item-title>
-          </v-list-item>
-          <v-list-item
-            prepend-icon="mdi-arrow-down"
-            :disabled="isLast"
-            @click="emit('move', group, 1)"
-          >
-            <v-list-item-title>Move down</v-list-item-title>
-          </v-list-item>
-          <v-divider></v-divider>
-          <v-list-item
-            prepend-icon="mdi-delete-forever-outline"
-            base-color="filthy"
-            :disabled="isOnlyGroup"
-            @click="openDelete"
-          >
-            <v-list-item-title>Delete group</v-list-item-title>
-            <v-list-item-subtitle v-if="isOnlyGroup">
-              The last group cannot be deleted
-            </v-list-item-subtitle>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      </LcActionMenu>
     </div>
 
     <div v-if="!expanded" class="lc-group__folded">
@@ -171,6 +145,7 @@
 import { computed, ref } from "vue";
 import AreaCard from "@/components/AreaCard.vue";
 import AreaGroupForm from "@/components/AreaGroupForm.vue";
+import LcActionMenu from "@/components/LcActionMenu.vue";
 import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
 import { useDashboardStore } from "@/stores/dashboard";
 import { useOptions } from "@/composables/optionsComposable";
@@ -233,6 +208,41 @@ const dirtBand = computed(() => {
   if (dirtiness.value <= high) return { color: "soiled", label: "getting there" };
   return { color: "filthy", label: "filthy" };
 });
+
+// Shared with the cards below, so the group's own actions reach a thumb the
+// same way theirs do -- this was a v-menu, which on a phone opened wherever it
+// could fit while every card underneath opened a bottom sheet.
+const menuItems = computed(() => [
+  { key: "edit", title: "Edit group…", icon: "mdi-pencil-outline" },
+  {
+    key: "up",
+    title: "Move up",
+    icon: "mdi-arrow-up",
+    disabled: props.isFirst,
+  },
+  {
+    key: "down",
+    title: "Move down",
+    icon: "mdi-arrow-down",
+    disabled: props.isLast,
+  },
+  {
+    key: "delete",
+    title: "Delete group",
+    icon: "mdi-delete-forever-outline",
+    color: "filthy",
+    dividerBefore: true,
+    disabled: props.isOnlyGroup,
+    subtitle: props.isOnlyGroup ? "The last group cannot be deleted" : undefined,
+  },
+]);
+
+const onMenuSelect = key => {
+  if (key === "edit") editOpen.value = true;
+  else if (key === "up") emit("move", props.group, -1);
+  else if (key === "down") emit("move", props.group, 1);
+  else if (key === "delete") openDelete();
+};
 
 const openDelete = () => {
   // Pre-select the same destination the API would choose, so the field shows

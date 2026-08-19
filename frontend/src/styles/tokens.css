@@ -21,6 +21,12 @@
   --lc-radius-xl: 26px;
   --lc-radius-pill: 999px;
 
+  /* The group-colour stripe down the leading edge of a chore or area card.
+     One token, because the stripe's width and the padding that clears it have
+     to move together -- and they lived as separate literals in two components,
+     so widening the area card's stripe left the chore card's at 4px. */
+  --lc-card-stripe: 6px;
+
   /* ── Spacing ─────────────────────────────────────────────────────────────
      4px base, matching the scale Vuetify's own padding and margin utilities
      use, so custom CSS lines up with them. */
