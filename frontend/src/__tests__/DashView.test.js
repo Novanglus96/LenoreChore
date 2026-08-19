@@ -1,0 +1,182 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ref } from "vue";
+import { mount } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
+
+const area = (id, name, group, extra = {}) => ({
+  id,
+  area_name: name,
+  area_icon: "mdi-home",
+  group,
+  group_id: group?.id ?? null,
+  dirtiness: 0,
+  dueCount: 0,
+  totalCount: 0,
+  total_dirtiness: 0,
+  ...extra,
+});
+
+const GROUP_A = { id: 1, group_name: "Downstairs", group_color: "area1", group_order: 2 };
+const GROUP_B = { id: 2, group_name: "Upstairs", group_color: "area2", group_order: 1 };
+
+let areasData = ref([]);
+let groupsData = ref([]);
+const editAreaGroup = vi.fn().mockResolvedValue({});
+
+vi.mock("@/composables/areasComposable", () => ({
+  useAreas: () => ({
+    areas: areasData,
+    isLoading: ref(false),
+    editArea: vi.fn(),
+    removeArea: vi.fn(),
+  }),
+}));
+
+vi.mock("@/composables/areaGroupsComposable", () => ({
+  useAreaGroups: () => ({
+    areagroups: groupsData,
+    isLoading: ref(false),
+    addAreaGroup: vi.fn(),
+    editAreaGroup: (...a) => editAreaGroup(...a),
+    removeAreaGroup: vi.fn().mockResolvedValue({}),
+  }),
+}));
+
+// AreaCard calls useRouter() for its "See chores" button. No router is
+// installed here, so stub it rather than let every mount warn.
+vi.mock("vue-router", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
+vi.mock("@/composables/optionsComposable", () => ({
+  useOptions: () => ({
+    options: ref({ med_thresh: 49, high_thresh: 74, vacation_mode: false }),
+  }),
+}));
+
+import DashView from "@/views/DashView.vue";
+
+const vuetify = createVuetify({ components, directives });
+
+const mountDash = () =>
+  mount(DashView, { global: { plugins: [vuetify, createPinia()] } });
+
+describe("DashView — areas are grouped, not flattened", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    editAreaGroup.mockClear();
+    areasData = ref([]);
+    groupsData = ref([]);
+  });
+
+  it("renders one section per group, in group_order", () => {
+    groupsData.value = [GROUP_A, GROUP_B];
+    areasData.value = [
+      area(10, "Kitchen", GROUP_A),
+      area(11, "Bathroom", GROUP_B),
+    ];
+
+    const text = mountDash().text();
+    // GROUP_B has the lower group_order, so it comes first despite being
+    // second in the array.
+    expect(text.indexOf("Upstairs")).toBeLessThan(text.indexOf("Downstairs"));
+    expect(text).toContain("Kitchen");
+    expect(text).toContain("Bathroom");
+  });
+
+  it("keeps an empty group visible", () => {
+    groupsData.value = [GROUP_A, GROUP_B];
+    areasData.value = [area(10, "Kitchen", GROUP_A)];
+
+    // A group that renders as nothing looks broken rather than empty.
+    const text = mountDash().text();
+    expect(text).toContain("Upstairs");
+    expect(text).toContain("No areas in this group yet");
+  });
+
+  it("shows an area whose group is null rather than dropping it", () => {
+    // AreaOut.group is Optional now, matching the nullable column.
+    groupsData.value = [GROUP_A];
+    areasData.value = [
+      area(10, "Kitchen", GROUP_A),
+      area(12, "Orphan room", null),
+    ];
+
+    const text = mountDash().text();
+    expect(text).toContain("Orphan room");
+    expect(text).toContain("No group");
+  });
+
+  it("totals due and total counts per group", () => {
+    groupsData.value = [GROUP_B];
+    areasData.value = [
+      area(10, "Bathroom", GROUP_B, { dueCount: 2, totalCount: 5 }),
+      area(11, "Landing", GROUP_B, { dueCount: 1, totalCount: 3 }),
+    ];
+
+    expect(mountDash().text()).toContain("3 / 8 due");
+  });
+
+  it("weights group dirtiness by chore count, not by area", () => {
+    groupsData.value = [GROUP_B];
+    areasData.value = [
+      // 1 chore at 100%
+      area(10, "Big", GROUP_B, { totalCount: 1, total_dirtiness: 100 }),
+      // 9 chores at 0%
+      area(11, "Small", GROUP_B, { totalCount: 9, total_dirtiness: 0 }),
+    ];
+
+    const wrapper = mountDash();
+    const section = wrapper.findComponent({ name: "AreaGroupSection" });
+    // A mean of the two areas' percentages would be 50. Chore-weighted is 10.
+    expect(section.vm.dirtiness).toBe(10);
+  });
+});
+
+describe("DashView — reordering repairs the legacy all-ties state", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    editAreaGroup.mockClear();
+    areasData = ref([]);
+    groupsData = ref([]);
+  });
+
+  it("renumbers when every group shares group_order", async () => {
+    // The state every existing install is in: AddAreaGroupForm hardcoded
+    // group_order: 1 on every group it ever created. A swap of two 1s is a
+    // no-op, which is why this renumbers instead.
+    const tied = [
+      { id: 1, group_name: "Alpha", group_color: "area1", group_order: 1 },
+      { id: 2, group_name: "Beta", group_color: "area2", group_order: 1 },
+      { id: 3, group_name: "Gamma", group_color: "area3", group_order: 1 },
+    ];
+    groupsData.value = tied;
+
+    const wrapper = mountDash();
+    // Move Gamma (last) up one place -> Alpha, Gamma, Beta.
+    await wrapper.vm.moveGroup(tied[2], -1);
+
+    const written = editAreaGroup.mock.calls.map(c => [c[0].id, c[0].group_order]);
+    // Alpha already wants 1 and holds 1, so it is not rewritten.
+    expect(written).toEqual([
+      [3, 2],
+      [2, 3],
+    ]);
+  });
+
+  it("does nothing at the ends of the list", async () => {
+    groupsData.value = [
+      { id: 1, group_name: "Alpha", group_color: "area1", group_order: 1 },
+      { id: 2, group_name: "Beta", group_color: "area2", group_order: 2 },
+    ];
+
+    const wrapper = mountDash();
+    await wrapper.vm.moveGroup(groupsData.value[0], -1);
+    await wrapper.vm.moveGroup(groupsData.value[1], 1);
+
+    expect(editAreaGroup).not.toHaveBeenCalled();
+  });
+});
