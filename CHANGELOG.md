@@ -1,3 +1,10 @@
+# [1.5.0-alpha.20](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.19...v1.5.0-alpha.20) (2026-08-19)
+
+
+### Bug Fixes
+
+* bind form controls with componentField, so labels stop sitting on values ([532660a](https://github.com/Novanglus96/LenoreChore/commit/532660ac6787321d2ce6998ec698ed0f9a5ff4d1))
+
 # [1.5.0-alpha.19](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.18...v1.5.0-alpha.19) (2026-08-19)
 
 
