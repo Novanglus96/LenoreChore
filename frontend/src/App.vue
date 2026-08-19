@@ -17,6 +17,7 @@
     </div>
 
     <AppNavigationVue />
+    <BottomNav />
     <v-main>
       <!-- tabindex="-1" makes this programmatically focusable but keeps it out
            of the tab order, which is what lets the router move focus here after
@@ -99,6 +100,7 @@
 
 <script setup>
 import AppNavigationVue from "./views/AppNavigation.vue";
+import BottomNav from "./components/BottomNav.vue";
 import { useChoreStore } from "@/stores/chores";
 import { useUserStore } from "@/stores/user";
 import { useThemeStore } from "@/stores/theme";

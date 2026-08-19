@@ -369,10 +369,5 @@ const cardLabel = computed(
     padding: var(--lc-space-3) var(--lc-space-3) var(--lc-space-2)
       calc(var(--lc-space-3) + 4px);
   }
-
-  .lc-area-card__actions :deep(.v-btn--icon) {
-    min-width: 44px;
-    min-height: 44px;
-  }
 }
 </style>
