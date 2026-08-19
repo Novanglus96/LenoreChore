@@ -1,3 +1,16 @@
+# [1.5.0-alpha.14](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.13...v1.5.0-alpha.14) (2026-08-19)
+
+
+### Bug Fixes
+
+* show the task filter even when nothing repeats yet ([12e8267](https://github.com/Novanglus96/LenoreChore/commit/12e8267b708924884d96c9f5528335f2ae857999))
+
+
+### Features
+
+* filter by task, to work one chore through every area ([8bc688f](https://github.com/Novanglus96/LenoreChore/commit/8bc688ffce45a5d9cef4f645f7cd22edd471fb91))
+* rebuild the chores filter, with sort, quick filters and group ([5184904](https://github.com/Novanglus96/LenoreChore/commit/5184904f3e590265da0e4df59a56ca61f7d4fc94))
+
 # [1.5.0-alpha.13](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0-alpha.12...v1.5.0-alpha.13) (2026-08-19)
 
 
