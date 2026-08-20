@@ -9,7 +9,7 @@ async function createChoreFunction(newChore) {
   const chorestore = useChoreStore();
   try {
     const response = await apiClient.post("/chores", newChore);
-    chorestore.showSnackbar("Chore created successfully!", "success");
+    chorestore.showSnackbar("Chore added", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not created: ");
@@ -23,7 +23,7 @@ async function updateChoreFunction(updatedChore) {
       "/chores/" + updatedChore.id,
       updatedChore,
     );
-    chorestore.showSnackbar("Chore updated successfully!", "success");
+    chorestore.showSnackbar("Chore saved", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not updated: ");
@@ -37,10 +37,29 @@ async function completeChoreFunction(completedChore) {
       "/chores/completechore/" + completedChore.id,
       completedChore,
     );
-    chorestore.showSnackbar("Chore completed successfully!", "success");
+    // The payoff line. The card has already sprung away by the time this
+    // lands, so it confirms rather than announces.
+    chorestore.showSnackbar("Nice — that's one done.", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not completed: ");
+  }
+}
+
+async function completeChoresFunction(batch) {
+  const chorestore = useChoreStore();
+  try {
+    const response = await apiClient.post("/chores/complete", batch);
+    const n = response.data?.completed ?? 0;
+    // The count comes from the server, not from what was asked: paused and
+    // disabled chores are skipped, so the two can legitimately differ.
+    chorestore.showSnackbar(
+      n === 1 ? "Nice — that's one done." : `Nice — ${n} done in one go.`,
+      "success",
+    );
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "Chores not completed: ");
   }
 }
 
@@ -51,7 +70,7 @@ async function snoozeChoreFunction(snoozedChore) {
       "/chores/snoozechore/" + snoozedChore.id,
       snoozedChore,
     );
-    chorestore.showSnackbar("Chore snoozed successfully!", "success");
+    chorestore.showSnackbar("Snoozed — it'll come back around.", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not snoozed: ");
@@ -65,7 +84,11 @@ async function claimChoreFunction(claimedChore) {
       "/chores/claimchore/" + claimedChore.id,
       claimedChore,
     );
-    chorestore.showSnackbar("Chore claimed successfully!", "success");
+    // The same endpoint claims and releases; assignee_id is which.
+    chorestore.showSnackbar(
+      claimedChore.assignee_id ? "It's yours." : "Back in the pool.",
+      "success",
+    );
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not claimed: ");
@@ -79,7 +102,12 @@ async function toggleChoreFunction(toggledChore) {
       "/chores/togglechore/" + toggledChore.id,
       toggledChore,
     );
-    chorestore.showSnackbar("Chore toggled successfully!", "success");
+    // status 0 is active, so this says which way it went rather than that
+    // something was "toggled".
+    chorestore.showSnackbar(
+      toggledChore.status === 0 ? "Chore is back on." : "Chore paused.",
+      "success",
+    );
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not toggled: ");
@@ -90,7 +118,7 @@ async function deleteChoreFunction(deletedChore) {
   const chorestore = useChoreStore();
   try {
     const response = await apiClient.delete("/chores/" + deletedChore.id);
-    chorestore.showSnackbar("Chore deleted successfully!", "success");
+    chorestore.showSnackbar("Chore deleted", "success");
     return response.data;
   } catch (error) {
     handleApiError(error, "Chore not deleted: ");
@@ -99,22 +127,70 @@ async function deleteChoreFunction(deletedChore) {
 
 async function getChoresFunction(filters) {
   try {
-    let params = "";
-    params = "inactive=" + filters.inactive;
+    // URLSearchParams rather than string concatenation: the hand-built version
+    // was one missing "&" away from a silently wrong query, and it grew a
+    // parameter every time the filter did.
+    const params = new URLSearchParams();
+    params.set("inactive", String(Boolean(filters.inactive)));
     if (filters.timeframe != null) {
-      params = params + "&timeframe=" + filters.timeframe;
+      params.set("timeframe", filters.timeframe);
     }
     if (filters.assignee_id) {
-      params = params + "&assignee_id=" + filters.assignee_id;
+      params.set("assignee_id", filters.assignee_id);
     }
     if (filters.area_id) {
-      params = params + "&area_id=" + filters.area_id;
+      params.set("area_id", filters.area_id);
     }
-    const response = await apiClient.get("/chores?" + params);
+    if (filters.group_id) {
+      params.set("group_id", filters.group_id);
+    }
+    if (filters.chore_name) {
+      params.set("chore_name", filters.chore_name);
+    }
+    if (filters.overdue) {
+      params.set("overdue", "true");
+    }
+    // Omitted when it is the default, so the common request keeps the URL --
+    // and therefore the Workbox cache entry -- it had before.
+    if (filters.sort && filters.sort !== "due") {
+      params.set("sort", filters.sort);
+    }
+    const response = await apiClient.get("/chores?" + params.toString());
     return response.data;
   } catch (error) {
     handleApiError(error, "Chores not fetched: ");
   }
+}
+
+async function getChoreNamesFunction() {
+  try {
+    const response = await apiClient.get("/chores/names");
+    return response.data;
+  } catch (error) {
+    handleApiError(error, "Chore names not fetched: ");
+  }
+}
+
+/**
+ * The names that exist on more than one active chore -- dusting that lives
+ * separately in every room, and so on. Feeds the "one task, every area" filter.
+ *
+ * Its own query rather than something derived from the chores list, because
+ * that list is itself filtered: deriving the options from it would make them
+ * disappear as soon as one was chosen.
+ */
+export function useChoreNames() {
+  const userStore = useUserStore();
+  const isAuthenticated = computed(() => userStore.isLoggedIn);
+
+  const { data: choreNames, isLoading } = useQuery({
+    queryKey: ["chorenames"],
+    queryFn: getChoreNamesFunction,
+    select: response => response,
+    enabled: isAuthenticated,
+  });
+
+  return { choreNames, isLoading };
 }
 
 export function useChores() {
@@ -133,6 +209,10 @@ export function useChores() {
     mutationFn: createChoreFunction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
+      // The chore-name index counts ACTIVE chores by name, so a create,
+      // rename, delete or disable can change it. complete/snooze/claim
+      // cannot, and deliberately do not refetch it.
+      queryClient.invalidateQueries({ queryKey: ["chorenames"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
@@ -141,6 +221,10 @@ export function useChores() {
     mutationFn: updateChoreFunction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
+      // The chore-name index counts ACTIVE chores by name, so a create,
+      // rename, delete or disable can change it. complete/snooze/claim
+      // cannot, and deliberately do not refetch it.
+      queryClient.invalidateQueries({ queryKey: ["chorenames"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
@@ -166,6 +250,32 @@ export function useChores() {
           queryClient.setQueryData(key, data)
         );
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chores"] });
+      queryClient.invalidateQueries({ queryKey: ["areas"] });
+      queryClient.invalidateQueries({ queryKey: ["historyitems"] });
+      queryClient.invalidateQueries({ queryKey: ["weeklytotals"] });
+    },
+  });
+
+  const completeChoresMutation = useMutation({
+    mutationFn: completeChoresFunction,
+    onMutate: async batch => {
+      // Same optimistic removal the single completion does, so the round
+      // clears in one gesture rather than card by card as replies arrive.
+      await queryClient.cancelQueries({ queryKey: ["chores"] });
+      const snapshots = queryClient.getQueriesData({ queryKey: ["chores"] });
+      const ids = new Set(batch.ids);
+      queryClient.setQueriesData({ queryKey: ["chores"] }, old =>
+        Array.isArray(old) ? old.filter(c => !ids.has(c.id)) : old
+      );
+      return { snapshots };
+    },
+    onError: (error, _vars, context) => {
+      context?.snapshots?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data)
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
@@ -277,6 +387,10 @@ export function useChores() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
+      // The chore-name index counts ACTIVE chores by name, so a create,
+      // rename, delete or disable can change it. complete/snooze/claim
+      // cannot, and deliberately do not refetch it.
+      queryClient.invalidateQueries({ queryKey: ["chorenames"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
@@ -285,12 +399,28 @@ export function useChores() {
     mutationFn: deleteChoreFunction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chores"] });
+      // The chore-name index counts ACTIVE chores by name, so a create,
+      // rename, delete or disable can change it. complete/snooze/claim
+      // cannot, and deliberately do not refetch it.
+      queryClient.invalidateQueries({ queryKey: ["chorenames"] });
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
 
+  // mutateAsync, not mutate: the caller needs to know whether this actually
+  // succeeded. The form dialogs keep themselves open and disabled until it
+  // settles, and close only on success -- previously they closed synchronously
+  // on the next line, so a failed POST showed an error over a dialog that had
+  // already vanished with the user's input in it.
+  //
+  // mutationFn rejects on failure: every *Function above routes its catch
+  // through handleApiError, which rethrows on every branch.
+  async function completeAll(batch) {
+    return completeChoresMutation.mutateAsync(batch);
+  }
+
   async function addChore(newChore) {
-    createChoreMutation.mutate(newChore);
+    return createChoreMutation.mutateAsync(newChore);
   }
 
   async function editChore(updatedChore) {
@@ -317,6 +447,7 @@ export function useChores() {
   return {
     chores,
     isLoading,
+    completeAll,
     addChore,
     editChore,
     removeChore,
