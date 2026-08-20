@@ -1,0 +1,12 @@
+# Build output. `npm run lint` runs eslint with --fix over `.`, so without this
+# it not only reported errors from generated bundles and the Workbox service
+# worker, it REWROTE them in place.
+dist/
+dev-dist/
+
+# Coverage and dependency output.
+coverage/
+node_modules/
+
+# Static assets served as-is.
+public/
