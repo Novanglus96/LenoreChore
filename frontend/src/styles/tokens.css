@@ -1,0 +1,401 @@
+/* ===========================================================================
+   LenoreChore design tokens
+   ===========================================================================
+   Shape, motion and spacing. Colour lives in plugins/vuetify.js, because
+   Vuetify owns theme colours and duplicating them here would let the two
+   drift.
+
+   The motion tokens are the load-bearing part of this file. The design
+   direction puts the app's personality in HOW THINGS MOVE rather than in
+   illustration or ornament, so these durations and curves are the vocabulary
+   every component animates with. Use the tokens; do not hand-write timings.
+   =========================================================================== */
+
+:root {
+  /* ── Shape ───────────────────────────────────────────────────────────────
+     A deliberate scale rather than per-component values. `lg` is the card
+     radius and the one most likely to be reached for. */
+  --lc-radius-sm: 8px;
+  --lc-radius-md: 12px;
+  --lc-radius-lg: 18px;
+  --lc-radius-xl: 26px;
+  --lc-radius-pill: 999px;
+
+  /* The group-colour stripe down the leading edge of a chore or area card.
+     One token, because the stripe's width and the padding that clears it have
+     to move together -- and they lived as separate literals in two components,
+     so widening the area card's stripe left the chore card's at 4px. */
+  --lc-card-stripe: 6px;
+
+  /* ── Spacing ─────────────────────────────────────────────────────────────
+     4px base, matching the scale Vuetify's own padding and margin utilities
+     use, so custom CSS lines up with them. */
+  --lc-space-1: 4px;
+  --lc-space-2: 8px;
+  --lc-space-3: 12px;
+  --lc-space-4: 16px;
+  --lc-space-5: 24px;
+  --lc-space-6: 32px;
+
+  /* ── Motion: duration ────────────────────────────────────────────────────
+     quick     — state flips the user should barely notice (hover, focus)
+     base      — the default for anything entering or leaving
+     slow      — larger surfaces travelling further (panels, sheets)
+     celebrate — the completion moment, and only that. It is longer than a
+                 normal transition on purpose: this is the payoff beat of the
+                 whole app, and rushing it is what makes such moments feel
+                 cheap rather than satisfying. */
+  --lc-dur-quick: 120ms;
+  --lc-dur-base: 220ms;
+  --lc-dur-slow: 380ms;
+  --lc-dur-celebrate: 620ms;
+
+  /* ── Motion: easing ──────────────────────────────────────────────────────
+     standard   — Material's standard curve. Decelerates into place.
+     emphasized — for motion that should read as deliberate.
+     spring     — overshoots slightly then settles. Reserved for the
+                  completion moment; used everywhere it reads as jittery.
+     exit       — accelerates out. Things leaving should not linger. */
+  --lc-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --lc-ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --lc-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --lc-ease-exit: cubic-bezier(0.3, 0, 1, 1);
+
+  /* ── Elevation ───────────────────────────────────────────────────────────
+     Softer and more diffuse than Vuetify's defaults, which read as dated.
+     Tinted toward the primary hue rather than neutral black. */
+  --lc-shadow-1: 0 1px 2px rgba(0, 38, 45, 0.06),
+    0 1px 3px rgba(0, 38, 45, 0.08);
+  --lc-shadow-2: 0 2px 6px rgba(0, 38, 45, 0.07),
+    0 6px 14px rgba(0, 38, 45, 0.08);
+  --lc-shadow-3: 0 8px 20px rgba(0, 38, 45, 0.1),
+    0 16px 32px rgba(0, 38, 45, 0.1);
+}
+
+/* Dark theme shadows need far more opacity to register against a dark ground;
+   the light values are invisible there. */
+.v-theme--myCustomDarkTheme {
+  --lc-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --lc-shadow-2: 0 2px 6px rgba(0, 0, 0, 0.5), 0 6px 14px rgba(0, 0, 0, 0.45);
+  --lc-shadow-3: 0 8px 20px rgba(0, 0, 0, 0.55), 0 16px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────────
+   Honouring this is not optional, and for vestibular disorders it is a
+   genuine accessibility requirement rather than a preference.
+
+   Durations collapse to ~0 instead of animations being disabled outright,
+   because several components rely on transitionend/animationend firing to
+   clean up. A zeroed duration still fires those events; `animation: none`
+   does not, and would leave elements stuck mid-state.
+
+   Opacity fades are deliberately KEPT (at quick duration): they convey state
+   change without any implied movement, so they do not trigger the symptoms
+   this query exists to prevent. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --lc-dur-quick: 1ms;
+    --lc-dur-base: 1ms;
+    --lc-dur-slow: 1ms;
+    --lc-dur-celebrate: 1ms;
+    --lc-ease-spring: var(--lc-ease-standard);
+  }
+}
+
+/* ── Motion primitives ─────────────────────────────────────────────────────
+   Shared classes so components do not each invent their own keyframes. */
+
+/* The completion beat: lift, then away. Paired with the dirtiness bar
+   draining, this is the app's signature moment. */
+@keyframes lc-complete {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  30% {
+    transform: scale(1.02) translateY(-6px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.96) translateY(8px);
+    opacity: 0;
+  }
+}
+
+.lc-completing {
+  animation: lc-complete var(--lc-dur-celebrate) var(--lc-ease-spring) forwards;
+  /* The card is on its way out; further clicks would emit duplicate mutations. */
+  pointer-events: none;
+}
+
+/* Soap bubbles, riding the completion beat.
+   ─────────────────────────────────────────────────────────────────────────
+   The card already springs away; these leave with it. Deliberately on the same
+   duration and the same spring as lc-complete so the two read as one gesture
+   rather than as a card animation with an effect stuck on top.
+
+   Each bubble carries its own --lc-bubble-dx/dy and delay, set inline, so a
+   burst scatters without fourteen keyframe blocks. */
+@keyframes lc-bubble {
+  0% {
+    transform: translate(0, 0) scale(0.3);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(var(--lc-bubble-dx, 0), var(--lc-bubble-dy, -60px))
+      scale(1);
+    opacity: 0;
+  }
+}
+
+.lc-bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 1;
+}
+
+.lc-bubbles__bubble {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(var(--v-theme-primary), 0.7);
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(var(--v-theme-surface), 0.9),
+    rgba(var(--v-theme-primary), 0.16)
+  );
+  animation: lc-bubble var(--lc-dur-celebrate) var(--lc-ease-spring) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Fourteen things flying outward is precisely what this query is for, and
+     unlike the fades elsewhere in this file there is nothing left worth
+     keeping once the movement goes. */
+  .lc-bubbles {
+    display: none;
+  }
+}
+
+/* The last one.
+   ─────────────────────────────────────────────────────────────────────────
+   Clearing the FINAL chore is the emotional peak of a chore app, and it looked
+   exactly like clearing the fifth of twenty: the card sprang away and an empty
+   state appeared, flatly. This gives that empty state an entrance, on the same
+   spring the completion beat uses, so the two read as one gesture.
+
+   Only when a completion emptied the list -- arriving at an already-empty list
+   is not an achievement, and celebrating it would cheapen the times it is. */
+@keyframes lc-cleared {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.lc-cleared {
+  animation: lc-cleared var(--lc-dur-celebrate) var(--lc-ease-spring) both;
+}
+
+/* The payoff inside the payoff: the icon overshoots a beat after the panel
+   settles. Reduced motion drops the movement and keeps the fade, as everywhere
+   else in this file. */
+@keyframes lc-cleared-pop {
+  0% {
+    transform: scale(0.4) rotate(-12deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15) rotate(4deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.lc-cleared .v-empty-state__media {
+  animation: lc-cleared-pop var(--lc-dur-celebrate) var(--lc-ease-spring) 120ms
+    both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-cleared,
+  .lc-cleared .v-empty-state__media {
+    animation: none;
+  }
+}
+
+/* Overdue chores breathe, very slowly. Slow enough to read as ambient rather
+   than as an alert that needs dismissing — it should draw the eye on a second
+   pass through the list, not demand attention on the first. */
+@keyframes lc-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+.lc-breathe {
+  animation: lc-breathe 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* A pulsing element is exactly what this query is for. Drop to a static
+     emphasis instead of animating faster. */
+  .lc-breathe {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Interactive lift. Applied to cards and tiles that respond to pointer. */
+.lc-lift {
+  transition: box-shadow var(--lc-dur-base) var(--lc-ease-standard),
+    transform var(--lc-dur-base) var(--lc-ease-standard);
+}
+
+@media (hover: hover) {
+  /* Guarded: on touch devices :hover sticks after a tap, leaving the card
+     visibly raised until something else is touched. */
+  .lc-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--lc-shadow-3);
+  }
+}
+
+.lc-lift:active {
+  transform: translateY(0) scale(0.995);
+  transition-duration: var(--lc-dur-quick);
+}
+
+/* ── Focus ─────────────────────────────────────────────────────────────────
+   Vuetify's default focus treatment is easy to lose against tinted surfaces.
+   A visible, consistent focus ring is a WCAG requirement and the thing
+   keyboard users navigate by, so it is defined once, globally, and uses
+   :focus-visible so pointer users never see it. */
+:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+  border-radius: var(--lc-radius-sm);
+}
+
+/* ── Card grid ─────────────────────────────────────────────────────────────
+   Dash and List both rendered every card inside a single full-width column, so
+   a 27" monitor showed one card per row and the other 1500px sat empty.
+
+   auto-fill + minmax rather than Vuetify breakpoint columns: the track count
+   follows the ACTUAL available width, so it keeps working inside a narrower
+   container or a future split view without anyone maintaining a breakpoint
+   table. 340px is where a chore card's title, due chip and dirtiness bar stop
+   competing for the same line.
+
+   align-items: start matters — cards expand when their editor opens, and
+   without it every card in that row would stretch to match the tallest. */
+.lc-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--lc-space-4);
+  align-items: start;
+}
+
+@media (max-width: 599px) {
+  /* Single column, and edge-to-edge: the cards drop their radius at this
+     breakpoint, so a horizontal gap would leave a sliver of background beside
+     a square card. Vertical spacing only. */
+  .lc-card-grid {
+    grid-template-columns: 1fr;
+    gap: var(--lc-space-2) 0;
+  }
+}
+
+/* ── Fieldsets ─────────────────────────────────────────────────────────────
+   A fieldset carries a border and padding by default, which would draw a box
+   around every grouped control. The legend is what makes the group announce as
+   a group, so it stays and only the chrome goes.
+
+   Shared because three components need it — ChoreCard's editor, AddChoreForm
+   and ProfileForm — and a per-component copy is how they drift apart. */
+.lc-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+}
+
+/* Fills the available width rather than a fixed column count, so twelve months
+   reflow to 2, 3 or 4 across instead of being squeezed on a narrow phone. */
+.lc-months__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 0 var(--lc-space-2);
+}
+
+/* ── Skip link ─────────────────────────────────────────────────────────────
+   Parked off-screen rather than display:none, because a hidden element is not
+   focusable and a skip link that cannot be focused is not a skip link. It flies
+   in on :focus-visible only, so pointer users never see it. */
+.lc-skip-link {
+  position: fixed;
+  top: var(--lc-space-2);
+  left: var(--lc-space-2);
+  z-index: 3000; /* above the app bar, which Vuetify puts at 1004 */
+  transform: translateY(-200%);
+  padding: var(--lc-space-2) var(--lc-space-4);
+  border-radius: var(--lc-radius-pill);
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: var(--lc-shadow-2);
+  transition: transform var(--lc-dur-base) var(--lc-ease-emphasized);
+}
+
+.lc-skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ── Touch targets ─────────────────────────────────────────────────────────
+   Vuetify's default icon-button hit area dips under the 44px that both
+   WCAG 2.5.8 and the platform HIGs ask for on touch.
+
+   This lived as a copy inside four components, each scoped to that component's
+   own action bar -- so the nav menu, the filter controls and every dialog
+   button missed it. Applying it once, to icon buttons and list items, is what
+   makes it a rule rather than four exceptions.
+
+   Bounded to the coarse-pointer breakpoint: on a desktop, 44px around every
+   icon button makes dense toolbars balloon for no benefit. */
+@media (max-width: 599px) {
+  .v-btn--icon,
+  .v-list-item {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* ── Screen-reader-only utility ────────────────────────────────────────────
+   For text that must be announced but not shown — the counterpart to giving
+   icon-only controls an accessible name. */
+.lc-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

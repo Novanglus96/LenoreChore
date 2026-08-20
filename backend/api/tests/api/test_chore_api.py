@@ -209,3 +209,35 @@ def test_complete_chore_weekly_interval(auth_client, area, user):
 
     weekly.refresh_from_db()
     assert weekly.nextDue == today + timedelta(weeks=1)
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_list_chores_with_deleted_completer(auth_client, chore):
+    """A history item whose completer was deleted (completed_by=None) must not
+    500 the chore list via last_three_history_items."""
+    from api.models import HistoryItem
+
+    HistoryItem.objects.create(
+        completed_date=date.today(), completed_by=None, chore=chore
+    )
+
+    response = auth_client.get("/api/v2/chores")
+    assert response.status_code == 200
+    result = next(c for c in response.json() if c["id"] == chore.id)
+    assert result["last_three_history_items"][0]["completed_by"] == "Unknown"
+
+
+@pytest.mark.django_db
+@pytest.mark.api
+def test_list_historyitems_with_deleted_completer(auth_client, chore):
+    """A history item with completed_by=None must serialize in /historyitems."""
+    from api.models import HistoryItem
+
+    HistoryItem.objects.create(
+        completed_date=date.today(), completed_by=None, chore=chore
+    )
+
+    response = auth_client.get("/api/v2/historyitems")
+    assert response.status_code == 200
+    assert response.json()["total_records"] >= 1

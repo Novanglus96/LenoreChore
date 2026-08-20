@@ -1,183 +1,199 @@
 <template>
-  <v-card :color="props.area.group.group_color" border elevation="3" :rounded="$vuetify.display.smAndDown ? 0 : undefined">
-    <v-card-title class="text-h5">
-      <v-icon :icon="props.area.area_icon" size="25" class="me-1 pb-1"></v-icon
-      >{{ props.area.area_name }}
-    </v-card-title>
-    <v-card-subtitle>{{ props.area.group.group_name }}</v-card-subtitle>
-    <v-card-text class="py-0">
-      <v-row align="center" no-gutters>
-        <v-col class="text-h9" cols="6">
-          <v-progress-linear
-            v-model="dirtiness"
-            :color="computedColor"
-            height="25"
-            striped
-            v-if="!options.vacation_mode"
-          >
-            <template v-slot:default="{ value }">
-              <strong>{{ Math.ceil(value) }}%</strong>
-            </template>
-          </v-progress-linear>
-          <span
-            v-if="options.vacation_mode"
-            class="text-error font-weight-bold text-h5"
-            ><v-icon icon="mdi-island"></v-icon> Vacation Mode Active</span
-          >
-        </v-col>
-        <v-col class="text-h9 text-center" cols="6">
-          <strong class="text-accent">{{ props.area.dueCount }}</strong> of
-          <strong class="text-accent">{{ props.area.totalCount }}</strong>
-          Chore(s) Due
-        </v-col>
-      </v-row>
-    </v-card-text>
-    <v-expand-transition>
-      <div v-if="expandcard">
-        <v-container>
-          <v-row dense>
-            <v-col>
-              <v-dialog v-model="editcard" persistent :fullscreen="$vuetify.display.smAndDown" width="1024">
-                <template v-slot:activator="{ props }">
-                  <v-btn icon="mdi-note-edit-outline" v-bind="props"></v-btn>
-                </template>
-                <v-card>
-                  <v-card-title>
-                    <span class="text-h5">Edit Area</span>
-                  </v-card-title>
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-text-field
-                            label="Area name*"
-                            required
-                            v-model="editForm.area_name"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-chip-group
-                            v-model="editForm.area_icon"
-                            selected-class="text-deep-purple-accent-4"
-                            mandatory
-                          >
-                            <v-chip
-                              v-for="icon in chorestore.areaicons"
-                              :key="icon"
-                              :value="icon"
-                            >
-                              <v-icon>{{ icon }}</v-icon>
-                            </v-chip>
-                          </v-chip-group>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="6" md="4">
-                          <v-select
-                            label="Area Group"
-                            :items="areagroups"
-                            item-title="group_name"
-                            item-value="id"
-                            v-model="editForm.group_id"
-                          >
-                          </v-select>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                    <small>*indicates required field</small>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="blue-darken-1"
-                      variant="text"
-                      @click="editcard = false"
-                    >
-                      Close
-                    </v-btn>
-                    <v-btn
-                      color="blue-darken-1"
-                      variant="text"
-                      @click="callEditArea(editForm)"
-                    >
-                      Save
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-              <v-dialog v-model="deletecard" persistent width="auto">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    icon="mdi-delete-forever-outline"
-                    v-bind="props"
-                  ></v-btn>
-                </template>
-                <v-card>
-                  <v-card-title class="text-h5">
-                    Delete this Area?
-                  </v-card-title>
-                  <v-card-text
-                    >Are you sure you want to delete
-                    <span class="text-secondary">{{
-                      props.area.area_name
-                    }}</span
-                    >? This will also delete
-                    <span class="text-secondary">{{
-                      props.area.totalCount
-                    }}</span>
-                    chores!</v-card-text
-                  >
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="primary-darken-1"
-                      variant="text"
-                      @click="deletecard = false"
-                    >
-                      Close
-                    </v-btn>
-                    <v-btn
-                      color="primary-darken-1"
-                      variant="text"
-                      @click="callDeleteArea(area)"
-                    >
-                      Delete
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-col>
-          </v-row>
-        </v-container>
+  <v-card
+    class="lc-area-card lc-lift"
+    tag="article"
+    :aria-label="cardLabel"
+    :rounded="$vuetify.display.smAndDown ? 0 : 'lg'"
+    :elevation="0"
+    border
+  >
+    <!-- Group colour as identity, not as a surface. See ChoreCard. -->
+    <div
+      class="lc-area-card__stripe"
+      :class="`bg-${groupColor}`"
+      aria-hidden="true"
+    ></div>
+
+    <div class="lc-area-card__body">
+      <div class="d-flex align-center ga-3">
+        <v-avatar
+          size="44"
+          class="lc-area-card__icon flex-shrink-0"
+          :class="`text-${groupColor}`"
+          aria-hidden="true"
+        >
+          <v-icon :icon="props.area.area_icon" size="24"></v-icon>
+        </v-avatar>
+
+        <div class="flex-grow-1 min-width-0">
+          <h2 class="text-h6 lc-area-card__title">{{ props.area.area_name }}</h2>
+          <p class="text-caption text-medium-emphasis mb-0">
+            {{ groupName }}
+          </p>
+        </div>
+
+        <!-- The count is the headline number for an area, so it reads as one
+             rather than as a sentence. The full phrasing is kept for screen
+             readers, where "3 / 8" alone would be ambiguous. -->
+        <div class="text-right flex-shrink-0">
+          <div class="text-h6 font-weight-medium lh-1" aria-hidden="true">
+            {{ props.area.dueCount }}<span class="text-medium-emphasis text-body-2">
+              / {{ props.area.totalCount }}</span
+            >
+          </div>
+          <div class="text-caption text-medium-emphasis" aria-hidden="true">
+            due
+          </div>
+          <span class="lc-visually-hidden">
+            {{ props.area.dueCount }} of {{ props.area.totalCount }} chores due
+          </span>
+        </div>
       </div>
-    </v-expand-transition>
-    <v-card-actions>
+
+      <div class="mt-3">
+        <LcDirtBar v-if="!options?.vacation_mode" :value="dirtiness" />
+
+        <v-alert
+          v-else
+          type="info"
+          density="compact"
+          icon="mdi-island"
+          text="Vacation mode — chores are paused."
+        ></v-alert>
+      </div>
+    </div>
+    <v-divider></v-divider>
+
+    <v-card-actions class="lc-area-card__actions">
       <v-btn
-        class="ms-2"
-        variant="outlined"
+        variant="tonal"
         size="small"
+        prepend-icon="mdi-format-list-checks"
+        :aria-label="`See chores in ${props.area.area_name}`"
         @click="setArea(props.area.id)"
       >
-        See Chores
+        See chores
       </v-btn>
-      <v-btn
-        @click="expandcard = !expandcard"
-        :icon="expandcard ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-      ></v-btn>
+
+      <v-spacer></v-spacer>
+
+      <LcActionMenu
+        :items="menuItems"
+        :title="props.area.area_name"
+        @select="onMenuSelect"
+      >
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn
+            v-bind="activatorProps"
+            icon="mdi-dots-vertical"
+            :aria-label="`More actions for ${props.area.area_name}`"
+          >
+            <v-icon icon="mdi-dots-vertical"></v-icon>
+          </v-btn>
+        </template>
+      </LcActionMenu>
     </v-card-actions>
+
+    <!-- ── Overlays ────────────────────────────────────────────────────────
+         Both used to sit inside a panel the chevron expanded, so reaching
+         "Edit area" was: tap chevron, wait for the card to grow, tap an
+         unlabelled pencil, then read the dialog. The panel's entire payload
+         was these two activators. They are menu items now, which is what the
+         group header directly above this card has always used for exactly the
+         same job -- two patterns for one thing on one screen. -->
+    <LcFormDialog
+      v-model="editcard"
+      title="Edit area"
+      icon="mdi-note-edit-outline"
+      submit-label="Save changes"
+      submit-icon="mdi-content-save-outline"
+      :schema="editSchema"
+      :initial-values="{ area_name: props.area.area_name }"
+      @submit="callEditArea"
+    >
+      <fieldset class="lc-fieldset lc-form-group">
+        <legend class="lc-form-group__legend text-body-2">What</legend>
+
+        <!-- Was a plain v-model with `required` and no schema, so an
+             empty area name saved happily. -->
+        <Field name="area_name" v-slot="{ componentField, errorMessage }">
+          <v-text-field
+            v-bind="componentField"
+            label="Area name"
+            prepend-inner-icon="mdi-format-title"
+            :error-messages="errorMessage"
+          ></v-text-field>
+        </Field>
+
+        <v-select
+          v-model="editForm.group_id"
+          label="Area group"
+          prepend-inner-icon="mdi-shape-outline"
+          :items="areagroups"
+          item-title="group_name"
+          item-value="id"
+        ></v-select>
+      </fieldset>
+
+      <v-divider class="my-4"></v-divider>
+
+      <fieldset class="lc-fieldset">
+        <!-- Each chip now carries a name derived from its own MDI id, so
+             the list cannot drift out of sync with the icons it
+             describes. -->
+        <legend class="lc-form-group__legend text-body-2">Area icon</legend>
+        <v-chip-group
+          v-model="editForm.area_icon"
+          selected-class="text-primary"
+          column
+          mandatory
+        >
+          <v-chip
+            v-for="icon in chorestore.areaicons"
+            :key="icon"
+            :value="icon"
+            :aria-label="iconLabel(icon)"
+            :title="iconLabel(icon)"
+          >
+            <v-icon :icon="icon" aria-hidden="true"></v-icon>
+          </v-chip>
+        </v-chip-group>
+      </fieldset>
+    </LcFormDialog>
+
+    <LcConfirmDialog
+      v-model="deletecard"
+      title="Delete this area?"
+      icon="mdi-delete-forever-outline"
+      confirm-label="Delete area"
+      confirm-icon="mdi-delete-forever-outline"
+      @confirm="callDeleteArea(props.area)"
+    >
+      Deleting <strong>{{ props.area.area_name }}</strong> also deletes the
+      <strong>{{ props.area.totalCount }}</strong>
+      {{ props.area.totalCount === 1 ? "chore" : "chores" }} in it. This cannot
+      be undone.
+    </LcConfirmDialog>
   </v-card>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, computed } from "vue";
+// defineProps/defineEmits are compiler macros; importing them warns on build.
+import { ref, computed } from "vue";
+import { Field } from "vee-validate";
+import * as yup from "yup";
 import { useAreaGroups } from "@/composables/areaGroupsComposable";
 import { useChoreStore } from "@/stores/chores";
 import { useRouter } from "vue-router";
 import { useOptions } from "@/composables/optionsComposable";
+import { iconLabel } from "@/utils/labels";
+import LcActionMenu from "@/components/LcActionMenu.vue";
+import LcDirtBar from "@/components/LcDirtBar.vue";
+import LcFormDialog from "@/components/LcFormDialog.vue";
+import LcConfirmDialog from "@/components/LcConfirmDialog.vue";
 
 const { options } = useOptions();
 const router = useRouter();
-const expandcard = ref(false);
 const editcard = ref(false);
 const deletecard = ref(false);
 const chorestore = useChoreStore();
@@ -186,11 +202,44 @@ const props = defineProps({
   area: Object,
 });
 const dirtiness = computed(() => props.area.dirtiness || 0);
+
+// Built as data so the desktop menu and the mobile bottom sheet cannot drift.
+const menuItems = computed(() => [
+  { key: "edit", title: "Edit area…", icon: "mdi-note-edit-outline" },
+  {
+    key: "delete",
+    title: "Delete area",
+    icon: "mdi-delete-forever-outline",
+    color: "filthy",
+    dividerBefore: true,
+    subtitle: props.area.totalCount
+      ? `Also deletes ${props.area.totalCount} ${
+          props.area.totalCount === 1 ? "chore" : "chores"
+        }`
+      : undefined,
+  },
+]);
+
+const onMenuSelect = key => {
+  if (key === "edit") editcard.value = true;
+  else if (key === "delete") deletecard.value = true;
+};
+
+// See ChoreCard: AreaOut.group is Optional now, so it has to be read as such.
+const groupColor = computed(() => props.area.group?.group_color || "outline");
+const groupName = computed(() => props.area.group?.group_name || "no group");
 const editForm = ref({
   id: props.area.id || 0,
   area_name: props.area.area_name || "",
-  group_id: props.area.group.id || 0,
+  group_id: props.area.group?.id || null,
   area_icon: props.area.area_icon || "",
+});
+
+// area_name is a vee-validate field now, so the dialog cannot save an empty
+// name -- it previously carried `required` (which does nothing on v-text-field
+// without a schema) and no validation at all.
+const editSchema = yup.object({
+  area_name: yup.string().required("Give the area a name"),
 });
 
 const { areagroups } = useAreaGroups();
@@ -204,24 +253,77 @@ const callDeleteArea = async deletedArea => {
   deletecard.value = false;
   emit("removeArea", deletedArea);
 };
-const callEditArea = async editArea => {
+// `values` carries the validated area_name; the chip pickers are plain v-models
+// on editForm, so the two are merged here.
+//
+// NOTE: no pending state. The save goes out as an emit that DashView turns into
+// a mutation, so this component never sees the promise -- unlike the add forms,
+// which hold their own mutation and stay open until it resolves. Wiring that
+// through would mean changing who owns the mutation, which is a bigger change
+// than this PR is making.
+const callEditArea = async values => {
   editcard.value = false;
-  emit("editArea", editArea);
+  emit("editArea", { ...editForm.value, area_name: values.area_name });
 };
-const computedColor = computed(() => {
-  if (!options.value || !props) {
-    return "white";
-  }
-  if (props.area.dirtiness <= options.value.med_thresh) {
-    return "success";
-  } else if (
-    props.area.dirtiness > options.value.med_thresh &&
-    props.area.dirtiness <= options.value.high_thresh
-  ) {
-    return "warning";
-  } else if (props.area.dirtiness > options.value.high_thresh) {
-    return "error";
-  }
-  return "white";
-});
+const cardLabel = computed(
+  () =>
+    `${props.area.area_name}, ${groupName.value}, ` +
+    `${props.area.dueCount} of ${props.area.totalCount} chores due, ` +
+    `${Math.ceil(dirtiness.value)} percent dirty`
+);
 </script>
+
+<style scoped>
+.lc-area-card {
+  position: relative;
+  overflow: hidden;
+  background: rgb(var(--v-theme-surface));
+}
+
+.lc-area-card__stripe {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--lc-card-stripe);
+}
+
+.lc-area-card__body {
+  padding: var(--lc-space-4) var(--lc-space-4) var(--lc-space-3)
+    calc(var(--lc-space-4) + var(--lc-card-stripe));
+}
+
+.lc-area-card__icon {
+  background: rgb(var(--v-theme-surface-variant));
+}
+
+.lc-form-group__legend {
+  color: rgb(var(--v-theme-on-surface));
+  margin-bottom: var(--lc-space-2);
+}
+
+.lc-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-1);
+}
+
+.lc-area-card__title {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.lh-1 {
+  line-height: 1.1;
+}
+
+.min-width-0 {
+  min-width: 0;
+}
+
+@media (max-width: 599px) {
+  .lc-area-card__body {
+    padding: var(--lc-space-3) var(--lc-space-3) var(--lc-space-2)
+      calc(var(--lc-space-3) + var(--lc-card-stripe));
+  }
+}
+</style>

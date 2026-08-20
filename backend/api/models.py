@@ -167,8 +167,10 @@ class Area(models.Model):
         total_chores = self.chore_set.filter(status=0).count()
 
         if total_chores > 0:
-            # Calculate the percentage if there are chores
-            percentage = total_dirtiness / total_chores
+            # Calculate the percentage if there are chores. Round to an int:
+            # the API schema (AreaOut.dirtiness) is an int, and Pydantic v2
+            # rejects floats with a fractional part.
+            percentage = round(total_dirtiness / total_chores)
         else:
             # Handle the case when there are no chores
             percentage = 0
@@ -186,6 +188,21 @@ class Area(models.Model):
         today = date.today().isoformat()
         count = self.chore_set.filter(status=0, nextDue__lte=today).count()
         return count
+
+    @property
+    def overdueCount(self):
+        """
+        Determines the number of chores in this area that are already late.
+
+        Distinct from dueCount, which uses `<= today` and so includes today's
+        chores: something due today is not yet overdue, which is how ChoreCard
+        and the overdue filter both read it.
+
+        Returns:
+            count (integer): The count of overdue chores for this area.
+        """
+        today = date.today().isoformat()
+        return self.chore_set.filter(status=0, nextDue__lt=today).count()
 
     @property
     def totalCount(self):
