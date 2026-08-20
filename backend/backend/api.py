@@ -18,13 +18,15 @@ from django.shortcuts import get_object_or_404
 from datetime import date, time, timedelta
 from ninja.errors import HttpError
 from dateutil.relativedelta import relativedelta
-from django.db.models import Count
+from django.db import transaction
+from django.db.models import Count, Max
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.core.cache import cache
 import importlib.metadata
 import platform
 import django
+from colorfield.validators import COLOR_HEX_RE
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 CACHE_TTL = 15 * 60  # 15 minutes
@@ -48,10 +50,22 @@ def invalidate_pattern(*patterns):
             cache.clear()
 
 
+def invalidate_chores(*extra):
+    """Drop every cache a chore write can invalidate.
+
+    There are twelve call sites, and the chore-name index added for the
+    "same task everywhere" filter is derived from the chore table -- so a
+    rename, a delete or a disable changes it. Bundling them means adding a
+    derived cache later cannot silently miss one of those twelve.
+    """
+    invalidate_pattern("chores:*", *extra)
+    invalidate("chorenames")
+
+
 api = NinjaAPI(auth=django_auth, urls_namespace="api_v2")
 router = Router()
 api.title = "LenoreChore API"
-api.version = "1.4.2"
+api.version = "1.5.0-rc.1"
 api.description = "API documentation for LenoreChore"
 
 
@@ -84,6 +98,29 @@ class VersionDetailsOut(Schema):
     python_version: str
     django_version: str
     packages: Dict[str, str]
+
+
+class ProfileIn(Schema):
+    """
+    Schema to update the logged-in user's own profile.
+
+    Deliberately narrow. The retired DRF `CustomUserSerializer` used
+    `fields = "__all__"`, which accepted `is_staff`, `is_superuser`,
+    `is_active`, `password` and `email` from the request body. Only the four
+    fields the profile form actually edits are settable here, and only ever on
+    `request.user` -- there is no user id in the payload or the path.
+
+    Attributes:
+        first_name (str): User first name.
+        last_name (str): User last name.
+        male (bool): Toggle if user is male (selects the avatar).
+        user_color (str): Hex colour used to represent the user.
+    """
+
+    first_name: str = ""
+    last_name: str = ""
+    male: bool = True
+    user_color: str = ""
 
 
 class NotificationPrefsIn(Schema):
@@ -241,18 +278,34 @@ class CustomUserSchema(Schema):
         return list(groups)
 
 
+class ChoreNameOut(Schema):
+    """
+    Schema to represent a chore name that recurs across the household.
+
+    Attributes:
+        chore_name (str): The name itself.
+        chore_count (int): How many active chores carry it.
+        area_count (int): How many distinct areas those chores span.
+    """
+
+    chore_name: str
+    chore_count: int
+    area_count: int
+
+
 class AreaGroupIn(Schema):
     """
     Schema to represent an AreaGroupIn.
 
     Attributes:
         group_name (str): Area group name.
-        group_order (int): Area group order index.
+        group_order (int): Area group order index. Optional; on create, a group
+            with no order given is appended to the end of the list.
         group_color (str): Hex value of area group color.
     """
 
     group_name: str
-    group_order: int
+    group_order: Optional[int] = None
     group_color: str
 
 
@@ -300,6 +353,7 @@ class AreaOut(Schema):
         group (AreaGroupOut): Group object area belongs to.
         dirtiness (int): Percentage of dirtiness for the area.
         dueCount (int): Number of chores due for the area.
+        overdueCount (int): Number of chores already past their due date.
         totalCount (int): Total number of chores for the area.
         total_dirtiness (int): Total dirtiness of the area.
     """
@@ -307,10 +361,15 @@ class AreaOut(Schema):
     id: int
     area_name: str
     area_icon: str
-    group_id: int
-    group: AreaGroupOut
+    # Area.group is null=True with on_delete=SET_DEFAULT, so both of these can
+    # legitimately be None. They were declared non-Optional, which meant a single
+    # group-less area returned 500 from BOTH /areas and /chores -- the same shape
+    # as the two Pydantic-v2 bugs that needed the v1.4.1 hotfix.
+    group_id: Optional[int] = None
+    group: Optional[AreaGroupOut] = None
     dirtiness: int
     dueCount: int
+    overdueCount: int
     totalCount: int
     total_dirtiness: int
 
@@ -377,6 +436,21 @@ class CompleteChore(Schema):
         completed_by_id (int): ID of the user who completed chore.
     """
 
+    lastCompleted: date
+    completed_by_id: int
+
+
+class CompleteChores(Schema):
+    """
+    Schema to complete several Chore objects in one call.
+
+    Attributes:
+        ids (List[int]): IDs of the chores to complete.
+        lastCompleted (date): Date they were completed.
+        completed_by_id (int): ID of the user who completed them.
+    """
+
+    ids: List[int]
     lastCompleted: date
     completed_by_id: int
 
@@ -638,7 +712,11 @@ def get_weeklytotals(request, week: int = 0):
         return cached
 
     labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    today = timezone.now().date()
+    # localdate(), not now().date(): see list_chores. With TIME_ZONE set to
+    # America/New_York and USE_TZ on, now().date() is the UTC date, so from
+    # ~8pm Eastern it is already tomorrow -- and on a Sunday evening that
+    # rolled this into next week's window.
+    today = timezone.localdate()
     days = week * 7
     start_of_week = (
         today - timedelta(days=today.weekday()) - timedelta(days=days)
@@ -721,6 +799,69 @@ def me(request):
     return request.user
 
 
+@api.put("/me", response=CustomUserSchema)
+def update_me(request, payload: ProfileIn):
+    """
+    The function `update_me` updates the logged in user's own profile.
+
+    Replaces the retired DRF `PATCH /api/users/{id}/`, which was unauthenticated
+    (no DEFAULT_PERMISSION_CLASSES, no permission_classes) and accepted every
+    model field including `is_superuser`. This endpoint takes no user id at all
+    -- it always writes to `request.user`, so one account can never edit
+    another's profile.
+
+    Endpoint:
+        - **Path**: `/api/v2/me`
+        - **Method**: `PUT`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (ProfileIn): The profile fields to update.
+
+    Returns:
+        (CustomUserSchema): The updated CustomUser object.
+    """
+    user = request.user
+
+    # AbstractUser caps both name fields at 150; without this a longer value
+    # reaches the database and surfaces as a 500 rather than a validation error.
+    for field, value in (
+        ("first name", payload.first_name),
+        ("last name", payload.last_name),
+    ):
+        if len(value) > 150:
+            raise HttpError(422, f"{field} must be 150 characters or fewer")
+
+    update_fields = ["first_name", "last_name", "male"]
+    user.first_name = payload.first_name
+    user.last_name = payload.last_name
+    user.male = payload.male
+
+    # An empty colour means "leave it alone" rather than "blank it", so a client
+    # that omits the field cannot silently reset the user's colour.
+    if payload.user_color:
+        # Reuse the field's own validator rather than restating it. CustomUser
+        # .user_color is a ColorField in the default "hex" format, which accepts
+        # 6- OR 3-digit values; the hand-written regex here only accepted 6, so
+        # a stored 3-digit colour round-tripped from the profile form would have
+        # been rejected on save. Importing the library's pattern means the two
+        # cannot drift if the field's format ever changes.
+        if not COLOR_HEX_RE.match(payload.user_color):
+            raise HttpError(422, "user_color must be a hex colour like #E91E63")
+        user.user_color = payload.user_color
+        update_fields.append("user_color")
+
+    user.save(update_fields=update_fields)
+
+    # The DRF endpoint this replaces did neither of these: other sessions never
+    # saw a profile change, and the cached user list kept serving the old name.
+    # `/users` caches under a literal "users" key, so delete rather than
+    # delete_pattern.
+    cache.delete("users")
+    notify("users")
+    return user
+
+
 @api.post("/toggle_vacation")
 def toggle_vacation(request):
     """
@@ -757,11 +898,14 @@ def toggle_vacation(request):
             chore.nextDue = date.today() + timedelta(days=chore.vacationPause)
             chore.save()
     invalidate("options")
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("options")
     notify("chores")
-    return {"success": True}
+    # The state it landed in, not just that something happened. A toggle whose
+    # response does not say which way it went leaves every caller guessing --
+    # the frontend was about to invert its own stale copy to word a message.
+    return {"success": True, "vacation_mode": option.vacation_mode}
 
 
 @api.post("/areagroups")
@@ -780,7 +924,14 @@ def create_areagroup(request, payload: AreaGroupIn):
     Returns:
         (int): The ID of the newly created AreaGroup object.
     """
-    areagroup = AreaGroup.objects.create(**payload.model_dump())
+    data = payload.model_dump()
+    # A new group goes to the end unless the caller asks for a position. The
+    # frontend used to send a hardcoded 1 for every group, so ordering was a
+    # twelve-way tie broken by whatever the database felt like.
+    if not data.get("group_order"):
+        highest = AreaGroup.objects.aggregate(Max("group_order"))["group_order__max"]
+        data["group_order"] = (highest or 0) + 1
+    areagroup = AreaGroup.objects.create(**data)
     invalidate("areagroups")
     notify("areagroups")
     return {"id": areagroup.id}
@@ -839,7 +990,7 @@ def create_chore(request, payload: ChoreIn):
     # Set the active_months field
     chore.active_months.set(active_months)
 
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"id": chore.id}
@@ -868,7 +1019,7 @@ def create_historyitem(request, payload: HistoryItemIn):
         completed_by=completed_by_object,
         chore_id=payload.chore_id,
     )
-    invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate_chores("weeklytotals:*")
     notify("chores")
     notify("history")
     return {"id": historyitem.id}
@@ -912,6 +1063,104 @@ def get_area(request, area_id: int):
     """
     area = get_object_or_404(Area, id=area_id)
     return area
+
+
+# NOTE: declared before /chores/{chore_id}, for the same reason as
+# /chores/names above it -- that route matches this path and has no POST,
+# so registering this one later returns 405 Method Not Allowed.
+@api.post("/chores/complete")
+def complete_chores(request, payload: CompleteChores):
+    """
+    The function `complete_chores` completes several Chore objects at once.
+
+    This exists for working one task through every area it lives in: filter the
+    list to "Dust", do the round, and check them off together rather than
+    tapping through eight cards.
+
+    Only ACTIVE chores are completed. A disabled or vacation-paused chore that
+    happened to match the filter is skipped rather than silently marked done,
+    and the count returned says how many actually were.
+
+    The whole batch is one transaction: a half-applied round would leave the
+    household unable to tell which rooms were actually done.
+
+    Endpoint:
+        - **Path**: `/api/v2/chores/complete`
+        - **Method**: `POST`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        payload (CompleteChores): The chores to complete, and by whom.
+
+    Returns:
+        (dict): `success` and the number of chores completed.
+    """
+    if not payload.ids:
+        raise HttpError(422, "No chores given to complete.")
+
+    with transaction.atomic():
+        chores = list(
+            Chore.objects.select_for_update().filter(
+                id__in=payload.ids, status=0
+            )
+        )
+        for chore in chores:
+            _apply_completion(
+                chore, payload.lastCompleted, payload.completed_by_id
+            )
+
+    invalidate_chores("weeklytotals:*")
+    invalidate("areas")
+    notify("chores")
+    notify("history")
+    return {"success": True, "completed": len(chores)}
+
+
+@api.get("/chores/names", response=List[ChoreNameOut])
+def list_chore_names(request):
+    """
+    The function `list_chore_names` retrieves chore names that appear on more
+    than one active chore -- the "same task in several rooms" case, e.g. a
+    Dusting that exists separately in every area.
+
+    Only names with two or more active chores are returned: a name carried by a
+    single chore cannot be worked through room by room, which is the whole point
+    of the filter this feeds.
+
+    Matching is on the name as typed, so it depends on those chores being named
+    consistently. A household that writes "Dust" in one area and "Dusting" in
+    another gets two entries.
+
+    NOTE: declared BEFORE /chores/{chore_id}. That path converts to int, so a
+    request for /chores/names would fail against it with a 422 rather than
+    falling through to this one.
+
+    Endpoint:
+        - **Path**: `/api/v2/chores/names`
+        - **Method**: `GET`
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        (List[ChoreNameOut]): Recurring chore names, commonest first.
+    """
+    cached = cache.get("chorenames")
+    if cached is not None:
+        return cached
+
+    rows = list(
+        Chore.objects.filter(status=0)
+        .values("chore_name")
+        .annotate(
+            chore_count=Count("id"),
+            area_count=Count("area_id", distinct=True),
+        )
+        .filter(chore_count__gte=2)
+        .order_by("-chore_count", "chore_name")
+    )
+    cache.set("chorenames", rows, CACHE_TTL)
+    return rows
 
 
 @api.get("/chores/{chore_id}", response=ChoreOut)
@@ -992,7 +1241,11 @@ def list_areagroups(request):
     cached = cache.get("areagroups")
     if cached is not None:
         return cached
-    qs = list(AreaGroup.objects.all())
+    # group_order exists precisely to order this list, and nothing was using it:
+    # a bare .all() returns database order, so every group picker in the app was
+    # in arbitrary order. group_name breaks ties left over from the era when the
+    # frontend hardcoded group_order=1 on every group it created.
+    qs = list(AreaGroup.objects.all().order_by("group_order", "group_name"))
     cache.set("areagroups", qs, CACHE_TTL)
     return qs
 
@@ -1020,6 +1273,17 @@ def list_areas(request):
     return qs
 
 
+# Sorts the chore list accepts. Values are the ORM ordering to apply; "dirtiest"
+# is None because Chore.dirtiness is a computed Python property, not a column,
+# so it cannot be ordered in SQL and is sorted after the list is built.
+CHORE_SORTS = {
+    "due": ("status", "nextDue", "lastCompleted", "effort", "chore_name", "id"),
+    "name": ("chore_name", "id"),
+    "effort": ("effort", "nextDue", "chore_name", "id"),
+    "dirtiest": None,
+}
+
+
 @api.get("/chores", response=List[ChoreOut])
 def list_chores(
     request,
@@ -1027,6 +1291,10 @@ def list_chores(
     timeframe: Optional[int] = None,
     assignee_id: Optional[int] = None,
     area_id: Optional[int] = None,
+    group_id: Optional[int] = None,
+    chore_name: Optional[str] = None,
+    overdue: bool = False,
+    sort: str = "due",
 ):
     """
     The function `list_chores` retrieves a list of Chore objects.
@@ -1041,30 +1309,65 @@ def list_chores(
         timeframe (int): Days from today to retrieve. Retreives all if None. Default=None.
         assignee_id (int): Filter chores by assigned CustomUser ID. Retreives all if None. Default=None.
         area_id (int): Filter chores by Area ID. Retreives all if None. Default=None.
+        group_id (int): Filter chores by the AreaGroup their area belongs to. Default=None.
+        chore_name (str): Only chores with this name, case-insensitively. Lets one
+            task -- dusting, say -- be worked through every area it exists in.
+        overdue (bool): Only chores whose due date has already passed. Default=False.
+        sort (str): One of `due`, `name`, `effort`, `dirtiest`. Default=`due`.
 
     Returns:
         (List[ChoreOut]): List of Chore objects.
     """
-    cache_key = f"chores:{inactive}:{timeframe}:{assignee_id}:{area_id}"
+    if sort not in CHORE_SORTS:
+        allowed = ", ".join(sorted(CHORE_SORTS))
+        raise HttpError(422, f"Unknown sort '{sort}'. Expected one of: {allowed}")
+
+    # Every parameter has to be in the key. Adding a filter or a sort without
+    # extending it serves one request's results to a differently-filtered one.
+    cache_key = (
+        f"chores:{inactive}:{timeframe}:{assignee_id}:{area_id}"
+        f":{group_id}:{chore_name}:{overdue}:{sort}"
+    )
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
 
-    qs = Chore.objects.all().order_by(
-        "status", "nextDue", "lastCompleted", "effort", "chore_name", "id"
-    )
+    # "dirtiest" still needs a stable base ordering, so ties after the Python
+    # sort below fall back to something deterministic rather than to whatever
+    # the database returns.
+    ordering = CHORE_SORTS[sort] or CHORE_SORTS["due"]
+    qs = Chore.objects.all().order_by(*ordering)
+
     if not inactive:
         qs = qs.filter(status=0)
     if timeframe is not None:
-        today = timezone.now().date()
+        today = timezone.localdate()
         target_date = today
         if timeframe > 0:
             target_date = today + timedelta(days=timeframe)
         qs = qs.filter(nextDue__lte=target_date)
+    if overdue:
+        # Strictly before today: something due today is not yet overdue, which
+        # is also how ChoreCard's "Due today" vs "N days overdue" reads.
+        #
+        # localdate(), NOT now().date(). USE_TZ is on and TIME_ZONE is
+        # America/New_York, so now().date() is the UTC date -- already tomorrow
+        # from about 8pm Eastern. The pre-existing `timeframe` filter above had
+        # the same bug: for those hours every evening it matched a day too far,
+        # while Chore.duedays and Chore.dirtiness use date.today() and did not.
+        qs = qs.filter(nextDue__lt=timezone.localdate())
     if assignee_id is not None:
         qs = qs.filter(assignee_id=assignee_id)
     if area_id is not None:
         qs = qs.filter(area_id=area_id)
+    if group_id is not None:
+        # Chores reach a group through their area.
+        qs = qs.filter(area__group_id=group_id)
+    if chore_name:
+        # iexact rather than exact: the name is picked from a list the API
+        # itself produced, but a filter that silently returns nothing over a
+        # capitalisation difference is a bad way to find that out.
+        qs = qs.filter(chore_name__iexact=chore_name)
     chore_list = []
 
     for chore in qs:
@@ -1109,6 +1412,12 @@ def list_chores(
             status=chore.status,
         )
         chore_list.append(chore_data)
+
+    if sort == "dirtiest":
+        # Chore.dirtiness is computed per chore in Python, so this cannot be an
+        # order_by. Sorted here on the built objects, which already carry the
+        # value, rather than recomputing it.
+        chore_list.sort(key=lambda c: c.dirtiness, reverse=True)
 
     cache.set(cache_key, chore_list, CACHE_TTL)
     return chore_list
@@ -1232,7 +1541,11 @@ def update_areagroup(request, areagroup_id: int, payload: AreaGroupIn):
     """
     areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
     areagroup.group_name = payload.group_name
-    areagroup.group_order = payload.group_order
+    # group_order is optional on the way in (see AreaGroupIn), but the column is
+    # a non-null IntegerField -- assigning None unconditionally would turn a
+    # rename that omits the order into a 500. Omitting it means "leave it".
+    if payload.group_order is not None:
+        areagroup.group_order = payload.group_order
     areagroup.group_color = payload.group_color
     areagroup.save()
     invalidate("areagroups")
@@ -1296,7 +1609,7 @@ def update_chore(request, chore_id: int, payload: ChoreIn):
     chore.assignee_id = payload.assignee_id
     chore.effort = payload.effort
     chore.save()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"success": True}
@@ -1322,7 +1635,7 @@ def toggle_chore(request, chore_id: int, payload: TogglActive):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.status = payload.status
     chore.save()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"success": True}
@@ -1348,7 +1661,7 @@ def snooze_chore(request, chore_id: int, payload: SnoozeChore):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.nextDue = payload.nextDue
     chore.save()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"success": True}
@@ -1374,9 +1687,38 @@ def claim_chore(request, chore_id: int, payload: ClaimChore):
     chore = get_object_or_404(Chore, id=chore_id)
     chore.assignee_id = payload.assignee_id
     chore.save()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     notify("chores")
     return {"success": True}
+
+
+def _apply_completion(chore, completed_on, completed_by_id):
+    """Mark one chore done and roll it forward to its next due date.
+
+    Extracted so completing one chore and completing a batch cannot drift:
+    this interval arithmetic is the part that would be quietly duplicated,
+    and a batch that advanced dates differently from a single completion
+    would be very hard to notice.
+    """
+    units = {
+        "day(s)": "days",
+        "week(s)": "weeks",
+        "month(s)": "months",
+        "year(s)": "years",
+    }
+    chore.lastCompleted = completed_on
+    unit = units.get(chore.unit)
+    if unit:
+        chore.nextDue = completed_on + relativedelta(
+            **{unit: chore.intervalNumber}
+        )
+    chore.assignee = None
+    chore.save()
+    HistoryItem.objects.create(
+        completed_date=completed_on,
+        completed_by_id=completed_by_id,
+        chore=chore,
+    )
 
 
 @api.patch("/chores/completechore/{chore_id}")
@@ -1397,31 +1739,8 @@ def complete_chore(request, chore_id: int, payload: CompleteChore):
         (str): Returns `success` if successful.
     """
     chore = get_object_or_404(Chore, id=chore_id)
-    chore.lastCompleted = payload.lastCompleted
-    if chore.unit == "day(s)":
-        chore.nextDue = payload.lastCompleted + relativedelta(
-            days=chore.intervalNumber
-        )
-    elif chore.unit == "week(s)":
-        chore.nextDue = payload.lastCompleted + relativedelta(
-            weeks=chore.intervalNumber
-        )
-    elif chore.unit == "month(s)":
-        chore.nextDue = payload.lastCompleted + relativedelta(
-            months=chore.intervalNumber
-        )
-    elif chore.unit == "year(s)":
-        chore.nextDue = payload.lastCompleted + relativedelta(
-            years=chore.intervalNumber
-        )
-    chore.assignee = None
-    chore.save()
-    HistoryItem.objects.create(
-        completed_date=payload.lastCompleted,
-        completed_by_id=payload.completed_by_id,
-        chore=chore,
-    )
-    invalidate_pattern("chores:*", "weeklytotals:*")
+    _apply_completion(chore, payload.lastCompleted, payload.completed_by_id)
+    invalidate_chores("weeklytotals:*")
     invalidate("areas")
     notify("chores")
     notify("history")
@@ -1450,7 +1769,7 @@ def update_historyitem(request, historyitem_id: int, payload: HistoryItemIn):
     historyitem.completed_by = payload.completed_by
     historyitem.chore_id = payload.chore_id
     historyitem.save()
-    invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate_chores("weeklytotals:*")
     notify("chores")
     notify("history")
     return {"success": True}
@@ -1484,9 +1803,24 @@ def update_option(request, option_id: int, payload: OptionIn):
 
 
 @api.delete("/areagroups/{areagroup_id}")
-def delete_areagroup(request, areagroup_id: int):
+def delete_areagroup(request, areagroup_id: int, reassign_to: Optional[int] = None):
     """
-    The function `delete_areagroup` deletes a given AreaGroup object.
+    The function `delete_areagroup` deletes a given AreaGroup object, moving any
+    areas that belong to it into another group first.
+
+    Area.group is `null=True, on_delete=SET_DEFAULT, default=1`, which made the
+    unguarded delete this replaces unsafe in three separate ways:
+
+    1. Deleting an ordinary group silently moved its areas to group 1 -- no
+       warning, no say in the destination.
+    2. Deleting group 1 set its own areas' group_id to 1, the row being deleted,
+       violating the foreign key.
+    3. Any area left group-less returned 500 from /areas and /chores, because
+       AreaOut.group was non-Optional. (That schema is fixed too, but an area
+       silently losing its group is still wrong.)
+
+    The reassignment is therefore explicit and happens before the delete, so
+    SET_DEFAULT never fires at all.
 
     Endpoint:
         - **Path**: `/api/v2/areagroups/{areagroup_id}`
@@ -1495,15 +1829,43 @@ def delete_areagroup(request, areagroup_id: int):
     Args:
         request (HttpRequest): The HTTP request object.
         areagroup_id (int): ID of the AreaGroup object to delete.
+        reassign_to (int): ID of the group to move this group's areas into.
+            Defaults to the lowest-ordered remaining group.
 
     Returns:
-        (str): Returns `success` if successful.
+        (dict): `success`, the destination group id, and how many areas moved.
     """
     areagroup = get_object_or_404(AreaGroup, id=areagroup_id)
+
+    remaining = AreaGroup.objects.exclude(id=areagroup_id).order_by(
+        "group_order", "group_name"
+    )
+
+    # Areas have to land somewhere, so the last group cannot go.
+    if not remaining.exists():
+        raise HttpError(
+            400,
+            "This is the only area group. Create another one before deleting it.",
+        )
+
+    if reassign_to is None:
+        destination = remaining.first()
+    else:
+        if reassign_to == areagroup_id:
+            raise HttpError(400, "Cannot reassign areas to the group being deleted.")
+        destination = get_object_or_404(AreaGroup, id=reassign_to)
+
+    moved = Area.objects.filter(group_id=areagroup_id).update(group=destination)
     areagroup.delete()
-    invalidate("areagroups")
+
+    # Reassigning areas changes what /areas and /chores return, so those caches
+    # have to go too -- the old version invalidated "areagroups" alone and left
+    # every area still reporting its deleted group.
+    invalidate("areas", "areagroups")
+    invalidate_chores()
     notify("areagroups")
-    return {"success": True}
+    notify("areas")
+    return {"success": True, "reassigned_to": destination.id, "areas_moved": moved}
 
 
 @api.delete("/areas/{area_id}")
@@ -1547,7 +1909,7 @@ def delete_chore(request, chore_id: int):
     """
     chore = get_object_or_404(Chore, id=chore_id)
     chore.delete()
-    invalidate_pattern("chores:*")
+    invalidate_chores()
     invalidate("areas")
     notify("chores")
     return {"success": True}
@@ -1571,7 +1933,7 @@ def delete_historyitem(request, historyitem_id: int):
     """
     historyitem = get_object_or_404(HistoryItem, id=historyitem_id)
     historyitem.delete()
-    invalidate_pattern("chores:*", "weeklytotals:*")
+    invalidate_chores("weeklytotals:*")
     notify("chores")
     notify("history")
     return {"success": True}

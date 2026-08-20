@@ -44,9 +44,6 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "api",
     "corsheaders",
-    "rest_framework",
-    "rest_framework.authtoken",
-    "django_filters",
     "dbbackup",
     "ninja",
     "django_q",
@@ -58,13 +55,17 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    # Must precede CommonMiddleware: django-cors-headers has to header
+    # responses that CommonMiddleware short-circuits (redirects in particular).
+    # It sat last in this list, so those responses went out without CORS
+    # headers.
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -174,20 +175,20 @@ CACHES = {
     }
 }
 
-CORS_ORIGIN_WHITELIST = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
+# The frontend is served same-origin behind nginx, so cross-origin requests are
+# only ever the dev server. CORS_ALLOW_ALL_ORIGINS used to be True here, which
+# let any site on the internet read the (then unauthenticated) DRF endpoints
+# cross-origin. CORS_ALLOWED_ORIGINS is the current spelling; the old
+# CORS_ORIGIN_WHITELIST alias was dead anyway, since allow-all overrode it.
+CORS_ALLOWED_ORIGINS = [
+    o for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(" ") if o
+]
 
-CORS_ALLOW_ALL_ORIGINS = True
+# Not enabled: cookies must not ride cross-origin requests. Session auth is
+# same-origin only.
+CORS_ALLOW_CREDENTIALS = False
 
 AUTH_USER_MODEL = "api.CustomUser"
-
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
-    ),
-    "DEFAULT_FILTER_BACKENDS": [
-        "django_filters.rest_framework.DjangoFilterBackend"
-    ],
-}
 
 DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
 DBBACKUP_STORAGE_OPTIONS = {"location": "/backup/"}

@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import axios from "axios";
 
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
@@ -64,11 +63,19 @@ export const useChoreStore = defineStore("chore", {
     med_thresh: 49,
     high_thresh: 74,
     vacation_mode: false,
+    // `sort` lives alongside the filters rather than beside them because the
+    // chores query is keyed on this whole object -- keeping it here is what
+    // makes changing the sort refetch. `hasActiveFilters` in ListView
+    // deliberately ignores it, since sorting is not filtering.
     filters: {
       inactive: false,
       timeframe: null,
       assignee_id: null,
       area_id: null,
+      group_id: null,
+      chore_name: null,
+      overdue: false,
+      sort: "due",
     },
   }),
   getters: {
@@ -205,31 +212,10 @@ export const useChoreStore = defineStore("chore", {
       this.snackbarColor = color;
       this.snackbar = true;
     },
-    async disableVacationMode() {
-      try {
-        // Make a POST request to your API endpoint
-        const response = await axios.post(
-          "/api/options/disable_vacation_mode/",
-        );
-
-        // Add area to local storage
-        //this.areas.push(area);
-        this.fetchAll();
-      } catch (error) {
-        // Handle errors (e.g., show an error message)
-      }
-    },
-    async enableVacationMode() {
-      try {
-        // Make a POST request to your API endpoint
-        const response = await axios.post("/api/options/enable_vacation_mode/");
-
-        // Add area to local storage
-        //this.areas.push(area);
-        this.fetchAll();
-      } catch (error) {
-        // Handle errors (e.g., show an error message)
-      }
-    },
+    // enableVacationMode/disableVacationMode lived here. They were already
+    // dead -- optionsComposable owns vacation mode via /api/v2/toggle_vacation
+    // -- and they called two things that no longer exist: the DRF endpoints
+    // /api/options/{enable,disable}_vacation_mode/, and this.fetchAll(), which
+    // was never defined on this store at all.
   },
 });

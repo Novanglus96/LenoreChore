@@ -1,28 +1,19 @@
 <template>
-  <div class="notfound">
-    <header class="bg-white shadow">
-      <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">
-          404 Page Not Found
-        </h1>
-      </div>
-    </header>
-    <main>
-      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <NotFound />
-      </div>
-    </main>
+  <!-- Same scaffold wrapper as the other three views. The <h1> it used to carry
+       is preserved here, visually hidden, matching how DashView and ListView
+       name themselves above a v-empty-state that carries its own title. -->
+  <div class="lc-notfound-view">
+    <h1 class="lc-visually-hidden">Page not found</h1>
+    <NotFound />
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
+<script setup>
 import NotFound from "@/components/NotFound.vue";
-
-export default {
-  name: "ListView",
-  components: {
-    NotFound,
-  },
-};
 </script>
+
+<style scoped>
+.lc-notfound-view {
+  padding: var(--lc-space-5) var(--lc-space-4);
+}
+</style>

@@ -46,7 +46,7 @@ export async function loginUser(credentials) {
 
   try {
     const meResponse = await apiClient.get("/me");
-    chorestore.showSnackbar("User logged in successfully!", "success");
+    chorestore.showSnackbar("Welcome back", "success");
     return meResponse.data;
   } catch (error) {
     handleApiError(error, "User not logged in: ");

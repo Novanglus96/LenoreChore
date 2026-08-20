@@ -190,6 +190,21 @@ class Area(models.Model):
         return count
 
     @property
+    def overdueCount(self):
+        """
+        Determines the number of chores in this area that are already late.
+
+        Distinct from dueCount, which uses `<= today` and so includes today's
+        chores: something due today is not yet overdue, which is how ChoreCard
+        and the overdue filter both read it.
+
+        Returns:
+            count (integer): The count of overdue chores for this area.
+        """
+        today = date.today().isoformat()
+        return self.chore_set.filter(status=0, nextDue__lt=today).count()
+
+    @property
     def totalCount(self):
         """
         Calculates the total chores in this area.

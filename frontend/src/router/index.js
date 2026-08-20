@@ -4,7 +4,6 @@ import ListView from "../views/ListView.vue";
 import GraphView from "../views/GraphView.vue";
 import HistoryView from "../views/HistoryView.vue";
 import ProfileView from "../views/ProfileView.vue";
-import SettingsView from "../views/SettingsView.vue";
 import LogoutView from "../views/LogoutView.vue";
 import LoginView from "../views/LoginView.vue";
 import AboutView from "../views/AboutView.vue";
@@ -36,12 +35,11 @@ const routes = [
     component: HistoryView,
     meta: { requiresAuth: true },
   },
-  {
-    path: "/settings",
-    name: "settings",
-    component: SettingsView,
-    meta: { requiresAuth: true },
-  },
+  // /settings was a live authenticated route rendering the Vue CLI welcome
+  // page: it printed the signed-in user's name, email and admin flag as bare
+  // <h1>s above links to the vue-cli docs. Nothing in the app linked to it.
+  // Removed along with the view and HelloWorld; a real settings screen can
+  // reclaim the path.
   {
     path: "/profile",
     name: "profile",
