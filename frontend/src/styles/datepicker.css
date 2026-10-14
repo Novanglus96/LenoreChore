@@ -97,3 +97,26 @@
   outline: 2px solid rgb(var(--v-theme-primary));
   outline-offset: 2px;
 }
+
+/* The menu opened off-screen inside any dialog once the page was scrolled.
+   A Vuetify dialog locks scrolling by pinning <html> with `position: fixed;
+   top: var(--v-body-scroll-y)` -- minus the scroll distance -- which leaves
+   window.scrollY reading 0. The picker teleports its menu to <body> and places
+   it at `rect.top + window.scrollY`: correct against the viewport, but the
+   menu's containing block is the shifted <html>, so it landed exactly that
+   many pixels too high. On a phone, scrolled to a chore halfway down the list,
+   that was above the top of the screen: tapping the field appeared to do
+   nothing, while the snooze at the top of the list always worked.
+
+   Vuetify corrects its own overlays by the same two variables
+   (VOverlay/locationStrategies.js), and only sets them while the lock is on,
+   so outside a dialog this resolves to no shift at all. `translate` rather
+   than `transform`, so it composes with the menu's appear transition instead
+   of being overwritten by it.
+
+   `body >` because the library puts `dp--menu-wrapper` on the inner menu as
+   well as on the positioned wrapper; matching both applied the shift twice. */
+html.v-overlay-scroll-blocked body > .dp--menu-wrapper {
+  translate: calc(-1 * var(--v-body-scroll-x, 0px))
+    calc(-1 * var(--v-body-scroll-y, 0px));
+}
