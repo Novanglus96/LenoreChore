@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0...v1.5.1) (2026-10-14)
+
+
+### Bug Fixes
+
+* open the date picker on screen inside dialogs when the page is scrolled ([6aee8a1](https://github.com/Novanglus96/LenoreChore/commit/6aee8a103e4302df4f241b853c23a8fdaf0eb55a))
+
 # [1.5.0](https://github.com/Novanglus96/LenoreChore/compare/v1.4.2...v1.5.0) (2026-08-20)
 
 
