@@ -69,7 +69,11 @@ WORKDIR $APP_HOME
 # Python dependencies
 COPY --from=backend-builder /usr/src/app/wheels /wheels
 COPY --from=backend-builder /usr/src/app/requirements.txt .
-RUN pip install --upgrade pip setuptools wheel && pip install --no-cache /wheels/*
+# pip is uninstalled once the wheels are in: nothing runs it at runtime, and
+# its vendored msgpack/urllib3/pkg_resources (listed in pip/_vendor/bom.cdx.json)
+# carry fixable CVEs that the security scan reports even on the newest pip.
+RUN pip install --upgrade pip setuptools wheel && pip install --no-cache /wheels/* \
+    && pip uninstall -y pip
 
 # Vue static files
 COPY --from=frontend-build /app/dist /usr/share/nginx/html
