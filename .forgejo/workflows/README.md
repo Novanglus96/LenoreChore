@@ -18,6 +18,7 @@ these files are ~10 lines each.
 | `announce.yml` | `announce.yml@v1` (`target: reddit`) | `release: published`, or dispatch by tag |
 | `pr-title-lint.yml` | `pr-title-lint.yml@v1` | `pull_request` |
 | `tests.yml` | `tests.yml@v1` | `pull_request` |
+| `security.yml` | `security.yml@v1` | `pull_request` |
 
 ## 🔴 `.github/workflows/` is gone, and it must stay gone
 
