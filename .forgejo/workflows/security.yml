@@ -1,0 +1,15 @@
+name: Security
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  # Trivy scan of the image a release would ship, plus frontend/'s lockfile --
+  # the Vite bundle leaves no package metadata in the image, so an image scan
+  # alone cannot see what is inside it. Report-only until a clean run or two;
+  # then set `blocking: true` so a fixable CVE cannot get a version number.
+  security:
+    uses: lenore/lenore-ci/.forgejo/workflows/security.yml@v1
+    with:
+      dockerfiles: "Dockerfile"
+      lockfile_dirs: "frontend"
+      blocking: false

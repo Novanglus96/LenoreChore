@@ -14,7 +14,7 @@ RUN npm run build
 # STAGE 2 #
 # Python wheels
 ###########
-FROM python:3.11.4-slim-bookworm AS backend-builder
+FROM python:3.11-slim-bookworm AS backend-builder
 
 WORKDIR /usr/src/app
 
@@ -41,7 +41,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 # STAGE 3 #
 # Final single-container image
 ###########
-FROM python:3.11.4-slim-bookworm
+FROM python:3.11-slim-bookworm
 
 LABEL maintainer="John Adams"
 # Stamped by scripts/update-version.sh during the semantic-release prepare step.
