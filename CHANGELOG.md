@@ -1,3 +1,11 @@
+## [1.5.2](https://github.com/Novanglus96/LenoreChore/compare/v1.5.1...v1.5.2) (2026-10-22)
+
+
+### Bug Fixes
+
+* bump Django and Pillow, drop pip from the runtime image ([3e4ef5b](https://github.com/Novanglus96/LenoreChore/commit/3e4ef5bc48f89bbf69ca518cbca199219210cb39))
+* patch fixable CVEs in the base image and frontend deps ([bb2d213](https://github.com/Novanglus96/LenoreChore/commit/bb2d213d61cf748971de6919e94eb0537f8ad09c))
+
 ## [1.5.1](https://github.com/Novanglus96/LenoreChore/compare/v1.5.0...v1.5.1) (2026-10-14)
 
 
