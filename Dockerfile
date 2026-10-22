@@ -14,7 +14,7 @@ RUN npm run build
 # STAGE 2 #
 # Python wheels
 ###########
-FROM python:3.11.4-slim-bookworm AS backend-builder
+FROM python:3.11-slim-bookworm AS backend-builder
 
 WORKDIR /usr/src/app
 
@@ -41,7 +41,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 # STAGE 3 #
 # Final single-container image
 ###########
-FROM python:3.11.4-slim-bookworm
+FROM python:3.11-slim-bookworm
 
 LABEL maintainer="John Adams"
 # Stamped by scripts/update-version.sh during the semantic-release prepare step.
@@ -69,7 +69,11 @@ WORKDIR $APP_HOME
 # Python dependencies
 COPY --from=backend-builder /usr/src/app/wheels /wheels
 COPY --from=backend-builder /usr/src/app/requirements.txt .
-RUN pip install --upgrade pip setuptools wheel && pip install --no-cache /wheels/*
+# pip is uninstalled once the wheels are in: nothing runs it at runtime, and
+# its vendored msgpack/urllib3/pkg_resources (listed in pip/_vendor/bom.cdx.json)
+# carry fixable CVEs that the security scan reports even on the newest pip.
+RUN pip install --upgrade pip setuptools wheel && pip install --no-cache /wheels/* \
+    && pip uninstall -y pip
 
 # Vue static files
 COPY --from=frontend-build /app/dist /usr/share/nginx/html
