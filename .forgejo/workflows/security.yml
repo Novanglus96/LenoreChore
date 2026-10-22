@@ -5,11 +5,12 @@ on:
 jobs:
   # Trivy scan of the image a release would ship, plus frontend/'s lockfile --
   # the Vite bundle leaves no package metadata in the image, so an image scan
-  # alone cannot see what is inside it. Report-only until a clean run or two;
-  # then set `blocking: true` so a fixable CVE cannot get a version number.
+  # alone cannot see what is inside it. Blocking: a fixable HIGH/CRITICAL fails
+  # the PR, so it cannot get a version number. Accepted risks go in a repo-root
+  # .trivyignore.yaml with a `statement` and an `expired_at`.
   security:
     uses: lenore/lenore-ci/.forgejo/workflows/security.yml@v1
     with:
       dockerfiles: "Dockerfile"
       lockfile_dirs: "frontend"
-      blocking: false
+      blocking: true
